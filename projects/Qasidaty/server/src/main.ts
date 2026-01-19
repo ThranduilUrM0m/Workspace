@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
   app.use(compression());
   
   // Enable helmet for security headers
-  app.use(helmet());
+  app.use(helmet({ contentSecurityPolicy: false }));
   
   // Global validation pipe
   app.useGlobalPipes(new ValidationPipe());

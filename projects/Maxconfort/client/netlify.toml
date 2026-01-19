@@ -1,12 +1,10 @@
 [build]
-command = "pnpm build"
-publish = ".next"
-functions = "netlify/functions"
+  command = "pnpm build"
+  publish = ".next"
+  functions = ".netlify/functions"
 
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[headers]]
 for = "/_next/static/*"
