@@ -1,10 +1,18 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { configureStore, createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+interface AppState {
+  ready: boolean;
+}
+
+const initialState: AppState = { ready: true };
 
 const appSlice = createSlice({
   name: 'app',
-  initialState: { ready: true },
+  initialState,
   reducers: {
-    setReady: (state, action) => { state.ready = action.payload; }
+    setReady: (state, action: PayloadAction<boolean>) => {
+      state.ready = action.payload;
+    }
   }
 });
 

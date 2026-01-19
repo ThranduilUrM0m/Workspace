@@ -5,16 +5,16 @@ import 'nprogress/nprogress.css';
 
 NProgress.configure({ showSpinner: false, minimum: 0.08 });
 
-export default function TopProgress() {
-  useEffect(() => {
-    const handleStart = () => NProgress.start();
-    const handleStop = () => NProgress.done();
+export default function TopProgress(): null {
+  useEffect((): (() => void) => {
+    const handleStart = (): void => { NProgress.start(); };
+    const handleStop = (): void => { NProgress.done(); };
 
     Router.events.on('routeChangeStart', handleStart);
     Router.events.on('routeChangeComplete', handleStop);
     Router.events.on('routeChangeError', handleStop);
 
-    return () => {
+    return (): void => {
       Router.events.off('routeChangeStart', handleStart);
       Router.events.off('routeChangeComplete', handleStop);
       Router.events.off('routeChangeError', handleStop);

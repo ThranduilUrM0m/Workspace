@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
 import * as Comlink from 'comlink';
 
-export function useWorker() {
-  const workerRef = useRef<Worker>();
-  const workerApiRef = useRef<any>();
+interface WorkerAPI {}
+
+export function useWorker(): any {
+  const workerRef = useRef<Worker | null>(null);
+  const workerApiRef = useRef<Comlink.Remote<WorkerAPI> | null>(null);
 
   useEffect(() => {
     workerRef.current = new Worker(

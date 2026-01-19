@@ -1,5 +1,6 @@
+import React from 'react';
 import Link from 'next/link';
-export default function Header() {
+export default function Header(): React.ReactElement {
   return (
     <header className="header">
       <div className="header-container">

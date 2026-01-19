@@ -184,7 +184,7 @@ https://github.com/youruser/my-workspace.git
 
 ```bash
 cd my_workspace
-git remote add origin https://github.com/youruser/my-workspace.git
+git remote add origin https://github.com/ThranduilUrM0m/Workspace.git
 git push -u origin master
 ```
 
