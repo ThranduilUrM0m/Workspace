@@ -148,77 +148,379 @@ The repo is monorepo‑first, but each project can be split and deployed separat
 bash scripts/git-init.sh
 ```
 
-### Publish a Project to its Own GitHub Repo (HTTPS — recommended for you)
+**What this script does:**
+- Initializes Git at workspace root
+- Adds all files to staging
+- Creates initial commit on `master` branch
+- Ready to push to GitHub
 
-Authenticate with GitHub CLI first (recommended — opens browser for login):
-
-- PowerShell / CMD:
-  gh auth login --web
-
-- Git Bash (if the web flow fails; use winpty):
-  winpty gh auth login --web
-
-After successful login you can run the publish command. Example (you asked for master branch):
-
+**Verify:**
 ```bash
-bash scripts/publish-subtree.sh Maxconfort https://github.com/ThranduilUrM0m/MaxConfort.git master
+git status
+# Output: "On branch master, nothing to commit, working tree clean"
 ```
 
-What this script does (safe default)
-- Exports only the files under projects/Maxconfort plus the shared package packages/ui (so your standalone repo contains the project and required shared UI).
-- Initializes a fresh Git repo, commits and pushes to the remote branch you pass (force push).
-- This avoids accidentally pushing the entire workspace to the target repo.
+### Phase 2: Create GitHub Repository
 
-If you already pushed the full monorepo by mistake
-- Option A (recommended): make the remote empty and re-run the publish script above (it force-pushes).
-- Option B: delete the remote GitHub repository and recreate it empty, then re-run the script.
-- Option C (if you cannot re-create remote): in the remote repo remove unwanted files via GitHub web UI or locally clone, remove files, force-push a cleaned branch.
+**Goal:** Create empty repo to receive your monorepo
 
-Render supports monorepos and can deploy multiple services (frontend + backend) from the same GitHub repository. The recommended, professional workflow is to push the entire workspace (monorepo) to GitHub and create one Render service per project piece (client and server), pointing each service to the correct root directory inside the repository.
+1. Go to **github.com**
+2. Click **+ New** (top left)
+3. **Repository name:** `my-workspace` (or your preferred name)
+4. **Visibility:** Public (or Private)
+5. **DO NOT** check "Initialize with README"
+6. Click **Create Repository**
 
-Steps to deploy a project (example: `Risala`) from the monorepo to Render:
+**Copy the HTTPS URL:**
+```
+https://github.com/youruser/my-workspace.git
+```
 
-1. Push the full workspace to GitHub (recommended):
+---
 
-  - From the workspace root:
+### Phase 3: Push to GitHub
 
-    ```bash
-    git remote add origin git@github.com:yourorg/your-repo.git
-    git push -u origin master
-    ```
+**Goal:** Upload entire monorepo to GitHub
 
-  - Note: pushing the full workspace preserves shared packages (`packages/ui`) and Turborepo configuration which avoids import/build issues.
+```bash
+cd my_workspace
+git remote add origin https://github.com/youruser/my-workspace.git
+git push -u origin master
+```
 
-2. In the Render dashboard, create a new Web Service for the client (Next.js):
+**Expected output:**
+```
+Enumerating objects: 1234, done.
+Counting objects: 100% (1234/1234), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (800/800), done.
+Writing objects: 100% (1234/1234), 2.50 MiB | 1.50 MiB/s, done.
+* [new branch]      master -> master
+Branch 'master' set up to track remote origin/master.
+```
 
-  - Select your GitHub repository.
-  - Set the Root Directory to: `projects/<ProjectName>/client` (e.g. `projects/Risala/client`).
-  - Build Command: `pnpm install --frozen-lockfile && pnpm build`.
-  - Start Command: `pnpm start` (ensure `start` runs `next start` in the client's `package.json`).
-  - Add necessary environment variables (Clerk publishable key, frontend API, NEXT_PUBLIC_SOCKET_URL, etc.).
+**Verify:** Refresh your GitHub page. You should see:
+- `packages/` folder
+- `projects/` folder
+- `scripts/` folder
+- All configuration files
 
-3. In the Render dashboard, create a new Web Service for the server (NestJS):
+---
 
-  - Select the same GitHub repository.
-  - Set the Root Directory to: `projects/<ProjectName>/server` (e.g. `projects/Risala/server`).
-  - Build Command: `pnpm install --frozen-lockfile && pnpm build`.
-  - Start Command: `node dist/main.js` (or `pnpm start` if defined to run this).
-  - Add required environment variables (MONGODB_URI, CLERK_JWKS_URI, PORT, etc.).
+### Phase 4: Deploy Risala Client (Netlify)
 
-4. Repeat for each project (create separate frontend + backend services), each pointing at the correct root directory inside the single repository.
+**Goal:** Deploy first client to establish pattern (5-10 minutes)
 
-Why this approach?
+#### Step 1: Access Netlify
 
-- Shared packages (like `packages/ui`) remain in the repository; Render will install dependencies and build from the project root and can resolve local workspace packages via pnpm workspaces.
-- Keeping a single canonical repo avoids duplication, dependency mismatch, and the fragile process of exporting subtrees that must also carry shared packages.
+1. Visit **https://app.netlify.com**
+2. Sign in or create account
+3. Click **"Add new site"** → **"Import an existing project"**
 
-Notes and tips:
+#### Step 2: Connect GitHub Repository
 
-- Make sure each project's `package.json` uses workspace-friendly install/build scripts (for example `pnpm build` and `pnpm start`).
-- In Render, you can set the Install Command to `pnpm install --frozen-lockfile` to ensure reproducible installs.
-- Add Render environment variables in the service settings (do not check secrets into git).
+1. Click **"Connect to Git"**
+2. Select **GitHub** (authorize Netlify if needed)
+3. Search for: `my-workspace`
+4. Click to select it
+5. Click **"Continue"**
 
-If you still need to export a single project repository, the `scripts/publish-subtree.sh` helper exists but the preferred workflow is to keep the monorepo and configure platform roots.
+#### Step 3: Configure Build Settings
+
+When Netlify shows project selection options and you see `@repo/ui`:
+
+**Click "other (configure manually)"** → Form will load
+
+Fill in these fields:
+
+```
+Repository:      my-workspace
+Branch:          master (IMPORTANT: NOT "main")
+Base directory:  projects/Risala/client
+Build command:   pnpm install --frozen-lockfile && pnpm build
+Publish dir:     .next
+```
+
+#### Step 4: Set Environment Variables
+
+Click **"Advanced build settings"** or **"Environment"** tab
+
+Click **"Add new variable"** for each:
+
+| Variable Name | Value | Where to Find |
+|---|---|---|
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx` | Clerk Dashboard → API Keys |
+| `NEXT_PUBLIC_CLERK_FRONTEND_API` | `https://xxx.clerk.accounts.dev` | Clerk Dashboard → API Keys |
+| `NEXT_PUBLIC_SOCKET_IO_URL` | `http://localhost:4001` | (Update after Render deploy) |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3001` | (Can update later) |
+
+**How to get Clerk Keys:**
+1. Go to: https://dashboard.clerk.com
+2. Log in to your account
+3. Select your application
+4. Go to **API Keys** section
+5. Copy **Publishable Key** → `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+6. Copy **Frontend API** → `NEXT_PUBLIC_CLERK_FRONTEND_API`
+
+#### Step 5: Review & Deploy
+
+Before clicking Deploy, verify:
+- ✅ Base directory: `projects/Risala/client`
+- ✅ Build command: `pnpm install --frozen-lockfile && pnpm build`
+- ✅ Publish directory: `.next`
+- ✅ Branch: `master` (not main)
+- ✅ All 4 environment variables set
+
+Click **"Deploy site"**
+
+**Wait:** 3-5 minutes for build to complete
+
+**Result:** 
+```
+Deploy successful!
+Live URL: https://risala-client-xxxxx.netlify.app
+```
+
+---
+
+### Phase 5: Deploy Remaining Clients
+
+**For Boutaleb Client:**
+
+Repeat Phase 4, changing only:
+```
+Base directory: projects/Boutaleb/client
+```
+
+(Everything else identical)
+
+**For Maxconfort Client:**
+
+```
+Base directory: projects/Maxconfort/client
+```
+
+**For Qasidaty Client:**
+
+```
+Base directory: projects/Qasidaty/client
+```
+
+**Timeline:**
+- Risala: 5-10 min (first setup)
+- Boutaleb: 3-5 min
+- Maxconfort: 3-5 min
+- Qasidaty: 3-5 min
+- **Total: ~20 minutes for all 4 clients**
+
+---
+
+### Phase 6: Deploy Servers (Render)
+
+**Goal:** Deploy NestJS servers (5-10 min each)
+
+Repeat for each server: Risala, Boutaleb, Maxconfort, Qasidaty
+
+#### Step 1: Access Render
+
+1. Visit **https://dashboard.render.com**
+2. Sign in or create account
+3. Click **"New +"** button (top right)
+4. Select **"Web Service"**
+
+#### Step 2: Connect GitHub Repository
+
+1. Click **"Connect GitHub"** (authorize if needed)
+2. Search for: `my-workspace`
+3. Click to select
+4. Click **"Connect"**
+
+#### Step 3: Configure Deployment
+
+Fill in these fields:
+
+```
+Name:              risala-server (or boutaleb-server, etc.)
+Environment:       Node
+Region:            Choose closest to you
+Root Directory:    projects/Risala/server
+Build Command:     pnpm install --frozen-lockfile && pnpm build
+Start Command:     node dist/main.js
+```
+
+#### Step 4: Set Environment Variables
+
+Scroll to **"Environment"** section
+
+Click **"Add new variable"** for each:
+
+| Variable | Value | Where to Find |
+|---|---|---|
+| `MONGODB_URI` | `mongodb+srv://user:pass@cluster.mongodb.net/db` | MongoDB Atlas |
+| `JWT_SECRET` | `your-jwt-secret` | Generate any random string |
+| `CLERK_SECRET_KEY` | `sk_test_xxxxx` | Clerk Dashboard → API Keys |
+| `CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx` | Clerk Dashboard → API Keys |
+| `PORT` | `4001` | Fixed value |
+| `NODE_ENV` | `production` | Fixed value |
+| `CORS_ORIGIN` | `https://risala-client-xxxxx.netlify.app` | From Netlify (your client URL) |
+
+**Note:** Get `CLERK_SECRET_KEY` from Clerk Dashboard (different from publishable key)
+
+#### Step 5: Review & Deploy
+
+Before deploying, verify:
+- ✅ Root directory: `projects/Risala/server`
+- ✅ Build command: `pnpm install --frozen-lockfile && pnpm build`
+- ✅ Start command: `node dist/main.js`
+- ✅ All environment variables set
+- ✅ PORT = 4001
+
+Click **"Create Web Service"**
+
+**Wait:** 5-10 minutes for build to complete
+
+**Result:**
+```
+Deploy successful!
+Live URL: https://risala-server-xxxxx.onrender.com
+```
+
+---
+
+### Phase 7: Connect Clients to Servers
+
+**Goal:** Update client URLs to point to deployed servers
+
+For **each Netlify client site** (4 times):
+
+1. Go to **Netlify dashboard**
+2. Select the site (e.g., risala-client)
+3. Go to **Site settings** → **Build & deploy** → **Environment**
+4. Edit or add variable:
+   ```
+   NEXT_PUBLIC_SOCKET_IO_URL = https://risala-server-xxxxx.onrender.com
+   NEXT_PUBLIC_API_URL = https://risala-server-xxxxx.onrender.com
+   ```
+5. Click **"Save"**
+6. Go to **Deploys** tab
+7. Click **"Trigger deploy"** → **"Clear cache and redeploy"**
+
+**Wait:** 3-5 minutes for redeploy
+
+Repeat for remaining 3 clients (Boutaleb, Maxconfort, Qasidaty)
+
+---
+
+## Netlify Setup (Detailed)
+
+### Understanding "@repo/ui Only" Issue
+
+**What you'll see:**
+```
+Netlify site creation showing:
+┌─────────────────────────────┐
+│ Select project to deploy:   │
+│                             │
+│ [ @repo/ui ]                │
+│ [ other (configure manual)]  │
+└─────────────────────────────┘
+```
+
+**Why this happens:**
+
+Netlify scans `pnpm-workspace.yaml`:
+```yaml
+packages:
+  - 'packages/*'              ← Matches: @repo/ui ✓
+```
+
+But doesn't show:
+```yaml
+  - 'projects/*/client'       ← Netlify ignores this
+```
+
+**This is NORMAL.** It's not an error. Just use "Configure manually."
+
+### Netlify Configuration Template
+
+Use this template for each client:
+
+```
+Repository:        my-workspace
+Branch:            master
+Base directory:    projects/ProjectName/client
+Build command:     pnpm install --frozen-lockfile && pnpm build
+Publish directory: .next
+
+Environment Variables:
+  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = pk_test_xxxxx
+  NEXT_PUBLIC_CLERK_FRONTEND_API = https://xxx.clerk.accounts.dev
+  NEXT_PUBLIC_SOCKET_IO_URL = https://project-server-xxx.onrender.com
+  NEXT_PUBLIC_APP_URL = https://project-client-xxx.netlify.app
+```
+
+### If "@repo/ui" Click Doesn't Work
+
+**Option 1: Refresh & Retry**
+- Refresh page (Ctrl+R)
+- Start again from "Add new site"
+
+**Option 2: Check GitHub Integration**
+1. Go to Netlify Team settings
+2. Connected services → GitHub
+3. If disconnected, click "Connect"
+4. Authorize and retry
+
+**Option 3: Direct Deploy**
+1. Create site WITHOUT connecting GitHub first
+2. Go to Site settings → Build & deploy
+3. Connect GitHub manually
+4. Fill in all settings
+
+---
+
+## Render Setup (Detailed)
+
+### Render Configuration Template
+
+Use this template for each server:
+
+```
+Name:              project-server
+Environment:       Node
+Region:            Choose closest to you
+Root Directory:    projects/ProjectName/server
+Build Command:     pnpm install --frozen-lockfile && pnpm build
+Start Command:     node dist/main.js
+
+Environment Variables:
+  MONGODB_URI = mongodb+srv://user:pass@cluster.mongodb.net/db
+  JWT_SECRET = your-secret-key
+  CLERK_SECRET_KEY = sk_test_xxxxx
+  CLERK_PUBLISHABLE_KEY = pk_test_xxxxx
+  PORT = 4001
+  NODE_ENV = production
+  CORS_ORIGIN = https://project-client-xxx.netlify.app
+```
+
+### Render Known Issues
+
+**Issue: Build fails with "Cannot find module"**
+
+Fix:
+1. Go to Service settings → Environment
+2. Add: `NODE_ENV = production`
+3. Clear cache: Go to Deploys → "Clear build cache"
+4. Trigger redeploy
+
+**Issue: Server starts but crashes immediately**
+
+Fix:
+1. Check logs: Deployments tab → View logs
+2. Common causes:
+   - Missing MongoDB connection
+   - Wrong JWT_SECRET format
+   - PORT already in use
 
 ---
 
