@@ -1,0 +1,17 @@
+[build]
+command = "pnpm build"
+publish = ".next"
+functions = "netlify/functions"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
+
+[[headers]]
+for = "/_next/static/*"
+[headers.values]
+  Cache-Control = "public, max-age=31536000, immutable"
+
+[context.production.environment]
+NODE_ENV = "production"
