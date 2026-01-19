@@ -1,0 +1,40 @@
+@use "../abstracts/_mixins.scss" as *;
+
+.header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  
+  &-container {
+    @include container;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  &-logo {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+  
+  &-nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+  
+  &-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}

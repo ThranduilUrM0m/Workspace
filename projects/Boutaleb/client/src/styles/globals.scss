@@ -1,0 +1,118 @@
+/* Mixins (bring into scope) */
+@use "./abstracts/_mixins.scss" as *;
+@use "./abstracts/_typography.scss" as *;
+
+/* Bring shared responsive mixins (from packages/ui) */
+@use "../../../../../packages/ui/src/scss/_responsive.scss" as *;
+
+/* Include component and page styles */
+@use "./components/_header.scss" as *;
+@use "./components/_footer.scss" as *;
+@use "./pages/_homepage.scss" as *;
+@use "./pages/_general.scss" as *;
+
+/* Tailwind utilities should be available first (recommended)
+   Then define :root CSS variables, bring in mixins, typography, and include component/page partials.
+*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Root-level design tokens (CSS custom properties)
+   - We store RGB triplets for colors (e.g. --color-primary-rgb: 14 165 164;)
+   - We also define computed variables (e.g. --color-primary) for convenience so SCSS can
+     use var(--color-primary) for solid colors, while Tailwind uses the rgb(var(--...-rgb) / <alpha>)
+*/
+:root {
+  /* container */
+  --max-container-width: 1280px;
+
+  /* color RGB triplets (for Tailwind alpha) */
+  --color-primary-rgb: 14 165 164;      /* #0ea5a4 */
+  --color-accent-rgb: 6 182 212;        /* #06b6d4 */
+  --color-secondary-rgb: 100 116 139;   /* #64748b */
+
+  --color-bg-rgb: 248 250 252;          /* #f8fafc */
+  --color-surface-rgb: 255 255 255;     /* #ffffff */
+  --color-card-bg-rgb: 255 255 255;     /* #ffffff */
+
+  --text-dark-rgb: 31 41 55;            /* #1f2937 */
+  --text-light-rgb: 107 114 128;        /* #6b7280 */
+  --text-muted-rgb: 156 163 175;        /* #9ca3af */
+
+  --border-color-rgb: 229 231 235;      /* #e5e7eb */
+  --muted-border-rgb: 230 233 238;      /* #e6e9ee */
+
+  --success-rgb: 22 163 74;
+  --danger-rgb: 239 68 68;
+  --warning-rgb: 245 158 11;
+  --info-rgb: 14 165 164;
+
+  /* computed convenience variables (solid/opaque versions) */
+  --color-primary: rgb(var(--color-primary-rgb) / 1);
+  --color-accent: rgb(var(--color-accent-rgb) / 1);
+  --color-secondary: rgb(var(--color-secondary-rgb) / 1);
+  --color-bg: rgb(var(--color-bg-rgb) / 1);
+  --color-surface: rgb(var(--color-surface-rgb) / 1);
+  --color-card-bg: rgb(var(--color-card-bg-rgb) / 1);
+
+  --text-dark: rgb(var(--text-dark-rgb) / 1);
+  --text-light: rgb(var(--text-light-rgb) / 1);
+  --text-muted: rgb(var(--text-muted-rgb) / 1);
+
+  --border-color: rgb(var(--border-color-rgb) / 1);
+  --muted-border: rgb(var(--muted-border-rgb) / 1);
+
+  --success: rgb(var(--success-rgb) / 1);
+  --danger: rgb(var(--danger-rgb) / 1);
+  --warning: rgb(var(--warning-rgb) / 1);
+  --info: rgb(var(--info-rgb) / 1);
+
+  /* convenience white/black tokens */
+  --color-white: rgb(var(--color-surface-rgb) / 1);
+  --color-black: rgb(0 0 0 / 1);
+
+  /* core utility tokens */
+  --space-xxs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+
+  --radius: 8px;
+  --radius-sm: 6px;
+
+  --shadow-sm: 0 1px 2px rgba(15,23,42,0.08);
+}
+
+/* Minimal global reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--text-dark);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-main {
+  flex: 1;
+}

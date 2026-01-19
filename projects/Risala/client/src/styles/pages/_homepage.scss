@@ -1,0 +1,79 @@
+@use "../abstracts/_mixins.scss" as *;
+
+.homepage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  color: var(--text-dark);
+}
+
+.hero {
+  @include container;
+  @include flex-center;
+  flex-direction: column;
+  text-align: center;
+  padding: 4rem 1rem;
+  flex: 1;
+  
+  &-title {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  &-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    max-width: 600px;
+  }
+  
+  &-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.2s;
+  
+  &-primary {
+    background: var(--color-primary);
+    color: var(--color-white);
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  &-secondary {
+    background: var(--color-surface);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    
+    &:hover {
+      background: var(--color-bg);
+      transform: translateY(-2px);
+    }
+  }
+  
+  &-text {
+    color: var(--text-light);
+    
+    &:hover {
+      color: var(--color-primary);
+    }
+  }
+}

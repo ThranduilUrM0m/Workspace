@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+
+  risala-client:
+    build: ./projects/Risala/client
+    ports:
+      - "3001:3000"
+    env_file: ./projects/Risala/client/.env
+    depends_on:
+      - risala-server
+
+  risala-server:
+    build: ./projects/Risala/server
+    ports:
+      - "4001:4000"
+    env_file: ./projects/Risala/server/.env
+
+  boutaleb-client:
+    build: ./projects/Boutaleb/client
+    ports:
+      - "3002:3000"
+    env_file: ./projects/Boutaleb/client/.env
+    depends_on:
+      - boutaleb-server
+
+  boutaleb-server:
+    build: ./projects/Boutaleb/server
+    ports:
+      - "4002:4000"
+    env_file: ./projects/Boutaleb/server/.env
+
+  maxconfort-client:
+    build: ./projects/Maxconfort/client
+    ports:
+      - "3003:3000"
+    env_file: ./projects/Maxconfort/client/.env
+    depends_on:
+      - maxconfort-server
+
+  maxconfort-server:
+    build: ./projects/Maxconfort/server
+    ports:
+      - "4003:4000"
+    env_file: ./projects/Maxconfort/server/.env
+
+  qasidaty-client:
+    build: ./projects/Qasidaty/client
+    ports:
+      - "3004:3000"
+    env_file: ./projects/Qasidaty/client/.env
+    depends_on:
+      - qasidaty-server
+
+  qasidaty-server:
+    build: ./projects/Qasidaty/server
+    ports:
+      - "4004:4000"
+    env_file: ./projects/Qasidaty/server/.env

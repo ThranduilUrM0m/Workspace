@@ -1,0 +1,24 @@
+packages:
+  - 'projects/*/client'
+  - 'projects/*/server'
+  - 'packages/*'
+
+# Allow React 19 for packages that are compatible at runtime and
+# add a package extension to relax the peer deps of @react-spring/zdog
+peerDependencyRules:
+  # treat react/react-dom v19 as allowed for packages that only declare ^16/17/18
+  allowedVersions:
+    react: ">=19 <20"
+    react-dom: ">=19 <20"
+  # optionally allow any version for packages under the @react-spring scope
+  allowAny:
+    - "@react-spring/*"
+
+packageExtensions:
+  "@react-spring/zdog@*":
+    peerDependencies:
+      react: ">=16.8.0"
+      react-dom: ">=16.8.0"
+    peerDependenciesMeta:
+      react-dom:
+        optional: true

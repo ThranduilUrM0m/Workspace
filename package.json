@@ -1,0 +1,51 @@
+{
+  "name": "my_workspace",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.15.0",
+  "workspaces": [
+    "projects/*/client",
+    "projects/*/server",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    
+    "risala-client:dev": "pnpm --filter risala-client dev",
+    "risala-server:dev": "pnpm --filter risala-server dev",
+    "risala:dev": "concurrently \"pnpm --filter risala-server dev\" \"pnpm --filter risala-client dev\"",
+    "deploy:risala-client": "echo 'Deploy client to Render: set up a Web Service in Render dashboard with root projects/Risala/client'",
+    "deploy:risala-server": "echo 'Deploy server to Render: set up a Web Service in Render dashboard with root projects/Risala/server'",
+    
+    "boutaleb-client:dev": "pnpm --filter boutaleb-client dev",
+    "boutaleb-server:dev": "pnpm --filter boutaleb-server dev",
+    "boutaleb:dev": "concurrently \"pnpm --filter boutaleb-server dev\" \"pnpm --filter boutaleb-client dev\"",
+    "deploy:boutaleb-client": "echo 'Deploy client to Render: set up a Web Service in Render dashboard with root projects/Boutaleb/client'",
+    "deploy:boutaleb-server": "echo 'Deploy server to Render: set up a Web Service in Render dashboard with root projects/Boutaleb/server'",
+    
+    "maxconfort-client:dev": "pnpm --filter maxconfort-client dev",
+    "maxconfort-server:dev": "pnpm --filter maxconfort-server dev",
+    "maxconfort:dev": "concurrently \"pnpm --filter maxconfort-server dev\" \"pnpm --filter maxconfort-client dev\"",
+    "deploy:maxconfort-client": "echo 'Deploy client to Render: set up a Web Service in Render dashboard with root projects/Maxconfort/client'",
+    "deploy:maxconfort-server": "echo 'Deploy server to Render: set up a Web Service in Render dashboard with root projects/Maxconfort/server'",
+    
+    "qasidaty-client:dev": "pnpm --filter qasidaty-client dev",
+    "qasidaty-server:dev": "pnpm --filter qasidaty-server dev",
+    "qasidaty:dev": "concurrently \"pnpm --filter qasidaty-server dev\" \"pnpm --filter qasidaty-client dev\"",
+    "deploy:qasidaty-client": "echo 'Deploy client to Render: set up a Web Service in Render dashboard with root projects/Qasidaty/client'",
+    "deploy:qasidaty-server": "echo 'Deploy server to Render: set up a Web Service in Render dashboard with root projects/Qasidaty/server'",
+    "bootstrap": "bash scripts/bootstrap.sh",
+    "prepare:git": "bash scripts/git-init.sh || true",
+    "approve-builds": "pnpm approve-builds || true"
+  },
+  "devDependencies": {
+    "turbo": "*",
+    "concurrently": "*",
+    "react": "*",
+    "react-dom": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*"
+  }
+}

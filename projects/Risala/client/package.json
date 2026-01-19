@@ -1,0 +1,42 @@
+{
+  "name": "risala-client",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "*",
+    "react": "*",
+    "react-dom": "*",
+    "@clerk/nextjs": "*",
+    "axios": "*",
+    "react-hook-form": "*",
+    "yup": "*",
+    "socket.io-client": "*",
+    "@reduxjs/toolkit": "*",
+    "react-redux": "*",
+    "nprogress": "*",
+    "react-spring": "*",
+    "next-pwa": "*",
+    "workbox-window": "*",
+    "web-worker": "*",
+    "sharp": "*",
+    "@next/bundle-analyzer": "*",
+    "comlink": "*"
+  },
+  "devDependencies": {
+    "tailwindcss": "*",
+    "@tailwindcss/postcss": "*",
+    "postcss": "*",
+    "autoprefixer": "*",
+    "sass": "*",
+    "typescript": "*",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@types/nprogress": "*"
+  }
+}

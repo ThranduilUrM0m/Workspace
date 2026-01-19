@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: maxconfort-client
+    env: node
+    plan: starter # Adjust based on needs (starter/standard/pro)
+    region: frankfurt  # Choose region closest to users
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    healthCheckPath: /
+    autoDeploy: true  # Enable auto-deployment on push
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+        sync: false  # Indicates this should be set manually in dashboard
+      - key: NEXT_PUBLIC_CLERK_FRONTEND_API
+        sync: false
+      - key: NEXT_PUBLIC_SOCKET_URL
+        sync: false  # Set to server URL after deployment
+    domains:
+      - maxconfort.example.com  # Replace with actual domain if needed

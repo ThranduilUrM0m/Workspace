@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: boutaleb-server
+    env: node
+    plan: starter
+    region: frankfurt  # Should match client region for best performance
+    buildCommand: pnpm install --frozen-lockfile && pnpm build
+    startCommand: node dist/main.js
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"  # Render assigns a port automatically
+      - key: CLERK_JWKS_URI
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true  # Render will auto-generate a secure value
+    disk:
+      name: tmp
+      mountPath: /tmp
+      sizeGB: 1  # Adjust based on needs
+    domains:
+      - api.boutaleb.example.com  # Replace with actual domain

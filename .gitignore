@@ -1,0 +1,16 @@
+node_modules
+.pnpm-store
+.pnpm
+.pnpm-store-lock
+.dist
+dist
+.env
+.env.local
+/.turbo
+.vscode
+.DS_Store
+npm-debug.log
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+.next

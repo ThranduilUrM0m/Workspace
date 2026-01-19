@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "labels": ["dependencies", "renovate"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@repo/"],
+      "groupName": "monorepo: internal packages",
+      "automerge": true
+    },
+    {
+      "matchPackageNames": ["next","react","react-dom"],
+      "groupName": "frontend dependencies"
+    }
+  ],
+  "ignorePaths": [
+    "projects/*/client/build/**",
+    "projects/*/server/dist/**"
+  ]
+}
