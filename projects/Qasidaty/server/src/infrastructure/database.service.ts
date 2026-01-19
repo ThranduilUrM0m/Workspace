@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import type { BulkWriteResult } from 'mongodb';
 
 @Injectable()
 export class DatabaseService {
@@ -29,7 +30,7 @@ export class DatabaseService {
   }
 
   // Helper method for optimized bulk operations
-  async bulkWrite(model: string, operations: any[]) {
+  async bulkWrite(model: string, operations: any[]): Promise<BulkWriteResult> {
     const Model = this.connection.model(model);
     return await Model.bulkWrite(operations, {
       ordered: false, // Allow parallel processing

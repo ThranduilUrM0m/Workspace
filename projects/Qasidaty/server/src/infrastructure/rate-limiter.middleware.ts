@@ -22,7 +22,7 @@ export class RateLimiterMiddleware implements NestMiddleware {
     });
   }
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       await this.rateLimiter.consume(req.ip);
       next();
