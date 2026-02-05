@@ -26,7 +26,19 @@
     "web-worker": "*",
     "sharp": "*",
     "@next/bundle-analyzer": "*",
-    "comlink": "*"
+    "comlink": "*",
+    "framer-motion": "*",
+    "@radix-ui/react-dialog": "*",
+    "@radix-ui/react-dropdown-menu": "*",
+    "@radix-ui/react-select": "*",
+    "@radix-ui/react-tabs": "*",
+    "@radix-ui/react-toggle": "*",
+    "@radix-ui/react-toast": "*",
+    "@radix-ui/react-popover": "*",
+    "@radix-ui/react-slot": "*",
+    "class-variance-authority": "*",
+    "clsx": "*",
+    "tailwind-merge": "*"
   },
   "devDependencies": {
     "tailwindcss": "*",
@@ -37,6 +49,7 @@
     "typescript": "*",
     "@types/react": "*",
     "@types/react-dom": "*",
-    "@types/nprogress": "*"
+    "@types/nprogress": "*",
+    "shadcn-ui": "*"
   }
 }
