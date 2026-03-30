@@ -1,15 +1,15 @@
 /* Mixins (bring into scope) */
-@use "./abstracts/_mixins.scss" as *;
-@use "./abstracts/_typography.scss" as *;
+@use './abstracts/_mixins.scss' as *;
+@use './abstracts/_typography.scss' as *;
 
 /* Bring shared responsive mixins (from packages/ui) */
-@use "../../../../../packages/ui/src/scss/_responsive.scss" as *;
+@use '../../../../../packages/ui/src/scss/_responsive.scss' as *;
 
 /* Include component and page styles */
-@use "./components/_header.scss" as *;
-@use "./components/_footer.scss" as *;
-@use "./pages/_homepage.scss" as *;
-@use "./pages/_general.scss" as *;
+@use './components/_header.scss' as *;
+@use './components/_footer.scss' as *;
+@use './pages/_homepage.scss' as *;
+@use './pages/_general.scss' as *;
 
 /* Tailwind utilities should be available first (recommended)
    Then define :root CSS variables, bring in mixins, typography, and include component/page partials.
@@ -24,95 +24,115 @@
      use var(--color-primary) for solid colors, while Tailwind uses the rgb(var(--...-rgb) / <alpha>)
 */
 :root {
-  /* container */
-  --max-container-width: 1280px;
+    /* container */
+    --container-sm: 48rem; /* max-w-3xl */
+    --container-md: 64rem; /* max-w-5xl */
+    --container-lg: 72rem; /* max-w-6xl */
+    --container-xl: 80rem; /* max-w-7xl */
+    --max-container-width: var(--container-xl);
 
-  /* color RGB triplets (for Tailwind alpha) */
-  --color-primary-rgb: 14 165 164;      /* #0ea5a4 */
-  --color-accent-rgb: 6 182 212;        /* #06b6d4 */
-  --color-secondary-rgb: 100 116 139;   /* #64748b */
+    /* color RGB triplets (for Tailwind alpha) */
+    --color-primary-rgb: 14 16 22; /* ink */
+    --color-accent-rgb: 201 168 106; /* gold */
+    --color-secondary-rgb: 28 106 106; /* deep-teal */
 
-  --color-bg-rgb: 248 250 252;          /* #f8fafc */
-  --color-surface-rgb: 255 255 255;     /* #ffffff */
-  --color-card-bg-rgb: 255 255 255;     /* #ffffff */
+    --color-bg-rgb: 246 244 240; /* porcelain */
+    --color-surface-rgb: 255 255 255; /* white */
+    --color-card-bg-rgb: 255 255 255; /* white */
 
-  --text-dark-rgb: 31 41 55;            /* #1f2937 */
-  --text-light-rgb: 107 114 128;        /* #6b7280 */
-  --text-muted-rgb: 156 163 175;        /* #9ca3af */
+    --text-dark-rgb: 26 26 26; /* charcoal */
+    --text-light-rgb: 93 93 93; /* graphite */
+    --text-muted-rgb: 93 93 93; /* graphite */
 
-  --border-color-rgb: 229 231 235;      /* #e5e7eb */
-  --muted-border-rgb: 230 233 238;      /* #e6e9ee */
+    --border-color-rgb: 228 225 220; /* mist */
+    --muted-border-rgb: 228 225 220; /* mist */
 
-  --success-rgb: 22 163 74;
-  --danger-rgb: 239 68 68;
-  --warning-rgb: 245 158 11;
-  --info-rgb: 14 165 164;
+    --success-rgb: 22 163 74; /* green */
+    --danger-rgb: 239 68 68; /* red */
+    --warning-rgb: 245 158 11; /* amber */
+    --info-rgb: 28 106 106; /* deep-teal */
 
-  /* computed convenience variables (solid/opaque versions) */
-  --color-primary: rgb(var(--color-primary-rgb) / 1);
-  --color-accent: rgb(var(--color-accent-rgb) / 1);
-  --color-secondary: rgb(var(--color-secondary-rgb) / 1);
-  --color-bg: rgb(var(--color-bg-rgb) / 1);
-  --color-surface: rgb(var(--color-surface-rgb) / 1);
-  --color-card-bg: rgb(var(--color-card-bg-rgb) / 1);
+    /* computed convenience variables (keep scaffold patterns) */
+    --color-primary: rgb(var(--color-primary-rgb) / 1);
+    --color-accent: rgb(var(--color-accent-rgb) / 1);
+    --color-secondary: rgb(var(--color-secondary-rgb) / 1);
+    --color-bg: rgb(var(--color-bg-rgb) / 1);
+    --color-surface: rgb(var(--color-surface-rgb) / 1);
+    --color-card-bg: rgb(var(--color-card-bg-rgb) / 1);
 
-  --text-dark: rgb(var(--text-dark-rgb) / 1);
-  --text-light: rgb(var(--text-light-rgb) / 1);
-  --text-muted: rgb(var(--text-muted-rgb) / 1);
+    --text-dark: rgb(var(--text-dark-rgb) / 1);
+    --text-light: rgb(var(--text-light-rgb) / 1);
+    --text-muted: rgb(var(--text-muted-rgb) / 1);
 
-  --border-color: rgb(var(--border-color-rgb) / 1);
-  --muted-border: rgb(var(--muted-border-rgb) / 1);
+    --border-color: rgb(var(--border-color-rgb) / 1);
+    --muted-border: rgb(var(--muted-border-rgb) / 1);
 
-  --success: rgb(var(--success-rgb) / 1);
-  --danger: rgb(var(--danger-rgb) / 1);
-  --warning: rgb(var(--warning-rgb) / 1);
-  --info: rgb(var(--info-rgb) / 1);
+    --success: rgb(var(--success-rgb) / 1);
+    --danger: rgb(var(--danger-rgb) / 1);
+    --warning: rgb(var(--warning-rgb) / 1);
+    --info: rgb(var(--info-rgb) / 1);
 
-  /* convenience white/black tokens */
-  --color-white: rgb(var(--color-surface-rgb) / 1);
-  --color-black: rgb(0 0 0 / 1);
+    /* convenience white/black tokens */
+    --color-white: rgb(var(--color-surface-rgb) / 1);
+    --color-black: rgb(0 0 0 / 1);
 
-  /* core utility tokens */
-  --space-xxs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
+    /* core utility tokens */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --section-y: 6rem;
+    --section-y-lg: 8rem;
 
-  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+    /* legacy aliases */
+    --space-xxs: var(--space-1);
+    --space-xs: var(--space-2);
+    --space-sm: var(--space-3);
+    --space-md: var(--space-4);
+    --space-lg: var(--space-6);
+    --space-xl: var(--space-8);
 
-  --font-size-base: 16px;
-  --line-height-base: 1.6;
+    --font-sans:
+        var(--font-manrope), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+        sans-serif;
+    --font-display:
+        var(--font-space-grotesk), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+        Arial, sans-serif;
 
-  --radius: 8px;
-  --radius-sm: 6px;
+    --font-size-base: 16px;
+    --line-height-base: 1.6;
 
-  --shadow-sm: 0 1px 2px rgba(15,23,42,0.08);
+    --radius: 8px;
+    --radius-sm: 6px;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
 }
 
 /* Minimal global reset */
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: var(--color-bg);
-  color: var(--text-dark);
-  font-family: var(--font-sans);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
+    margin: 0;
+    min-height: 100vh;
+    background: var(--color-bg);
+    color: var(--text-dark);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
 }
 
 .layout {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .layout-main {
-  flex: 1;
+    flex: 1;
 }

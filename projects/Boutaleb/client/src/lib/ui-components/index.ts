@@ -1,6 +1,22 @@
-export { Button } from './button'
-export { Badge } from './badge'
-export { Input } from './input'
-export { Textarea } from './textarea'
-export { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from './dialog'
-export { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetFooter, SheetClose } from './sheet'
+export { Button } from './button';
+export { Badge } from './badge';
+export { Input } from './input';
+export { Textarea } from './textarea';
+export {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+} from './dialog';
+export {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetFooter,
+    SheetClose,
+} from './sheet';

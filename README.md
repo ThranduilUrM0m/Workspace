@@ -39,45 +39,41 @@ my_workspace/
 
 ## 🚀 Features
 
-* **Next.js 15 clients** with:
+- **Next.js 15 clients** with:
+    - Clerk authentication integration
+    - TailwindCSS (v4-ready) + SASS with modular architecture
+    - Redux Toolkit state management
+    - Prebuilt layout, header/footer, progress bar, and sample pages
+    - Shared SCSS utilities from `packages/ui`
 
-  * Clerk authentication integration
-  * TailwindCSS (v4-ready) + SASS with modular architecture
-  * Redux Toolkit state management
-  * Prebuilt layout, header/footer, progress bar, and sample pages
-  * Shared SCSS utilities from `packages/ui`
+- **NestJS servers** with:
+    - ConfigModule + environment variables support
+    - MongoDB + Mongoose + User schema/service/controller
+    - Clerk JWT validation strategy with Passport
+    - WebSocket gateway with sample `echo` and `ping` events
+    - REST endpoint for broadcasting messages to WebSocket clients
 
-* **NestJS servers** with:
+- **Shared UI Package (`@repo/ui`)**:
+    - Responsive container component
+    - Socket.io client React hook
+    - SCSS responsive mixins
 
-  * ConfigModule + environment variables support
-  * MongoDB + Mongoose + User schema/service/controller
-  * Clerk JWT validation strategy with Passport
-  * WebSocket gateway with sample `echo` and `ping` events
-  * REST endpoint for broadcasting messages to WebSocket clients
-
-* **Shared UI Package (`@repo/ui`)**:
-
-  * Responsive container component
-  * Socket.io client React hook
-  * SCSS responsive mixins
-
-* **Development tooling**:
-
-  * pnpm workspaces (fast, disk‑efficient package management)
-  * Turborepo task runner for caching/build orchestration
-  * Dockerfiles for each client/server + root docker-compose.yml
-  * GitHub Actions CI (build matrix for each project)
-  * Git subtree publishing script (deploy each project to its own GitHub repo)
+- **Development tooling**:
+    - pnpm workspaces (fast, disk‑efficient package management)
+    - Turborepo task runner for caching/build orchestration
+    - Dockerfiles for each client/server + root docker-compose.yml
+    - GitHub Actions CI (build matrix for each project)
+    - Git subtree publishing script (deploy each project to its own GitHub repo)
 
 ---
 
 ## 🛠 Prerequisites
 
-* **Node.js** v18+
-* **pnpm** (via `corepack enable` or manual install)
-* **Docker** (for containerization and local DB)
-* **MongoDB** (local or cloud instance, e.g. Atlas)
-* **Clerk account** (for authentication)
+- **Node.js** v18+
+- **pnpm** (via `corepack enable` or manual install)
+- **Docker** (for containerization and local DB)
+- **MongoDB** (local or cloud instance, e.g. Atlas)
+- **Clerk account** (for authentication)
 
 ---
 
@@ -111,20 +107,21 @@ pnpm run risala-server:dev
 
 ### 3. Environment Setup
 
-* Each **client** has `.env` with:
+- Each **client** has `.env` with:
 
-  ```env
-  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
-  NEXT_PUBLIC_CLERK_FRONTEND_API=clerk.xxx
-  NEXT_PUBLIC_SOCKET_URL=http://localhost:4001
-  ```
-* Each **server** has `.env` with:
+    ```env
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+    NEXT_PUBLIC_CLERK_FRONTEND_API=clerk.xxx
+    NEXT_PUBLIC_SOCKET_URL=http://localhost:4001
+    ```
 
-  ```env
-  CLERK_JWKS_URI=https://clerk.xxx/.well-known/jwks.json
-  MONGODB_URI=mongodb://localhost:27017/risala
-  PORT=4001
-  ```
+- Each **server** has `.env` with:
+
+    ```env
+    CLERK_JWKS_URI=https://clerk.xxx/.well-known/jwks.json
+    MONGODB_URI=mongodb://localhost:27017/risala
+    PORT=4001
+    ```
 
 Update with your **Clerk API keys** and **MongoDB URI** before running.
 
@@ -149,12 +146,14 @@ bash scripts/git-init.sh
 ```
 
 **What this script does:**
+
 - Initializes Git at workspace root
 - Adds all files to staging
 - Creates initial commit on `master` branch
 - Ready to push to GitHub
 
 **Verify:**
+
 ```bash
 git status
 # Output: "On branch master, nothing to commit, working tree clean"
@@ -172,6 +171,7 @@ git status
 6. Click **Create Repository**
 
 **Copy the HTTPS URL:**
+
 ```
 https://github.com/youruser/my-workspace.git
 ```
@@ -189,6 +189,7 @@ git push -u origin master
 ```
 
 **Expected output:**
+
 ```
 Enumerating objects: 1234, done.
 Counting objects: 100% (1234/1234), done.
@@ -200,6 +201,7 @@ Branch 'master' set up to track remote origin/master.
 ```
 
 **Verify:** Refresh your GitHub page. You should see:
+
 - `packages/` folder
 - `projects/` folder
 - `scripts/` folder
@@ -247,14 +249,15 @@ Click **"Advanced build settings"** or **"Environment"** tab
 
 Click **"Add new variable"** for each:
 
-| Variable Name | Value | Where to Find |
-|---|---|---|
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx` | Clerk Dashboard → API Keys |
-| `NEXT_PUBLIC_CLERK_FRONTEND_API` | `https://xxx.clerk.accounts.dev` | Clerk Dashboard → API Keys |
-| `NEXT_PUBLIC_SOCKET_IO_URL` | `http://localhost:4001` | (Update after Render deploy) |
-| `NEXT_PUBLIC_APP_URL` | `http://localhost:3001` | (Can update later) |
+| Variable Name                       | Value                            | Where to Find                |
+| ----------------------------------- | -------------------------------- | ---------------------------- |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx`                  | Clerk Dashboard → API Keys   |
+| `NEXT_PUBLIC_CLERK_FRONTEND_API`    | `https://xxx.clerk.accounts.dev` | Clerk Dashboard → API Keys   |
+| `NEXT_PUBLIC_SOCKET_IO_URL`         | `http://localhost:4001`          | (Update after Render deploy) |
+| `NEXT_PUBLIC_APP_URL`               | `http://localhost:3001`          | (Can update later)           |
 
 **How to get Clerk Keys:**
+
 1. Go to: https://dashboard.clerk.com
 2. Log in to your account
 3. Select your application
@@ -265,6 +268,7 @@ Click **"Add new variable"** for each:
 #### Step 5: Review & Deploy
 
 Before clicking Deploy, verify:
+
 - ✅ Base directory: `projects/Risala/client`
 - ✅ Build command: `pnpm install --frozen-lockfile && pnpm build`
 - ✅ Publish directory: `.next`
@@ -275,7 +279,8 @@ Click **"Deploy site"**
 
 **Wait:** 3-5 minutes for build to complete
 
-**Result:** 
+**Result:**
+
 ```
 Deploy successful!
 Live URL: https://risala-client-xxxxx.netlify.app
@@ -288,6 +293,7 @@ Live URL: https://risala-client-xxxxx.netlify.app
 **For Boutaleb Client:**
 
 Repeat Phase 4, changing only:
+
 ```
 Base directory: projects/Boutaleb/client
 ```
@@ -307,6 +313,7 @@ Base directory: projects/Qasidaty/client
 ```
 
 **Timeline:**
+
 - Risala: 5-10 min (first setup)
 - Boutaleb: 3-5 min
 - Maxconfort: 3-5 min
@@ -354,21 +361,22 @@ Scroll to **"Environment"** section
 
 Click **"Add new variable"** for each:
 
-| Variable | Value | Where to Find |
-|---|---|---|
-| `MONGODB_URI` | `mongodb+srv://user:pass@cluster.mongodb.net/db` | MongoDB Atlas |
-| `JWT_SECRET` | `your-jwt-secret` | Generate any random string |
-| `CLERK_SECRET_KEY` | `sk_test_xxxxx` | Clerk Dashboard → API Keys |
-| `CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx` | Clerk Dashboard → API Keys |
-| `PORT` | `4001` | Fixed value |
-| `NODE_ENV` | `production` | Fixed value |
-| `CORS_ORIGIN` | `https://risala-client-xxxxx.netlify.app` | From Netlify (your client URL) |
+| Variable                | Value                                            | Where to Find                  |
+| ----------------------- | ------------------------------------------------ | ------------------------------ |
+| `MONGODB_URI`           | `mongodb+srv://user:pass@cluster.mongodb.net/db` | MongoDB Atlas                  |
+| `JWT_SECRET`            | `your-jwt-secret`                                | Generate any random string     |
+| `CLERK_SECRET_KEY`      | `sk_test_xxxxx`                                  | Clerk Dashboard → API Keys     |
+| `CLERK_PUBLISHABLE_KEY` | `pk_test_xxxxx`                                  | Clerk Dashboard → API Keys     |
+| `PORT`                  | `4001`                                           | Fixed value                    |
+| `NODE_ENV`              | `production`                                     | Fixed value                    |
+| `CORS_ORIGIN`           | `https://risala-client-xxxxx.netlify.app`        | From Netlify (your client URL) |
 
 **Note:** Get `CLERK_SECRET_KEY` from Clerk Dashboard (different from publishable key)
 
 #### Step 5: Review & Deploy
 
 Before deploying, verify:
+
 - ✅ Root directory: `projects/Risala/server`
 - ✅ Build command: `pnpm install --frozen-lockfile && pnpm build`
 - ✅ Start command: `node dist/main.js`
@@ -380,6 +388,7 @@ Click **"Create Web Service"**
 **Wait:** 5-10 minutes for build to complete
 
 **Result:**
+
 ```
 Deploy successful!
 Live URL: https://risala-server-xxxxx.onrender.com
@@ -397,10 +406,10 @@ For **each Netlify client site** (4 times):
 2. Select the site (e.g., risala-client)
 3. Go to **Site settings** → **Build & deploy** → **Environment**
 4. Edit or add variable:
-   ```
-   NEXT_PUBLIC_SOCKET_IO_URL = https://risala-server-xxxxx.onrender.com
-   NEXT_PUBLIC_API_URL = https://risala-server-xxxxx.onrender.com
-   ```
+    ```
+    NEXT_PUBLIC_SOCKET_IO_URL = https://risala-server-xxxxx.onrender.com
+    NEXT_PUBLIC_API_URL = https://risala-server-xxxxx.onrender.com
+    ```
 5. Click **"Save"**
 6. Go to **Deploys** tab
 7. Click **"Trigger deploy"** → **"Clear cache and redeploy"**
@@ -416,6 +425,7 @@ Repeat for remaining 3 clients (Boutaleb, Maxconfort, Qasidaty)
 ### Understanding "@repo/ui Only" Issue
 
 **What you'll see:**
+
 ```
 Netlify site creation showing:
 ┌─────────────────────────────┐
@@ -429,12 +439,14 @@ Netlify site creation showing:
 **Why this happens:**
 
 Netlify scans `pnpm-workspace.yaml`:
+
 ```yaml
 packages:
   - 'packages/*'              ← Matches: @repo/ui ✓
 ```
 
 But doesn't show:
+
 ```yaml
   - 'projects/*/client'       ← Netlify ignores this
 ```
@@ -462,16 +474,19 @@ Environment Variables:
 ### If "@repo/ui" Click Doesn't Work
 
 **Option 1: Refresh & Retry**
+
 - Refresh page (Ctrl+R)
 - Start again from "Add new site"
 
 **Option 2: Check GitHub Integration**
+
 1. Go to Netlify Team settings
 2. Connected services → GitHub
 3. If disconnected, click "Connect"
 4. Authorize and retry
 
 **Option 3: Direct Deploy**
+
 1. Create site WITHOUT connecting GitHub first
 2. Go to Site settings → Build & deploy
 3. Connect GitHub manually
@@ -508,6 +523,7 @@ Environment Variables:
 **Issue: Build fails with "Cannot find module"**
 
 Fix:
+
 1. Go to Service settings → Environment
 2. Add: `NODE_ENV = production`
 3. Clear cache: Go to Deploys → "Clear build cache"
@@ -516,11 +532,12 @@ Fix:
 **Issue: Server starts but crashes immediately**
 
 Fix:
+
 1. Check logs: Deployments tab → View logs
 2. Common causes:
-   - Missing MongoDB connection
-   - Wrong JWT_SECRET format
-   - PORT already in use
+    - Missing MongoDB connection
+    - Wrong JWT_SECRET format
+    - PORT already in use
 
 ---
 
@@ -558,30 +575,30 @@ docker-compose up --build
 
 ## 🔑 Clerk Setup Notes
 
-* Go to [Clerk Dashboard](https://dashboard.clerk.com/)
-* Create an **application** for each project
-* Add **Frontend API URL** + **Publishable Key** to client `.env`
-* Add **JWKS URI** to server `.env`
-* Configure **Allowed Origins** (client URL in dev/prod)
+- Go to [Clerk Dashboard](https://dashboard.clerk.com/)
+- Create an **application** for each project
+- Add **Frontend API URL** + **Publishable Key** to client `.env`
+- Add **JWKS URI** to server `.env`
+- Configure **Allowed Origins** (client URL in dev/prod)
 
 ---
 
 ## 🧩 Next Steps
 
-* Add features to your client apps inside `src/components`, `src/pages`, `src/styles`
-* Extend your server apps with new modules under `src/logic`
-* Share UI/logic across projects in `packages/ui`
-* Configure CI/CD secrets in GitHub → Settings → Secrets → Actions
-* Deploy clients and servers to Render (recommended for monorepos)
+- Add features to your client apps inside `src/components`, `src/pages`, `src/styles`
+- Extend your server apps with new modules under `src/logic`
+- Share UI/logic across projects in `packages/ui`
+- Configure CI/CD secrets in GitHub → Settings → Secrets → Actions
+- Deploy clients and servers to Render (recommended for monorepos)
 
 ---
 
 ## 📝 Notes
 
-* The scaffold already sets up `redux`, `socket.io`, `clerk`, and `mongoose` integration.
-* SASS deprecation warning for `map-get` → update `_responsive.scss` to `map.get` if using Dart Sass 3.0+.
-* Ignore `Watchpack` warnings on Windows (`pagefile.sys`, etc.) — harmless.
-* Each project is **fully independent** yet benefits from shared packages and workspace tooling.
+- The scaffold already sets up `redux`, `socket.io`, `clerk`, and `mongoose` integration.
+- SASS deprecation warning for `map-get` → update `_responsive.scss` to `map.get` if using Dart Sass 3.0+.
+- Ignore `Watchpack` warnings on Windows (`pagefile.sys`, etc.) — harmless.
+- Each project is **fully independent** yet benefits from shared packages and workspace tooling.
 
 ---
 

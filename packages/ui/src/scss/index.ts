@@ -1,3 +1,3 @@
-import "./_responsive.scss";
+import './_responsive.scss';
 
 export {};

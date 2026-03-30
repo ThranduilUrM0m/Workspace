@@ -1,34 +1,37 @@
-import { useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import { useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 interface UseSocketReturn {
-  emit: (event: string, payload?: any) => void;
-  on: (event: string, cb?: (...args: any[]) => void) => void;
-  off: (event: string, cb?: (...args: any[]) => void) => void;
-  socket: Socket | null;
+    emit: (event: string, payload?: any) => void;
+    on: (event: string, cb?: (...args: any[]) => void) => void;
+    off: (event: string, cb?: (...args: any[]) => void) => void;
+    socket: Socket | null;
 }
 
-export function useSocket(path: string = "/", opts: Record<string, any> = {}): UseSocketReturn {
-  const socketRef = useRef<Socket | null>(null);
+export function useSocket(path: string = '/', opts: Record<string, any> = {}): UseSocketReturn {
+    const socketRef = useRef<Socket | null>(null);
 
-  useEffect((): (() => void) => {
-    if (!socketRef.current) {
-      const url = typeof window !== "undefined" ? window.location.origin : "http://localhost:4000";
-      socketRef.current = io(url, { path: "/socket.io", autoConnect: true, ...opts });
-    }
-    const s = socketRef.current;
-    return (): void => { if (s) s.disconnect(); };
-  }, [path, opts]);
+    useEffect((): (() => void) => {
+        if (!socketRef.current) {
+            const url =
+                typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4000';
+            socketRef.current = io(url, { path: '/socket.io', autoConnect: true, ...opts });
+        }
+        const s = socketRef.current;
+        return (): void => {
+            if (s) s.disconnect();
+        };
+    }, [path, opts]);
 
-  const emit = (event: string, payload?: any): void => {
-    if (socketRef.current) socketRef.current.emit(event, payload);
-  };
-  const on = (event: string, cb?: (...args: any[]) => void): void => {
-    if (socketRef.current) socketRef.current.on(event, cb);
-  };
-  const off = (event: string, cb?: (...args: any[]) => void): void => {
-    if (socketRef.current) socketRef.current.off(event, cb);
-  };
+    const emit = (event: string, payload?: any): void => {
+        if (socketRef.current) socketRef.current.emit(event, payload);
+    };
+    const on = (event: string, cb?: (...args: any[]) => void): void => {
+        if (socketRef.current) socketRef.current.on(event, cb);
+    };
+    const off = (event: string, cb?: (...args: any[]) => void): void => {
+        if (socketRef.current) socketRef.current.off(event, cb);
+    };
 
-  return { emit, on, off, socket: socketRef.current };
+    return { emit, on, off, socket: socketRef.current };
 }

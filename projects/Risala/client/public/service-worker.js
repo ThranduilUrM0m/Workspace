@@ -9,55 +9,56 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 // Cache static assets with a Cache First strategy
 registerRoute(
-  ({ request }) => request.destination === 'style' ||
-                   request.destination === 'script' ||
-                   request.destination === 'font',
-  new CacheFirst({
-    cacheName: 'static-resources',
-    plugins: [
-      new CacheableResponsePlugin({
-        statuses: [0, 200]
-      }),
-      new ExpirationPlugin({
-        maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
-        maxEntries: 30
-      })
-    ]
-  })
+    ({ request }) =>
+        request.destination === 'style' ||
+        request.destination === 'script' ||
+        request.destination === 'font',
+    new CacheFirst({
+        cacheName: 'static-resources',
+        plugins: [
+            new CacheableResponsePlugin({
+                statuses: [0, 200],
+            }),
+            new ExpirationPlugin({
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+                maxEntries: 30,
+            }),
+        ],
+    })
 );
 
 // Cache images with a Cache First strategy
 registerRoute(
-  ({ request }) => request.destination === 'image',
-  new CacheFirst({
-    cacheName: 'images',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 60,
-        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
-      })
-    ]
-  })
+    ({ request }) => request.destination === 'image',
+    new CacheFirst({
+        cacheName: 'images',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 60,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+            }),
+        ],
+    })
 );
 
 // Cache API calls with a Network First strategy
 registerRoute(
-  ({ url }) => url.pathname.startsWith('/api/'),
-  new NetworkFirst({
-    cacheName: 'api-cache',
-    plugins: [
-      new ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 5 * 60 // 5 minutes
-      })
-    ]
-  })
+    ({ url }) => url.pathname.startsWith('/api/'),
+    new NetworkFirst({
+        cacheName: 'api-cache',
+        plugins: [
+            new ExpirationPlugin({
+                maxEntries: 50,
+                maxAgeSeconds: 5 * 60, // 5 minutes
+            }),
+        ],
+    })
 );
 
 // Default to Stale While Revalidate for everything else
 registerRoute(
-  ({ url }) => true,
-  new StaleWhileRevalidate({
-    cacheName: 'others'
-  })
+    ({ url }) => true,
+    new StaleWhileRevalidate({
+        cacheName: 'others',
+    })
 );

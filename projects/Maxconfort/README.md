@@ -13,12 +13,14 @@ pnpm run dev
 ## Deployment (Render)
 
 ### Client
+
 - Root Directory: `projects/Maxconfort/client`
 - Build Command: `pnpm install --frozen-lockfile && pnpm build`
 - Start Command: `pnpm start`
 - Set environment variables in Render dashboard (see .env)
 
 ### Server
+
 - Root Directory: `projects/Maxconfort/server`
 - Build Command: `pnpm install --frozen-lockfile && pnpm build`
 - Start Command: `node dist/main.js`
