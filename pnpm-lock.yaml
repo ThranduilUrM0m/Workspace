@@ -157,7 +157,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.8)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       axios:
         specifier: '*'
-        version: 1.13.2
+        version: 1.14.0
       class-variance-authority:
         specifier: '*'
         version: 0.7.1
@@ -378,7 +378,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       ts-node-dev:
         specifier: '*'
-        version: 2.0.0(@types/node@25.0.9)(typescript@5.9.3)
+        version: 2.0.0(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
         specifier: '*'
         version: 5.9.3
@@ -420,7 +420,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.8)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       axios:
         specifier: '*'
-        version: 1.13.2
+        version: 1.14.0
       class-variance-authority:
         specifier: '*'
         version: 0.7.1
@@ -602,7 +602,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       ts-node-dev:
         specifier: '*'
-        version: 2.0.0(@types/node@25.0.9)(typescript@5.9.3)
+        version: 2.0.0(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
         specifier: '*'
         version: 5.9.3
@@ -644,7 +644,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.8)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       axios:
         specifier: '*'
-        version: 1.13.2
+        version: 1.14.0
       class-variance-authority:
         specifier: '*'
         version: 0.7.1
@@ -826,7 +826,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       ts-node-dev:
         specifier: '*'
-        version: 2.0.0(@types/node@25.0.9)(typescript@5.9.3)
+        version: 2.0.0(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
         specifier: '*'
         version: 5.9.3
@@ -868,7 +868,7 @@ importers:
         version: 2.11.2(react-redux@9.2.0(@types/react@19.2.8)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       axios:
         specifier: '*'
-        version: 1.13.2
+        version: 1.14.0
       class-variance-authority:
         specifier: '*'
         version: 0.7.1
@@ -1050,7 +1050,7 @@ importers:
         version: 9.39.2(jiti@2.6.1)
       ts-node-dev:
         specifier: '*'
-        version: 2.0.0(@types/node@25.0.9)(typescript@5.9.3)
+        version: 2.0.0(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
         specifier: '*'
         version: 5.9.3
@@ -3669,8 +3669,8 @@ packages:
   avvio@9.1.0:
     resolution: {integrity: sha512-fYASnYi600CsH/j9EQov7lECAniYiBFiiAtBNuZYLA2leLe9qOvZzqYHFjtIj6gD2VMoMLP14834LFWvr4IfDw==}
 
-  axios@1.13.2:
-    resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
+  axios@1.14.0:
+    resolution: {integrity: sha512-3Y8yrqLSwjuzpXuZ0oIYZ/XGgLwUIBU3uLvbcpb0pidD9ctpShJd43KSlEEkVQg6DS0G9NKyzOvBfUtDKEyHvQ==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -5743,8 +5743,9 @@ packages:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
     engines: {node: '>= 0.10'}
 
-  proxy-from-env@1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
+  proxy-from-env@2.1.0:
+    resolution: {integrity: sha512-cJ+oHTW1VAEa8cJslgmUZrc+sjRKgAKl3Zyse6+PV38hZe/V6Z14TbCuXcan9F9ghlz4QrFr2c92TNF82UkYHA==}
+    engines: {node: '>=10'}
 
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
@@ -9818,11 +9819,11 @@ snapshots:
       '@fastify/error': 4.2.0
       fastq: 1.20.1
 
-  axios@1.13.2:
+  axios@1.14.0:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.5
-      proxy-from-env: 1.1.0
+      proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
 
@@ -12136,7 +12137,7 @@ snapshots:
       forwarded: 0.2.0
       ipaddr.js: 1.9.1
 
-  proxy-from-env@1.1.0: {}
+  proxy-from-env@2.1.0: {}
 
   punycode@2.3.1: {}
 
@@ -13044,7 +13045,7 @@ snapshots:
 
   tree-kill@1.2.2: {}
 
-  ts-node-dev@2.0.0(@types/node@25.0.9)(typescript@5.9.3):
+  ts-node-dev@2.0.0(@types/node@25.5.0)(typescript@5.9.3):
     dependencies:
       chokidar: 3.6.0
       dynamic-dedupe: 0.3.0
@@ -13054,7 +13055,7 @@ snapshots:
       rimraf: 2.7.1
       source-map-support: 0.5.21
       tree-kill: 1.2.2
-      ts-node: 10.9.2(@types/node@25.0.9)(typescript@5.9.3)
+      ts-node: 10.9.2(@types/node@25.5.0)(typescript@5.9.3)
       tsconfig: 7.0.0
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -13062,14 +13063,14 @@ snapshots:
       - '@swc/wasm'
       - '@types/node'
 
-  ts-node@10.9.2(@types/node@25.0.9)(typescript@5.9.3):
+  ts-node@10.9.2(@types/node@25.5.0)(typescript@5.9.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.12
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 25.0.9
+      '@types/node': 25.5.0
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
