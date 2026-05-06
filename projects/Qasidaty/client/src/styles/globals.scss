@@ -5,18 +5,8 @@
 /* Bring shared responsive mixins (from packages/ui) */
 @use '../../../../../packages/ui/src/scss/_responsive.scss' as *;
 
-/* Include component and page styles */
-@use './components/_header.scss' as *;
-@use './components/_footer.scss' as *;
-@use './pages/_homepage.scss' as *;
-@use './pages/_general.scss' as *;
-
-/* Tailwind utilities should be available first (recommended)
-   Then define :root CSS variables, bring in mixins, typography, and include component/page partials.
-*/
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* TAILWIND 4 - @tailwindcss/postcss integration */
+@import "tailwindcss";
 
 /* Root-level design tokens (CSS custom properties)
    - We store RGB triplets for colors (e.g. --color-primary-rgb: 14 165 164;)
@@ -68,6 +58,21 @@
     --warning: rgb(var(--warning-rgb) / 1);
     --info: rgb(var(--info-rgb) / 1);
 
+    /* semantic aliases used by shared UI classes */
+    --background-rgb: var(--color-bg-rgb);
+    --foreground-rgb: var(--text-dark-rgb);
+    --card-foreground-rgb: var(--text-dark-rgb);
+    --popover-rgb: var(--color-surface-rgb);
+    --popover-foreground-rgb: var(--text-dark-rgb);
+    --primary-foreground-rgb: var(--color-surface-rgb);
+    --secondary-foreground-rgb: var(--color-surface-rgb);
+    --accent-foreground-rgb: var(--text-dark-rgb);
+    --muted-foreground-rgb: var(--text-muted-rgb);
+    --destructive-rgb: var(--danger-rgb);
+    --destructive-foreground-rgb: var(--color-surface-rgb);
+    --input-rgb: var(--border-color-rgb);
+    --ring-rgb: var(--color-primary-rgb);
+
     /* convenience white/black tokens */
     --color-white: rgb(var(--color-surface-rgb) / 1);
     --color-black: rgb(0 0 0 / 1);
@@ -80,9 +85,13 @@
     --space-lg: 1.5rem;
     --space-xl: 2rem;
 
+    /* Nexa (body), Space Grotesk (headings), Manrope (UI) — variables from Next fonts on <Html> */
     --font-sans:
-        var(--font-inter), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+        var(--font-nexa, system-ui), -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
         sans-serif;
+    --font-heading:
+        var(--font-space-grotesk, system-ui), -apple-system, 'Segoe UI', Roboto, sans-serif;
+    --font-ui: var(--font-manrope, system-ui), -apple-system, 'Segoe UI', Roboto, sans-serif;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
 
     --font-size-base: 16px;
@@ -92,7 +101,19 @@
     --radius-sm: 6px;
 
     --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+
+    /* fallback defaults for Tailwind transition internals */
+    --tw-ease: ease;
+    --tw-duration: 150ms;
 }
+
+/* ============================================================
+   COMPONENT & PAGE STYLES (after Tailwind)
+   ============================================================ */
+@use './components/_header.scss' as *;
+@use './components/_footer.scss' as *;
+@use './pages/_homepage.scss' as *;
+@use './pages/_general.scss' as *;
 
 /* Minimal global reset */
 * {
@@ -104,9 +125,22 @@ body {
     min-height: 100vh;
     background: var(--color-bg);
     color: var(--text-dark);
-    font-family: var(--font-sans);
+    font-family: var(--font-nexa, var(--font-sans));
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
+}
+
+/* UI chrome: Manrope */
+button,
+input,
+select,
+textarea,
+label,
+optgroup,
+[role='button'],
+[role='tab'],
+[role='menuitem'] {
+    font-family: var(--font-ui);
 }
 
 .layout {

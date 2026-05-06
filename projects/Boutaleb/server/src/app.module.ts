@@ -7,6 +7,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './logic/auth/auth.module';
 import { UserModule } from './logic/user/user.module';
 import { WebsocketModule } from './logic/websocket/websocket.module';
+import { BlogModule } from './logic/blog/blog.module';
+import { ClientsModule } from './logic/clients/clients.module';
+import { ProjectsModule } from './logic/projects/projects.module';
+import { ContactModule } from './logic/contact/contact.module';
 import { ClusterService } from './infrastructure/cluster.service';
 import { WorkerPool } from './infrastructure/worker.pool';
 import { CacheService } from './infrastructure/cache.service';
@@ -90,6 +94,10 @@ import * as redisStore from 'cache-manager-redis-store';
         AuthModule,
         UserModule,
         WebsocketModule,
+        BlogModule,
+        ClientsModule,
+        ProjectsModule,
+        ContactModule,
     ],
     controllers: [AppController],
     providers: [AppService, ClusterService, WorkerPool, CacheService],

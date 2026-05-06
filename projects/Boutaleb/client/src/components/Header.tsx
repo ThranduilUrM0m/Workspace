@@ -1,31 +1,42 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button, NavigationOverlay } from '../ui';
+import logo from '../media/SVG/Logo_1.svg';
 
 export default function Header() {
     return (
-        <header className="sticky top-0 z-40 border-b border-border/80 bg-bg/80 backdrop-blur-xl">
-            <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
-                <Link href="/" className="font-display text-lg tracking-tight text-primary">
-                    Zakariae Boutaleb
+        <header className="sticky top-0 z-40 bg-bg/[0.72] backdrop-blur-xl supports-[backdrop-filter]:bg-bg/[0.68]">
+            <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
+                <Link href="/" className="flex items-center">
+                    <Image src={logo} alt="Zakariae Boutaleb" className="h-8 w-auto" />
                 </Link>
 
-                <nav className="hidden items-center gap-6 md:flex">
-                    <Link href="/work" className="text-sm text-muted transition hover:text-primary">
-                        Work
+                <nav className="hidden items-center gap-2 bg-surface/[0.76] px-2 py-2 shadow-soft backdrop-blur-xl md:flex">
+                    <Link
+                        href="/projects"
+                        className="px-4 py-2 text-sm text-muted transition hover:bg-bg hover:text-primary"
+                    >
+                        Projects
                     </Link>
                     <Link
-                        href="/process"
-                        className="text-sm text-muted transition hover:text-primary"
+                        href="/about"
+                        className="px-4 py-2 text-sm text-muted transition hover:bg-bg hover:text-primary"
                     >
-                        Process
+                        About
                     </Link>
                     <Link
-                        href="/system-internal"
-                        className="text-sm text-muted transition hover:text-primary"
+                        href="/blog"
+                        className="px-4 py-2 text-sm text-muted transition hover:bg-bg hover:text-primary"
                     >
-                        System
+                        Blog
                     </Link>
-                    <Button asChild variant="primary">
+                    <Link
+                        href="/contact"
+                        className="px-4 py-2 text-sm text-muted transition hover:bg-bg hover:text-primary"
+                    >
+                        Contact
+                    </Link>
+                    <Button asChild variant="primary" className="ml-1">
                         <Link href="/contact">Start a Project</Link>
                     </Button>
                 </nav>

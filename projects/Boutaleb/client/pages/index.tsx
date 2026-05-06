@@ -4,7 +4,7 @@ import { FeaturedWorkSection } from "../src/components/home/FeaturedWorkSection"
 import { ProcessTeaserSection } from "../src/components/home/ProcessTeaserSection";
 import { CtaBandSection } from "../src/components/home/CtaBandSection";
 
-export default function Home() {
+export default function HomePage() {
     return (
         <>
             <Head>
@@ -14,7 +14,7 @@ export default function Home() {
                     content="Crafting beautiful, scalable digital experiences with modern web technologies and AI integration."
                 />
             </Head>
-            <main className="homepage">
+            <main className="page-shell--public home-page">
                 <HomeHeroSection />
                 <FeaturedWorkSection />
                 <ProcessTeaserSection />

@@ -108,6 +108,22 @@ export const heroVisual: Variants = {
     },
 };
 
+export const headerReveal: Variants = {
+    hidden: { opacity: 0, y: -18 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            duration: 0.42,
+            ease: motionDefaults.ease.decelerate,
+            when: 'beforeChildren',
+            staggerChildren: 0.04,
+            delayChildren: 0.02,
+        },
+    },
+    exit: { opacity: 0, y: -10, transition: makeTransition(motionDefaults.duration.fast) },
+};
+
 export const sectionReveal: Variants = {
     hidden: { opacity: 0, y: 24 },
     show: {

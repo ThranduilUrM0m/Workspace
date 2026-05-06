@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './Button';
 
 const navLinks = [
-    { label: 'Work', href: '/work' },
-    { label: 'Process', href: '/process' },
-    { label: 'System', href: '/system-internal' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'About', href: '/about' },
+    { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
 ];
 

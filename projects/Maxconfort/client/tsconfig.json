@@ -15,8 +15,8 @@
         "jsx": "react-jsx",
         "baseUrl": ".",
         "paths": {
-            "@repo/ui": ["../../../../packages/ui/src"],
-            "@repo/ui/*": ["../../../../packages/ui/src/*"]
+            "@repo/ui": ["../../../packages/ui/src"],
+            "@repo/ui/*": ["../../../packages/ui/src/*"]
         }
     },
     "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

@@ -12,8 +12,49 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
-                display: ['var(--font-display)', ...defaultTheme.fontFamily.sans],
+                // Body (Manrope)
+                sans: ['var(--font-manrope)', 'system-ui', 'sans-serif'],
+                body: ['var(--font-manrope)', 'system-ui', 'sans-serif'],
+
+                // Headings (Space Grotesk) — alias `display` matches existing `font-display` utilities
+                heading: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+                display: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+            },
+            fontWeight: {
+                thin: '100',
+                light: '300',
+                normal: '400',
+                book: '450',
+                bold: '700',
+                xbold: '800',
+                heavy: '900',
+                black: '950',
+            },
+            fontSize: {
+                xs: 'var(--font-size-xs)',
+                sm: 'var(--font-size-sm)',
+                base: 'var(--font-size-base)',
+                lg: 'var(--font-size-lg)',
+                xl: 'var(--font-size-xl)',
+                '2xl': 'var(--font-size-2xl)',
+                '3xl': 'var(--font-size-3xl)',
+                '4xl': 'var(--font-size-4xl)',
+                '5xl': 'var(--font-size-5xl)',
+            },
+            lineHeight: {
+                tight: 'var(--line-height-tight)',
+                snug: 'var(--line-height-snug)',
+                normal: 'var(--line-height-normal)',
+                relaxed: 'var(--line-height-relaxed)',
+                loose: 'var(--line-height-loose)',
+            },
+            letterSpacing: {
+                tighter: 'var(--letter-spacing-tighter)',
+                tight: 'var(--letter-spacing-tight)',
+                normal: 'var(--letter-spacing-normal)',
+                wide: 'var(--letter-spacing-wide)',
+                wider: 'var(--letter-spacing-wider)',
+                widest: 'var(--letter-spacing-widest)',
             },
             colors: {
                 primary: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
@@ -31,6 +72,19 @@ module.exports = {
                 info: 'rgb(var(--info-rgb) / <alpha-value>)',
                 white: 'var(--color-surface)',
                 black: '#000000',
+                background: 'rgb(var(--background-rgb) / <alpha-value>)',
+                foreground: 'rgb(var(--foreground-rgb) / <alpha-value>)',
+                'card-foreground': 'rgb(var(--card-foreground-rgb) / <alpha-value>)',
+                popover: 'rgb(var(--popover-rgb) / <alpha-value>)',
+                'popover-foreground': 'rgb(var(--popover-foreground-rgb) / <alpha-value>)',
+                'primary-foreground': 'rgb(var(--primary-foreground-rgb) / <alpha-value>)',
+                'secondary-foreground': 'rgb(var(--secondary-foreground-rgb) / <alpha-value>)',
+                'accent-foreground': 'rgb(var(--accent-foreground-rgb) / <alpha-value>)',
+                'muted-foreground': 'rgb(var(--muted-foreground-rgb) / <alpha-value>)',
+                destructive: 'rgb(var(--destructive-rgb) / <alpha-value>)',
+                'destructive-foreground': 'rgb(var(--destructive-foreground-rgb) / <alpha-value>)',
+                input: 'rgb(var(--input-rgb) / <alpha-value>)',
+                ring: 'rgb(var(--ring-rgb) / <alpha-value>)',
 
                 /* optional aliases (safe to keep for readability) */
                 ink: 'rgb(var(--color-primary-rgb) / <alpha-value>)',

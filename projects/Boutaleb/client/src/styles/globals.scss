@@ -1,116 +1,38 @@
-/* Mixins (bring into scope) */
-@use './abstracts/_mixins.scss' as *;
-@use './abstracts/_typography.scss' as *;
+/* All @use statements MUST come first, before any other CSS */
+/* @use doesn't work as expected, like functions wouldn't work if you just @use them in globals,
+if you need to use a function from _functions.scss you will need to @use it in the file where you need the functions,
+otherwise it wouldn't know em, cause they aren't global, @import used to do that but it's deprecated */
 
-/* Bring shared responsive mixins (from packages/ui) */
-@use '../../../../../packages/ui/src/scss/_responsive.scss' as *;
+// Global Shared Package
+@use '../../../../../packages/ui/src/scss/_responsive.scss'as *;
 
-/* Include component and page styles */
-@use './components/_header.scss' as *;
-@use './components/_footer.scss' as *;
-@use './pages/_homepage.scss' as *;
-@use './pages/_general.scss' as *;
+// Abstracts: variables, mixins, functions
+@use './abstracts/variables';
+@use './abstracts/mixins';
+@use './abstracts/functions';
 
-/* Tailwind utilities should be available first (recommended)
-   Then define :root CSS variables, bring in mixins, typography, and include component/page partials.
-*/
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+// Base styles
+@use './base/typography';
 
-/* Root-level design tokens (CSS custom properties)
-   - We store RGB triplets for colors (e.g. --color-primary-rgb: 14 165 164;)
-   - We also define computed variables (e.g. --color-primary) for convenience so SCSS can
-     use var(--color-primary) for solid colors, while Tailwind uses the rgb(var(--...-rgb) / <alpha>)
-*/
-:root {
-    /* container */
-    --container-sm: 48rem; /* max-w-3xl */
-    --container-md: 64rem; /* max-w-5xl */
-    --container-lg: 72rem; /* max-w-6xl */
-    --container-xl: 80rem; /* max-w-7xl */
-    --max-container-width: var(--container-xl);
+// Components
+@use './components/header';
+@use './components/footer';
+/* @use './components/modals';
+@use './components/navigation';
+@use './components/forms'; */
 
-    /* color RGB triplets (for Tailwind alpha) */
-    --color-primary-rgb: 14 16 22; /* ink */
-    --color-accent-rgb: 201 168 106; /* gold */
-    --color-secondary-rgb: 28 106 106; /* deep-teal */
+// Pages
+@use './pages/general';
+@use './pages/homepage';
+/* @use './pages/login';
+@use './pages/dashboard';
+@use './pages/about';
+@use './pages/blog';
+@use './pages/post';
+@use './pages/contact';
+@use './pages/notfound'; */
 
-    --color-bg-rgb: 246 244 240; /* porcelain */
-    --color-surface-rgb: 255 255 255; /* white */
-    --color-card-bg-rgb: 255 255 255; /* white */
-
-    --text-dark-rgb: 26 26 26; /* charcoal */
-    --text-light-rgb: 93 93 93; /* graphite */
-    --text-muted-rgb: 93 93 93; /* graphite */
-
-    --border-color-rgb: 228 225 220; /* mist */
-    --muted-border-rgb: 228 225 220; /* mist */
-
-    --success-rgb: 22 163 74; /* green */
-    --danger-rgb: 239 68 68; /* red */
-    --warning-rgb: 245 158 11; /* amber */
-    --info-rgb: 28 106 106; /* deep-teal */
-
-    /* computed convenience variables (keep scaffold patterns) */
-    --color-primary: rgb(var(--color-primary-rgb) / 1);
-    --color-accent: rgb(var(--color-accent-rgb) / 1);
-    --color-secondary: rgb(var(--color-secondary-rgb) / 1);
-    --color-bg: rgb(var(--color-bg-rgb) / 1);
-    --color-surface: rgb(var(--color-surface-rgb) / 1);
-    --color-card-bg: rgb(var(--color-card-bg-rgb) / 1);
-
-    --text-dark: rgb(var(--text-dark-rgb) / 1);
-    --text-light: rgb(var(--text-light-rgb) / 1);
-    --text-muted: rgb(var(--text-muted-rgb) / 1);
-
-    --border-color: rgb(var(--border-color-rgb) / 1);
-    --muted-border: rgb(var(--muted-border-rgb) / 1);
-
-    --success: rgb(var(--success-rgb) / 1);
-    --danger: rgb(var(--danger-rgb) / 1);
-    --warning: rgb(var(--warning-rgb) / 1);
-    --info: rgb(var(--info-rgb) / 1);
-
-    /* convenience white/black tokens */
-    --color-white: rgb(var(--color-surface-rgb) / 1);
-    --color-black: rgb(0 0 0 / 1);
-
-    /* core utility tokens */
-    --space-1: 0.25rem;
-    --space-2: 0.5rem;
-    --space-3: 0.75rem;
-    --space-4: 1rem;
-    --space-6: 1.5rem;
-    --space-8: 2rem;
-    --space-12: 3rem;
-    --space-16: 4rem;
-    --section-y: 6rem;
-    --section-y-lg: 8rem;
-
-    /* legacy aliases */
-    --space-xxs: var(--space-1);
-    --space-xs: var(--space-2);
-    --space-sm: var(--space-3);
-    --space-md: var(--space-4);
-    --space-lg: var(--space-6);
-    --space-xl: var(--space-8);
-
-    --font-sans:
-        var(--font-manrope), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-        sans-serif;
-    --font-display:
-        var(--font-space-grotesk), system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
-        Arial, sans-serif;
-
-    --font-size-base: 16px;
-    --line-height-base: 1.6;
-
-    --radius: 8px;
-    --radius-sm: 6px;
-
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
-}
+@import "tailwindcss";
 
 /* Minimal global reset */
 * {
@@ -120,9 +42,11 @@
 body {
     margin: 0;
     min-height: 100vh;
-    background: var(--color-bg);
+    background:
+        radial-gradient(circle at top left, rgb(var(--color-accent-rgb) / 0.11), transparent 26%),
+        radial-gradient(circle at 85% 18%, rgb(var(--color-secondary-rgb) / 0.08), transparent 24%),
+        linear-gradient(180deg, rgb(var(--color-bg-rgb) / 1) 0%, rgb(255 255 255 / 1) 100%);
     color: var(--text-dark);
-    font-family: var(--font-sans);
     font-size: var(--font-size-base);
     line-height: var(--line-height-base);
 }
@@ -135,4 +59,30 @@ body {
 
 .layout-main {
     flex: 1;
+}
+
+.page-shell--public {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+            linear-gradient(180deg, rgb(255 255 255 / 0.42), transparent 24%),
+            radial-gradient(circle at 20% 0%, rgb(var(--color-accent-rgb) / 0.08), transparent 22%);
+        opacity: 0.9;
+        z-index: -1;
+    }
+}
+
+.panel-glass {
+    background: rgb(var(--color-surface-rgb) / 0.78);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgb(var(--border-color-rgb) / 0.72);
+    box-shadow: 0 24px 60px rgba(14, 16, 22, 0.09);
 }

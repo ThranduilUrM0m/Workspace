@@ -11,7 +11,11 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['var(--font-sans)', ...defaultTheme.fontFamily.sans],
+                sans: ['var(--font-nexa)', 'system-ui', 'sans-serif'],
+                body: ['var(--font-nexa)', 'system-ui', 'sans-serif'],
+                heading: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+                display: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+                ui: ['var(--font-manrope)', 'system-ui', 'sans-serif'],
             },
             colors: {
                 primary: 'rgb(var(--color-primary-rgb) / <alpha-value>)',
@@ -29,6 +33,19 @@ module.exports = {
                 info: 'rgb(var(--info-rgb) / <alpha-value>)',
                 white: 'var(--color-surface)',
                 black: '#000000',
+                background: 'rgb(var(--background-rgb) / <alpha-value>)',
+                foreground: 'rgb(var(--foreground-rgb) / <alpha-value>)',
+                'card-foreground': 'rgb(var(--card-foreground-rgb) / <alpha-value>)',
+                popover: 'rgb(var(--popover-rgb) / <alpha-value>)',
+                'popover-foreground': 'rgb(var(--popover-foreground-rgb) / <alpha-value>)',
+                'primary-foreground': 'rgb(var(--primary-foreground-rgb) / <alpha-value>)',
+                'secondary-foreground': 'rgb(var(--secondary-foreground-rgb) / <alpha-value>)',
+                'accent-foreground': 'rgb(var(--accent-foreground-rgb) / <alpha-value>)',
+                'muted-foreground': 'rgb(var(--muted-foreground-rgb) / <alpha-value>)',
+                destructive: 'rgb(var(--destructive-rgb) / <alpha-value>)',
+                'destructive-foreground': 'rgb(var(--destructive-foreground-rgb) / <alpha-value>)',
+                input: 'rgb(var(--input-rgb) / <alpha-value>)',
+                ring: 'rgb(var(--ring-rgb) / <alpha-value>)',
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-in-out',

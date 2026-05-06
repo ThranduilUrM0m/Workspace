@@ -1,0 +1,102 @@
+// Next.js loads Space Grotesk and Manrope and exposes --font-space-grotesk, --font-manrope.
+
+:root {
+    // Font families
+    --font-body: var(--font-manrope), system-ui, -apple-system, sans-serif;
+    --font-heading: var(--font-space-grotesk), system-ui, -apple-system, sans-serif;
+    --font-ui: var(--font-manrope), system-ui, -apple-system, sans-serif;
+
+    // Font weights
+    --font-weight-thin: 100;
+    --font-weight-light: 300;
+    --font-weight-normal: 400;
+    --font-weight-book: 450;
+    --font-weight-bold: 700;
+    --font-weight-xbold: 800;
+    --font-weight-heavy: 900;
+    --font-weight-black: 950;
+
+    // Font sizes (responsive scale)
+    --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --font-size-sm: clamp(0.875rem, 0.825rem + 0.25vw, 1rem);
+    --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --font-size-lg: clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem);
+    --font-size-xl: clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem);
+    --font-size-2xl: clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem);
+    --font-size-3xl: clamp(1.875rem, 1.65rem + 1.125vw, 2.25rem);
+    --font-size-4xl: clamp(2.25rem, 1.95rem + 1.5vw, 3rem);
+    --font-size-5xl: clamp(3rem, 2.55rem + 2.25vw, 3.75rem);
+
+    // Line heights
+    --line-height-tight: 1.25;
+    --line-height-snug: 1.375;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
+    --line-height-loose: 2;
+
+    // Letter spacing
+    --letter-spacing-tighter: -0.05em;
+    --letter-spacing-tight: -0.025em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.025em;
+    --letter-spacing-wider: 0.05em;
+    --letter-spacing-widest: 0.1em;
+}
+
+// Base typography
+body {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-normal);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+    letter-spacing: var(--letter-spacing-normal);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-tight);
+    letter-spacing: var(--letter-spacing-tight);
+}
+
+h1 {
+    font-size: var(--font-size-5xl);
+}
+
+h2 {
+    font-size: var(--font-size-4xl);
+}
+
+h3 {
+    font-size: var(--font-size-3xl);
+}
+
+h4 {
+    font-size: var(--font-size-2xl);
+}
+
+h5 {
+    font-size: var(--font-size-xl);
+}
+
+h6 {
+    font-size: var(--font-size-lg);
+}
+
+/* Controls, labels, and chrome: Manrope */
+button,
+input,
+select,
+textarea,
+label,
+optgroup,
+[role='button'],
+[role='tab'],
+[role='menuitem'] {
+    font-family: var(--font-ui);
+}

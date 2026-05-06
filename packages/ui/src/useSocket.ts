@@ -27,10 +27,10 @@ export function useSocket(path: string = '/', opts: Record<string, any> = {}): U
         if (socketRef.current) socketRef.current.emit(event, payload);
     };
     const on = (event: string, cb?: (...args: any[]) => void): void => {
-        if (socketRef.current) socketRef.current.on(event, cb);
+        if (socketRef.current && cb) socketRef.current.on(event, cb);
     };
     const off = (event: string, cb?: (...args: any[]) => void): void => {
-        if (socketRef.current) socketRef.current.off(event, cb);
+        if (socketRef.current && cb) socketRef.current.off(event, cb);
     };
 
     return { emit, on, off, socket: socketRef.current };

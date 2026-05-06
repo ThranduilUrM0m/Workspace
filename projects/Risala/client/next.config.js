@@ -74,7 +74,7 @@ const nextConfig = {
         config.resolve = config.resolve || {};
         config.resolve.alias = {
             ...(config.resolve.alias || {}),
-            '@repo/ui': path.resolve(__dirname, '../../../../packages/ui/src'),
+            '@repo/ui': path.resolve(__dirname, '../../../packages/ui/src'),
         };
 
         // Prevent Watchpack from trying to stat Windows system files

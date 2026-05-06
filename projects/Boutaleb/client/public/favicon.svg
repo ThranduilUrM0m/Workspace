@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 357.14 384">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #131418;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g id="Background_Threshold_1_Image" data-name="Background Threshold 1 Image">
+      <path class="cls-1" d="m0,0v384h357.14V0H0Zm187.34,16.15h68.5l-68.5,73.48V16.15Zm-170.29,0h143.12L17.05,169.62V16.15Zm38.16,311.27h114.45v41.46H17.05v-168.64h38.16m16.59,111.69v-111.69h97.86v111.69h-97.89.03Zm97.86-128.83H29.23L169.64,32.54v150.58h.03Zm17.7-69.87l90.51-97.09h50.7l-141.26,151.48v-54.36l.05-.03Zm0,87h142.58l-142.58,152.9s0-152.9,0-152.9Zm8.95,168.64l66.36-71.16,68.73,71.16m10.76-11.61l-68.71-71.13,68.71-73.66v144.82-.03Zm0-174.16h-71.06l71.06-76.22v76.22Zm0-99.93l-93.4,100.16-51.55-.23L342.18,27.68v55.5h0Z"/>
+    </g>
+  </g>
+</svg>
