@@ -17,7 +17,7 @@ services:
     boutaleb-client:
         build: ./projects/Boutaleb/client
         ports:
-            - '3002:3000'
+            - '3002:3002'
         env_file: ./projects/Boutaleb/client/.env
         depends_on:
             - boutaleb-server
@@ -25,7 +25,7 @@ services:
     boutaleb-server:
         build: ./projects/Boutaleb/server
         ports:
-            - '4002:4000'
+            - '4002:4002'
         env_file: ./projects/Boutaleb/server/.env
 
     maxconfort-client:
