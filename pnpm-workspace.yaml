@@ -3,6 +3,19 @@ packages:
     - 'projects/*/server'
     - 'packages/*'
 
+# Force a single jest-mock/jest-environment-node version across the graph.
+# react-native (pulled in via @react-spring/native) pins jest-environment-node
+# ^29.7.0 as an optional peer for its own jest preset, so without this pnpm
+# installs both 29.7.0 and 30.4.1 side by side and Jest's test-environment
+# resolver picks up the stale 29.x copy, breaking every test suite with
+# "clearMocksOnScope is not a function" (jest-runtime@30 requires jest-mock
+# 30's ModuleMocker API). Boutaleb's client doesn't use react-native's own
+# tests, only its runtime code, so pinning to the jest devDependency's
+# version is safe.
+overrides:
+    jest-mock: '30.4.1'
+    jest-environment-node: '30.4.1'
+
 # Allow React 19 for packages that are compatible at runtime and
 # add a package extension to relax the peer deps of @react-spring/zdog
 peerDependencyRules:
