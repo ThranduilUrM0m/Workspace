@@ -11,6 +11,7 @@ import { BlogModule } from './logic/blog/blog.module';
 import { ClientsModule } from './logic/clients/clients.module';
 import { ProjectsModule } from './logic/projects/projects.module';
 import { ContactModule } from './logic/contact/contact.module';
+import { SitemapRevalidateController } from './logic/seo/sitemap-revalidate.controller';
 import { ClusterService } from './infrastructure/cluster.service';
 import { WorkerPool } from './infrastructure/worker.pool';
 import { CacheService } from './infrastructure/cache.service';
@@ -99,7 +100,7 @@ import * as redisStore from 'cache-manager-redis-store';
         ProjectsModule,
         ContactModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, SitemapRevalidateController],
     providers: [AppService, ClusterService, WorkerPool, CacheService],
 })
 export class AppModule {}
