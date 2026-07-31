@@ -8,8 +8,6 @@ otherwise it wouldn't know em, cause they aren't global, @import used to do that
 
 // Abstracts: variables, mixins, functions
 @use './abstracts/variables';
-@use './abstracts/mixins';
-@use './abstracts/functions';
 
 // Base styles
 @use './base/typography';
@@ -22,7 +20,6 @@ otherwise it wouldn't know em, cause they aren't global, @import used to do that
 @use './components/forms'; */
 
 // Pages
-@use './pages/general';
 @use './pages/homepage';
 /* @use './pages/login';
 @use './pages/dashboard';

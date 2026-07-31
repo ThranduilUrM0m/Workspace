@@ -17,7 +17,7 @@ const projects = [
     },
 ];
 
-export function FeaturedWorkSection() {
+export function FeaturedProjectsSection() {
     return (
         <motion.section
             variants={gridFade}
@@ -29,7 +29,7 @@ export function FeaturedWorkSection() {
             <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-end">
                 <div className="rounded-[28px] border border-border/[0.72] bg-white/[0.58] p-6 shadow-soft backdrop-blur-xl md:p-7">
                     <Badge className="mb-4 border-secondary/20 bg-secondary/10 text-secondary">
-                        Selected Work
+                        Selected Projects
                     </Badge>
                     <h2 className="mt-3 font-display text-3xl text-primary md:text-4xl">
                         Proof that design, delivery, and operations can work together.
@@ -42,7 +42,7 @@ export function FeaturedWorkSection() {
 
                 <div className="flex items-center justify-start lg:justify-end">
                     <Button asChild variant="secondary">
-                        <Link href="/work">View All Work</Link>
+                        <Link href="/projects">View All Projects</Link>
                     </Button>
                 </div>
             </div>

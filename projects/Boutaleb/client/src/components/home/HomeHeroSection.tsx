@@ -9,7 +9,11 @@ const heroData = {
     subtitle:
         'I build premium digital experiences, structured intake flows, and the internal tooling that keeps delivery, tickets, and finance aligned.',
     primaryCta: { label: 'Start a Project', href: '/contact' },
-    secondaryCta: { label: 'See Selected Work', href: '/work', variant: 'secondary' as const },
+    secondaryCta: {
+        label: 'See Selected Projects',
+        href: '/projects',
+        variant: 'secondary' as const,
+    },
     metrics: [
         'Structured intake before design starts',
         'Approval gates before automation ships',

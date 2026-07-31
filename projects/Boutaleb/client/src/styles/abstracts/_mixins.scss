@@ -5,16 +5,3 @@
     padding-left: var(--space-md);
     padding-right: var(--space-md);
 }
-
-@mixin flex-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-@mixin button-reset {
-    border: none;
-    background: none;
-    cursor: pointer;
-    font-family: var(--font-sans);
-}

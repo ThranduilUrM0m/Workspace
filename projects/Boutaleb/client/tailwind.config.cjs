@@ -72,6 +72,7 @@ module.exports = {
                 info: 'rgb(var(--info-rgb) / <alpha-value>)',
                 white: 'var(--color-surface)',
                 black: '#000000',
+
                 background: 'rgb(var(--background-rgb) / <alpha-value>)',
                 foreground: 'rgb(var(--foreground-rgb) / <alpha-value>)',
                 'card-foreground': 'rgb(var(--card-foreground-rgb) / <alpha-value>)',
@@ -114,12 +115,19 @@ module.exports = {
                 'container-xl': 'var(--container-xl)',
             },
             borderRadius: {
-                sm: '6px',
-                md: '12px',
-                lg: '20px',
+                sm: "6px",
+                md: "12px",
+                lg: "20px",
+                xl: "24px",
+                "2xl": "28px",
+                pill: "9999px"
             },
             boxShadow: {
-                soft: '0 10px 30px rgba(0,0,0,0.08)',
+                soft: "0 14px 38px rgba(14,16,22,0.08)",
+                panel: "0 24px 60px rgba(14,16,22,0.09)",
+                hero: "0 22px 48px rgba(14,16,22,0.22)",
+                float: "0 18px 42px rgba(14,16,22,0.14)",
+                insetLine: "inset 0 1px 0 rgba(255,255,255,0.45)"
             },
         },
     },
