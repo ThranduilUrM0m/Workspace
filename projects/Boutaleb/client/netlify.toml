@@ -13,3 +13,6 @@ for = "/_next/static/*"
 
 [context.production.environment]
 NODE_ENV = "production"
+
+[context.dev.environment]
+NODE_ENV = "development"
