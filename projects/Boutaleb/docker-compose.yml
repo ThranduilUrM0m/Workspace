@@ -1,0 +1,35 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      INFISICAL_ENV: dev
+      INFISICAL_TOKEN: ${INFISICAL_TOKEN}
+      MONGODB_URI: mongodb://mongo:27017/boutaleb
+    ports:
+      - "4002:4002"
+    depends_on:
+      - mongo
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      INFISICAL_ENV: dev
+      INFISICAL_TOKEN: ${INFISICAL_TOKEN}
+    ports:
+      - "3002:3002"
+    depends_on:
+      - server
+
+  mongo:
+    image: mongo:7
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
