@@ -72,5 +72,24 @@
         "reportLink": "report it",
         "reportAfter": ".",
         "reportSubject": "Broken link: {path}"
+    },
+    "thanks": {
+        "title": "Request received",
+        "eyebrow": "Request received",
+        "heading": "Your project has a room on the plan",
+        "copyOnItsWay": "A copy is on its way to <b>{email}</b>. Nothing arrived? Check your spam folder, or write to <a>{address}</a>.",
+        "room": "Your project",
+        "next": "What happens next",
+        "step1When": "Done",
+        "step1": "You sent your request.",
+        "step2When": "Within two working days",
+        "step2Email": "A short questionnaire reaches <b>{email}</b>, written from what you sent.",
+        "step2": "A short questionnaire reaches you by email, written from what you sent.",
+        "step3When": "Then",
+        "step3": "Your answers become a project guide: scope, budget and timeline, in writing.",
+        "step4When": "After that",
+        "step4": "Talked through with you, adjusted, then built.",
+        "meantime": "In the meantime:",
+        "home": "Home"
     }
 }

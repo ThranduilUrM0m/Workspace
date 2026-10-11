@@ -1,0 +1,110 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/thanks.html
+   (locked 2026-09-27, mobile pass 2026-10-01). Dropped: the wireframe's view
+   bar and the footer form's sent / failed card (ticket T5.3). The 404 page
+   shares the plan, so every class here is ty- and the eyebrow and inset
+   rules are scoped to .ty-v1: both stylesheets can be loaded at once.
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  a step goes number | when | sentence on one line
+     48rem  page gutters widen (public.css's header breakpoint)
+     56rem  the plan stands beside the head instead of under it */
+.ty-v1{
+  --bg:#F7F5F2; --accent:#C4694A; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1);
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);overflow-x:clip;
+}
+.ty-v1 h1,.ty-v1 h2{font-family:var(--f-head);}
+.ty-v1 .wrap{max-width:68.75rem;margin:0 auto;padding-inline:1.25rem;}
+.ty-v1 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+
+.ty-v1 .eyebrow{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--accent-ink);margin:0 0 1.125rem;display:flex;align-items:center;gap:.5rem;}
+.ty-v1 .eyebrow::after{content:"";width:1.5rem;height:1px;background:var(--accent);transform-origin:0 50%;}
+.ty-v1 .eyebrow:dir(rtl)::after{transform-origin:100% 50%;}
+.ty-head h1{font-size:clamp(2.125rem,1.75rem + 1.5vw,2.75rem);font-weight:700;line-height:1.15;margin:0 0 1rem;text-wrap:balance;}
+/* the title's period is the flooded room, small: square, terracotta */
+.ty-head h1 .dot{display:inline-block;width:.17em;height:.17em;margin-inline-start:.06em;background:var(--accent);color:transparent;overflow:hidden;line-height:0;}
+.ty-lede{font-size:1.0625rem;line-height:1.65;color:var(--muted);max-width:68ch;margin:0;}
+.ty-lede b{font-family:inherit;font-weight:400;color:var(--ink);overflow-wrap:anywhere;}
+.ty-lede a,.ty-out a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.2rem;}
+
+.ty-hero{display:grid;gap:2.5rem;padding-block:clamp(2.5rem,2rem + 2vw,3.5rem) clamp(2rem,1.5rem + 2vw,3rem);}
+.ty-plan{position:relative;justify-self:center;width:min(100%,22rem);aspect-ratio:404.94/384;}
+.ty-plan svg{display:block;width:100%;height:100%;overflow:visible;}
+.ty-plan:dir(rtl) svg{transform:scaleX(-1);}
+/* 404's sequence, shortened: the walls plot in, then the new room is
+   pegged out (dashed), walled (solid), and floods terracotta. */
+.ty-walls{fill:var(--ink);stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:0;animation:ty-plot 1.4s cubic-bezier(.25,.6,.3,1) both,ty-solid .5s 1.1s ease-out both;}
+.ty-new-dash{fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;animation:ty-fade .3s 1.2s both;}
+.ty-new-wall{fill:none;stroke:var(--ink);stroke-width:2.5;vector-effect:non-scaling-stroke;stroke-dasharray:1;animation:ty-plot .8s 1.4s cubic-bezier(.4,.1,.3,1) both;}
+.ty-new-room{fill:var(--accent);animation:ty-flood .7s 2.1s cubic-bezier(.3,.7,.3,1) both;}
+.ty-new-lbl{position:absolute;inset-inline-start:73.3%;top:67.7%;translate:-50% -50%;white-space:nowrap;pointer-events:none;font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--bg);animation:ty-fade .3s 2.6s both;}
+.ty-new-lbl:dir(rtl){translate:50% -50%;}
+
+/* What happens next: the contact page's four steps, 01 already done. */
+.ty-body{max-width:68ch;padding-bottom:clamp(3.5rem,2rem + 5vw,6rem);}
+.ty-next-h{font-size:1.375rem;font-weight:700;margin:0 0 1rem;}
+.ty-v1 .inset{position:relative;}
+.ty-v1 .inset::before{content:"";position:absolute;top:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+.ty-steps{list-style:none;margin:0 0 2rem;padding:0;}
+.ty-steps li{display:grid;grid-template-columns:2.75rem minmax(0,1fr);grid-template-areas:"n when" "n p";gap:.25rem .75rem;align-items:baseline;padding:1.125rem .25rem;}
+.ty-steps li:last-child::after{content:"";position:absolute;bottom:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+/* outline numerals, the site's counter; the step that is done is inked */
+.ty-steps .n{grid-area:n;font:700 1.625rem/1 var(--f-head);letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1px var(--accent);font-variant-numeric:tabular-nums;}
+.ty-steps .when{grid-area:when;display:flex;align-items:center;gap:.5rem;font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
+.ty-steps p{grid-area:p;margin:0;font-size:.9375rem;line-height:1.6;color:var(--muted);}
+.ty-steps li.done .n{color:var(--accent);}
+.ty-steps li.done .when{color:var(--accent-ink);}
+.ty-steps li.done p{color:var(--ink);}
+/* the step that is next carries the status square: work is waiting on me */
+.ty-steps li.now .when::before{content:"";flex:none;width:.4375rem;height:.4375rem;background:var(--accent);}
+.ty-steps li.now .when{color:var(--ink);}
+
+.ty-out{font-size:.9375rem;color:var(--muted);margin:0;display:flex;flex-wrap:wrap;align-items:center;column-gap:1.5rem;}
+.ty-out span{flex-basis:100%;}
+.ty-out a{display:inline-flex;align-items:center;min-height:var(--hit);}
+
+
+@media (min-width:40rem){
+  .ty-steps li{grid-template-columns:3rem minmax(0,11rem) minmax(0,1fr);grid-template-areas:"n when p";gap:1.5rem;}
+  .ty-out span{flex-basis:auto;}
+}
+@media (min-width:48rem){
+  .ty-v1 .wrap{padding-inline:2rem;}
+}
+@media (min-width:48rem) and (pointer:fine){
+  .ty-out a{min-height:0;}
+}
+@media (min-width:56rem){
+  .ty-hero{grid-template-columns:minmax(0,26rem) minmax(0,1fr);gap:4rem;align-items:center;}
+  .ty-plan{justify-self:end;width:clamp(18rem,100%,32rem);}
+  .ty-new-lbl{font-size:.6875rem;}
+}
+
+/* SOUL PASS 2026-10-01, light (the plan carries the motion): the eyebrow
+   rule draws in; the status square on the next step pulses; on scroll the
+   step dividers open from the middle and the outline numerals ink in. */
+@keyframes ty-flood{from{clip-path:circle(0 at 50% 50%);}to{clip-path:circle(75% at 50% 50%);}}
+@keyframes ty-plot{from{stroke-dashoffset:1;}}
+@keyframes ty-solid{from{fill-opacity:0;}}
+@keyframes ty-fade{from{opacity:0;}}
+@keyframes ty-draw{from{scale:0 1;}}
+@keyframes ty-pulse{50%{opacity:.25;}}
+@keyframes ty-ink{to{color:rgba(196,105,74,.22);}}
+@media (prefers-reduced-motion:no-preference){
+  .ty-v1 .eyebrow::after{animation:ty-draw .6s .2s var(--ease-out) both;}
+  .ty-steps li.now .when::before{animation:ty-pulse 1.8s ease-in-out infinite;}
+}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .ty-steps .inset::before{animation:ty-draw linear both;animation-timeline:view();animation-range:entry 0% entry 80%;}
+    .ty-steps li:not(.done) .n{animation:ty-ink linear both;animation-timeline:view();animation-range:entry 60% cover 45%;}
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  .ty-walls,.ty-new-dash,.ty-new-wall,.ty-new-room,.ty-new-lbl{animation:none;}
+}
+
+/* The footer's headline and form are hidden here: "Got a project in mind?"
+   right after sending one reads wrong (public README 42). Only the link
+   footer shows. */
+body:has(main.ty-v1) .site-foot :is(.ft-top,.ft-top + .ft-rule){display:none;}

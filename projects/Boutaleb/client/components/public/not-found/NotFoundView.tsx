@@ -8,6 +8,7 @@ import { routing, type Locale } from '@/i18n/routing';
 import { business } from '@/lib/business';
 import { closestRoute } from '@/lib/closest-route';
 import { track } from '@/lib/analytics';
+import { SITE_PLAN_VIEWBOX, SITE_PLAN_WALLS } from '../site-plan';
 import '@/styles/not-found.css';
 
 // Ported from Blueprinting/wireframes/public/404.html (locked 2026-09-27).
@@ -77,7 +78,7 @@ export function NotFoundView() {
                         </p>
                     </div>
                     <div className="nf-plan" aria-hidden="true">
-                        <svg viewBox="0 0 404.94 384">
+                        <svg viewBox={SITE_PLAN_VIEWBOX}>
                             <defs>
                                 <pattern id="nf-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                                     <line x1="0" y1="0" x2="0" y2="5" stroke="#C4694A" strokeWidth="1.2" strokeOpacity=".55" />
@@ -92,7 +93,7 @@ export function NotFoundView() {
                             <path
                                 className="nf-walls"
                                 pathLength={1}
-                                d="m370.04,209.44V34.98h-62.83V0h-20.94v34.98H118.78V0h-20.94v34.98h-62.9v118.65H0v20.98h34.94v34.84H0v20.98h34.94v118.72h62.9v34.87h20.94v-34.87h167.48v34.87h20.94v-34.87h62.83v-118.72h34.91v-20.98s-34.91,0-34.91,0Zm-272.2,118.72h-41.96v-97.74h41.96v97.74Zm0-118.72h-41.96v-34.84h41.96v34.84Zm0-55.81h-41.96V55.85h41.96v97.77Zm20.94-97.77h104.65v38.29h-104.65s0-38.29,0-38.29Zm104.65,272.3h-104.65v-38.5h104.65v38.5Zm125.63-118.72h-76.72v20.98h76.72v97.74h-41.85v-38.5h-20.94v38.5h-41.82v-118.72h-52.39v20.98h31.38v38.36h-104.65v-38.36h45.31v-20.98h-45.31v-34.84h80.21v-20.98h-80.21v-38.43h104.65v59.41h80.28v-20.98h-59.27V55.85h41.82v45.38h20.94v-45.38h41.85s0,153.59,0,153.59Z"
+                                d={SITE_PLAN_WALLS}
                             />
                         </svg>
                         <span className="nf-lbl" data-room="services">

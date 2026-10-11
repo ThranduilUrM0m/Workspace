@@ -72,5 +72,24 @@
         "reportLink": "signalez-le",
         "reportAfter": ".",
         "reportSubject": "Lien cassé : {path}"
+    },
+    "thanks": {
+        "title": "Demande reçue",
+        "eyebrow": "Demande reçue",
+        "heading": "Votre projet a sa pièce sur le plan",
+        "copyOnItsWay": "Une copie part vers <b>{email}</b>. Rien reçu ? Vérifiez vos spams, ou écrivez à <a>{address}</a>.",
+        "room": "Votre projet",
+        "next": "La suite",
+        "step1When": "Fait",
+        "step1": "Vous avez envoyé votre demande.",
+        "step2When": "Sous deux jours ouvrés",
+        "step2Email": "Un court questionnaire arrive à <b>{email}</b>, rédigé à partir de ce que vous avez envoyé.",
+        "step2": "Un court questionnaire vous arrive par e-mail, rédigé à partir de ce que vous avez envoyé.",
+        "step3When": "Ensuite",
+        "step3": "Vos réponses deviennent un guide de projet : périmètre, budget et calendrier, par écrit.",
+        "step4When": "Après",
+        "step4": "Discuté avec vous, ajusté, puis construit.",
+        "meantime": "En attendant :",
+        "home": "Accueil"
     }
 }

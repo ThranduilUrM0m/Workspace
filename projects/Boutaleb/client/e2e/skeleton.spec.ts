@@ -112,3 +112,18 @@ test('retired addresses answer 301 in every language', async ({ request }) => {
         expect(res.headers().location, from).toBe(to);
     }
 });
+
+test('/thanks shows the email line only when the intake cookie is there', async ({ page, context, baseURL }) => {
+    const res = await page.goto('/en/thanks');
+    expect(res?.status()).toBe(200);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    await expect(page.locator('.ty-lede')).toHaveCount(0);
+    await expect(page.locator('.ty-steps li')).toHaveCount(4);
+    // The footer keeps its links but drops the headline and form here.
+    await expect(page.locator('.site-foot .ft-top')).toBeHidden();
+
+    await context.addCookies([{ name: 'bt_thanks_email', value: 'sara@atlas-riads.ma', url: baseURL! }]);
+    await page.reload();
+    await expect(page.locator('.ty-lede b')).toHaveText('sara@atlas-riads.ma');
+    await expect(page.locator('.ty-steps li.now b')).toHaveText('sara@atlas-riads.ma');
+});
