@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm, type FieldValues, type SubmitHandler, type UseFormReturn } from 'react-hook-form';
+import { FormProvider, useForm, type FieldValues, type SubmitErrorHandler, type SubmitHandler, type UseFormReturn } from 'react-hook-form';
 import type { z } from 'zod';
 
 /* C5's form plumbing (component map): React Hook Form + a Zod schema from
@@ -31,15 +31,19 @@ const Words = React.createContext<ErrorWords>({});
 export const useErrorWords = () => React.useContext(Words);
 
 export interface FormProps<In extends FieldValues, Out extends FieldValues>
-  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'> {
+  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onInvalid'> {
   form: UseFormReturn<In, unknown, Out>;
   onSubmit: SubmitHandler<Out>;
+  /* A stepped form uses it to open the step holding the first error. */
+  onInvalid?: SubmitErrorHandler<In>;
   errorWords: ErrorWords;
+  ref?: React.Ref<HTMLFormElement>;
 }
 
 export function Form<In extends FieldValues, Out extends FieldValues>({
   form,
   onSubmit,
+  onInvalid,
   errorWords,
   children,
   ...props
@@ -48,7 +52,7 @@ export function Form<In extends FieldValues, Out extends FieldValues>({
     <FormProvider {...form}>
       <Words.Provider value={errorWords}>
         {/* noValidate: the browser's bubbles would race the schema's badges. */}
-        <form noValidate onSubmit={form.handleSubmit(onSubmit)} {...props}>
+        <form noValidate onSubmit={form.handleSubmit(onSubmit, onInvalid)} {...props}>
           {children}
         </form>
       </Words.Provider>

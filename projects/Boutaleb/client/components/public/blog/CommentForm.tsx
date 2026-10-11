@@ -1,9 +1,8 @@
 'use client';
 
 import { commentInput } from '@repo/schemas';
-import { Field, Form, Honeypot, useSchemaForm } from '@repo/ui';
+import { Field, Form, Honeypot, useSchemaForm, type ErrorWords } from '@repo/ui';
 import { useState } from 'react';
-import { useErrorWords } from '@/components/public/forms/error-words';
 import { glyph } from '@/components/public/forms/glyphs';
 import { Link } from '@/i18n/navigation';
 
@@ -12,8 +11,7 @@ import { Link } from '@/i18n/navigation';
 // further yet: comments are stored by the Posts API (T11.3), and the sent /
 // failed answers grow in place like the footer form's (T5.3).
 
-export function CommentForm({ slug }: { slug: string }) {
-    const errorWords = useErrorWords();
+export function CommentForm({ slug, errorWords }: { slug: string; errorWords: ErrorWords }) {
     const [idempotencyKey] = useState(() => crypto.randomUUID());
     const form = useSchemaForm(commentInput, { name: '', email: '', comment: '', slug, idempotencyKey });
 

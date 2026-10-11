@@ -165,7 +165,7 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
-for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about', '/en', '/', '/en/portfolio', '/en/portfolio/qasidaty', '/en/blog', '/en/blog?view=list', '/en/blog/longevity-beats-trend', '/ar/blog']) {
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about', '/en', '/', '/en/portfolio', '/en/portfolio/qasidaty', '/en/blog', '/en/blog?view=list', '/en/blog/longevity-beats-trend', '/ar/blog', '/en/contact']) {
     test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 800 });
         await page.goto(path);
@@ -347,4 +347,70 @@ test('error words follow the page language', async ({ page }) => {
     await email.fill('x');
     await email.blur();
     await expect(page.locator('#sec-footer .f-badge')).toHaveText('بريد غير صالح');
+});
+
+test('/contact checks each step before moving on and lands on /thanks', async ({ page, context }) => {
+    await context.clearCookies();
+    await page.goto('/en/contact');
+    const main = page.locator('main');
+    const rail = page.locator('.rail');
+    await expect(rail.locator('[aria-current="step"] .r-title')).toHaveText('Basics');
+    // The footer drops its form here.
+    await expect(page.locator('#sec-footer form')).toBeHidden();
+
+    // Continue with step 1 empty: it stays, the first missing field takes the focus.
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(main.getByLabel('Full name')).toBeFocused();
+    await expect(page.locator('fieldset[data-s="1"] .f-badge')).toHaveCount(2);
+
+    await main.getByLabel('Full name').fill('Hamza R.');
+    await main.getByLabel('Email', { exact: true }).fill('hamza@example.ma');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(rail.locator('[aria-current="step"] .r-title')).toHaveText('Project');
+    await expect(main.getByLabel('A line or two about what you need')).toBeFocused();
+
+    // Moving on checks step 2 too; step 3 lists files and removes them.
+    const message = main.getByLabel('A line or two about what you need');
+    await message.fill('A booking site for a riad.');
+    await page.getByRole('button', { name: '+ Add more detail' }).click();
+    await expect(rail.locator('[aria-current="step"] .r-title')).toHaveText('Extra detail');
+    await page.locator('.dz input[type="file"]').setInputFiles([
+        { name: 'brief.pdf', mimeType: 'application/pdf', buffer: Buffer.from('x'.repeat(2048)) },
+        { name: 'logo.png', mimeType: 'image/png', buffer: Buffer.from('y') },
+    ]);
+    await expect(page.locator('.dz-list li')).toHaveCount(2);
+    await page.getByRole('button', { name: 'Remove logo.png' }).click();
+    await expect(page.locator('.dz-list li')).toHaveCount(1);
+
+    // Back never checks; moving on again does, and focuses what is missing.
+    await page.getByRole('button', { name: 'Back' }).last().click();
+    await message.fill('');
+    await page.getByRole('button', { name: '+ Add more detail' }).click();
+    await expect(message).toBeFocused();
+    await message.fill('A booking site for a riad.');
+
+    // A reload keeps the answers (files aside, and it says so).
+    await page.reload();
+    await expect(page.locator('.c-restored')).toBeVisible();
+    await expect(main.getByLabel('Full name')).toHaveValue('Hamza R.');
+
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.locator('fieldset[data-s="2"]').getByRole('button', { name: 'Submit' }).click();
+    // Dev compiles the handler and /thanks on first use: allow for it.
+    await expect(page).toHaveURL(/\/en\/thanks$/, { timeout: 60_000 });
+    await expect(page.locator('main')).toContainText('hamza@example.ma');
+});
+
+test('/contact keeps every answer when the send fails', async ({ page }) => {
+    await page.route('**/api/enquiries', (route) => route.abort('connectionreset'));
+    await page.goto('/en/contact');
+    const main = page.locator('main');
+    await page.evaluate(() => sessionStorage.clear());
+    await main.getByLabel('Full name').fill('Sara L.');
+    await main.getByLabel('Email', { exact: true }).fill('sara@example.ma');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await main.getByLabel('A line or two about what you need').fill('A shop.');
+    await page.locator('fieldset[data-s="2"]').getByRole('button', { name: 'Submit' }).click();
+    await expect(page.locator('fieldset[data-s="2"] [role="alert"]')).toContainText('Not sent');
+    await expect(main.getByLabel('A line or two about what you need')).toHaveValue('A shop.');
 });

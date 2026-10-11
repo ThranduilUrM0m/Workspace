@@ -1,0 +1,143 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/contact.html
+   (stepper v4, mobile pass 2026-09-30). Every selector is scoped to
+   .contact-v1; [dir="rtl"] rules became :dir(rtl); faces read next/font
+   variables. The fields and buttons are @repo/ui's (field.css, Button
+   go / back), so the wireframe's .lbtn and .hp rules are gone; the
+   footer without its form is at the end, outside the page scope. */
+/* /contact — stepper form, v4. MOBILE PASS 2026-09-30. Header + footer:
+   public.css, menu: public.js; the fields are the footer's .ff-* fields.
+   The three static "STEP n preview" copies are now ONE working form: the
+   rail and the card move together, Continue / Back / Add more detail /
+   Submit all work. Step 3 is still reached only through "Add more detail".
+   The footer drops its "Missed the contact page?" form here: it would be
+   a second, shorter copy of the form right above it.
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  "What happens next" 2-up
+     56rem  the rail stands up beside the card as a sticky column (the
+            phone shows it as three segments above the card)
+     64rem  "What happens next" 4-up
+   Fixed on the way: the 400px ghost word (fluid now, clipped to the page),
+   26px link buttons (44px targets), inline heights on the rail fill,
+   inline styles on the honeypot and actions, physical left/right, labels
+   not tied to their fields. */
+.contact-v1{
+  --bg:#F7F5F2; --accent:#C4694A; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1); --fill:#232326;
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);padding-bottom:3.5rem;overflow-x:clip;
+}
+.contact-v1 .wrap{max-width:63.75rem;margin:0 auto;padding-inline:1.25rem;}
+.contact-v1 h1,.contact-v1 h2,.contact-v1 h3{margin:0;font-family:var(--f-head);}
+.contact-v1 button:focus-visible,.contact-v1 a:focus-visible,.contact-v1 .dz:focus-within{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* Hero: centred, the ghost PROJECT starts at the title and runs down
+   behind the form, clipped at the page edges. */
+.contact-v1 .c-hero{position:relative;text-align:center;padding-block:clamp(3rem,2rem + 5vw,6.875rem) 0;}
+.contact-v1 .ghost{position:absolute;inset-inline:0;top:clamp(3rem,2rem + 5vw,6.875rem);display:flex;justify-content:center;pointer-events:none;
+  font:700 clamp(6rem,1rem + 22vw,25rem)/1 var(--f-head);text-transform:uppercase;letter-spacing:.01em;color:rgba(27,27,31,.025);white-space:nowrap;user-select:none;}
+.contact-v1 .c-hero h1{position:relative;font-size:clamp(2.25rem,1.5rem + 3.5vw,3.5rem);font-weight:600;line-height:1.12;margin-bottom:.625rem;text-wrap:balance;}
+.contact-v1 .c-hero p{position:relative;color:var(--muted);font-size:1rem;line-height:1.55;max-width:32ch;margin:0 auto;}
+
+.contact-v1 .c-layout{position:relative;display:grid;gap:1.5rem;margin-top:clamp(2.5rem,1.5rem + 4vw,6rem);}
+
+/* Rail. Phone: three segments, the step names under them, no blurbs. */
+.contact-v1 .rail{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.5rem;}
+.contact-v1 .r-step{position:relative;padding-top:.75rem;transition:opacity .3s;}
+.contact-v1 .r-step::before{content:"";position:absolute;inset-inline:0;top:0;height:2px;background:rgba(27,27,31,.15);}
+.contact-v1 .r-step::after{content:"";position:absolute;inset-inline:0;top:0;height:2px;background:var(--accent);scale:0 1;transform-origin:0 50%;transition:scale .5s var(--ease-out);}
+.contact-v1 .r-step:dir(rtl)::after{transform-origin:100% 50%;}
+.contact-v1 .r-step.done::after,.contact-v1 .r-step[aria-current]::after{scale:1 1;}
+.contact-v1 .r-eye{display:block;font-size:.625rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem;}
+.contact-v1 .r-step.done .r-eye::after{content:" · done";}
+.contact-v1 .r-step[aria-current] .r-eye,.contact-v1 .r-step[aria-current] .r-title{color:var(--accent-ink);}
+.contact-v1 .r-step .r-title{font-size:.9375rem;font-weight:600;transition:color .3s;}
+.contact-v1 .r-step p{display:none;}
+.contact-v1 .r-step.upcoming{opacity:.8;}
+
+/* Card: one form, one fieldset per step, only the current one shown. */
+.contact-v1 .c-card{padding:clamp(1.25rem,.75rem + 2.5vw,3rem);}
+.contact-v1 .step{border:0;margin:0;padding:0;min-width:0;display:grid;gap:1.5rem;}
+.contact-v1 .step[hidden]{display:none;}
+.contact-v1 .grp{font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin:.5rem 0 -.25rem;}
+.contact-v1 .step > legend.grp{padding:0;margin:0 0 1.5rem;}
+
+/* Attachments: a dropzone over a real file input. */
+.contact-v1 .dz{position:relative;display:flex;align-items:center;min-height:3.125rem;padding-block:.75rem;padding-inline:2.5rem .875rem;
+  border:1px dashed rgba(27,27,31,.25);background:var(--ground);cursor:pointer;font-size:.8125rem;color:var(--faint);transition:border-color .2s,background .2s;}
+.contact-v1 .dz:hover,.contact-v1 .dz.drag{border-style:solid;border-color:var(--accent);background:rgba(196,105,74,.06);}
+.contact-v1 .dz input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.contact-v1 .dz-list{list-style:none;margin:-.75rem 0 0;padding:0;display:grid;gap:.5rem;}
+.contact-v1 .dz-list:empty{display:none;}
+.contact-v1 .dz-list li{display:flex;align-items:center;gap:.75rem;padding-block:.25rem;padding-inline:.875rem .25rem;border:1px solid rgba(27,27,31,.1);background:var(--ground);font-size:.8125rem;}
+.contact-v1 .dz-list .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.contact-v1 .dz-list .s{font-size:.6875rem;color:var(--faint);}
+.contact-v1 .dz-list button{width:var(--hit);height:var(--hit);border:0;background:none;cursor:pointer;color:var(--faint);font-size:1rem;}
+.contact-v1 .dz-list button:hover{color:var(--accent-ink);}
+
+.contact-v1 .consent{font-size:.75rem;color:var(--faint);margin:0;}
+.contact-v1 .consent a{color:inherit;}
+.contact-v1 .acts{display:flex;flex-wrap:wrap;align-items:center;gap:0 1.25rem;margin-top:.5rem;}
+.contact-v1 .acts .push{margin-inline-start:auto;}
+.contact-v1 .dz-ico{position:absolute;inset-inline-start:.875rem;top:50%;translate:0 -50%;display:flex;color:var(--color-icon-muted);pointer-events:none;}
+.contact-v1 .dz-ico svg{width:1rem;height:1rem;}
+/* A draft brought back after a reload says so, and that files are not kept. */
+.contact-v1 .c-restored{margin:0 0 1.5rem;font-size:.8125rem;color:var(--muted);}
+
+/* What happens next: outline numerals (the /services and /about ones),
+   split by short inset dividers. */
+.contact-v1 .next{margin-top:clamp(5rem,3rem + 8vw,10rem);padding-top:clamp(2.5rem,2rem + 2vw,4rem);position:relative;}
+.contact-v1 .next::before{content:"";position:absolute;inset-inline:.25rem;top:0;height:1px;background:var(--rule);}
+.contact-v1 .next h2{font-size:1.25rem;font-weight:600;text-align:center;margin-bottom:2.5rem;}
+.contact-v1 .n-list{list-style:none;margin:0;padding:0;display:grid;gap:1.75rem;counter-reset:n;}
+.contact-v1 .n-list li{counter-increment:n;display:flex;align-items:baseline;gap:1.25rem;font-size:.9375rem;line-height:1.4;}
+.contact-v1 .n-list li::before{content:counter(n,decimal-leading-zero);flex:none;min-width:3.25rem;font:700 2.5rem/1 var(--f-head);letter-spacing:-.04em;
+  color:rgba(196,105,74,.16);-webkit-text-stroke:1px var(--accent);}
+
+
+@media (min-width:40rem){
+  .contact-v1 .n-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 2.5rem;}
+}
+@media (min-width:48rem){
+  .contact-v1 .wrap{padding-inline:2.5rem;}
+}
+@media (min-width:56rem){
+  .contact-v1 .c-layout{grid-template-columns:17.5rem minmax(0,1fr);gap:clamp(2.5rem,1rem + 4vw,4.5rem);align-items:start;}
+  .contact-v1 .rail{position:sticky;top:4rem;grid-template-columns:none;gap:2.75rem;padding-inline-start:1.625rem;}
+  .contact-v1 .rail::before,.contact-v1 .rail::after{content:"";position:absolute;inset-inline-start:0;top:.125rem;width:2px;}
+  .contact-v1 .rail::before{bottom:.125rem;background:rgba(27,27,31,.15);}
+  .contact-v1 .rail::after{height:calc(var(--at,1) / 3 * 100% - .25rem);background:var(--accent);transition:height .5s var(--ease-out);}
+  .contact-v1 .r-step{padding-top:0;}
+  .contact-v1 .r-step::before,.contact-v1 .r-step::after{content:none;}
+  .contact-v1 .r-eye{font-size:.6875rem;margin-bottom:.5rem;}
+  .contact-v1 .r-step .r-title{font-size:1.3125rem;margin-bottom:.5rem;}
+  .contact-v1 .r-step p{display:block;margin:0;color:var(--muted);font-size:.875rem;line-height:1.6;max-width:32ch;}
+}
+@media (min-width:64rem){
+  .contact-v1 .n-list{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .contact-v1 .n-list li{flex-direction:column;gap:.625rem;}
+}
+
+/* SOUL PASS 2026-09-30, light: the rail fills as you move through the
+   steps; the new step rises in; the ghost word drifts a little as the
+   form passes; the "What happens next" numerals ink in as they arrive. */
+@media (prefers-reduced-motion:no-preference){
+  .contact-v1 .step.in{animation:c-rise .4s var(--ease-out);}
+}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .contact-v1 .c-hero{view-timeline:--hero block;}
+    .contact-v1 .ghost{animation:c-drift linear both;animation-timeline:--hero;animation-range:exit 0% exit 100%;}
+    .contact-v1 .n-list li::before{animation:c-ink linear both;animation-timeline:view();animation-range:entry 40% cover 45%;}
+  }
+}
+@keyframes c-rise{from{opacity:0;translate:0 .75rem;}}
+@keyframes c-drift{to{translate:0 3rem;}}
+@keyframes c-ink{from{color:transparent;}}
+
+/* The footer drops its form here: it would be a second, shorter copy of
+   the form right above it. Headline and contact details share the row. */
+body:has(main.contact-v1) .site-foot .ft-form{display:none;}
+body:has(main.contact-v1) .site-foot .ft-top{grid-template-columns:minmax(0,1fr);grid-template-areas:"head";}
+@media (min-width:48rem){
+  body:has(main.contact-v1) .site-foot .ft-head{flex-direction:row;align-items:flex-end;text-align:start;gap:2rem;}
+  body:has(main.contact-v1) .site-foot .ft-contact{text-align:end;}
+}

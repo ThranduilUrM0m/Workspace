@@ -9,6 +9,7 @@ import { authorCard, postBySlug, postCategoryLabel, posts, type PostBlock, type 
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { related } from '@/lib/blog';
+import { getErrorWords } from '@/lib/error-words';
 import { seoFor } from '@/lib/seo';
 import '@/styles/post.css';
 
@@ -139,7 +140,7 @@ export default async function PostPage({ params }: Props) {
                         Comments ({post.comments})
                     </h2>
                     <div className="c-layout">
-                        <CommentForm slug={post.slug} />
+                        <CommentForm slug={post.slug} errorWords={await getErrorWords('en')} />
                         {post.thread.length > 0 && (
                             <ol className="thread">
                                 {post.thread.map((c) => (
