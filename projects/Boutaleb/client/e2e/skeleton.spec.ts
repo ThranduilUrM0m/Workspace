@@ -99,3 +99,16 @@ test('the 404 page has no "did you mean" when nothing is close', async ({ page }
     await expect(page.locator('.nf-mean')).toHaveCount(0);
     await expect(page.locator('.nf-report a')).toHaveAttribute('href', /subject=Lien%20cass%C3%A9/);
 });
+
+test('retired addresses answer 301 in every language', async ({ request }) => {
+    for (const [from, to] of [
+        ['/process', '/services#process'],
+        ['/en/faq', '/en/services#questions'],
+        ['/ar/privacy-policy', '/ar/privacy'],
+        ['/mentions-legales', '/legal-notice'],
+    ]) {
+        const res = await request.get(from, { maxRedirects: 0 });
+        expect(res.status(), from).toBe(301);
+        expect(res.headers().location, from).toBe(to);
+    }
+});

@@ -1,10 +1,11 @@
 import { defineRouting } from 'next-intl/routing';
+import { defaultLocale, locales } from './locales';
 
 // Route rule (site-completeness §0): English slugs in every language, the
 // language in the prefix. French is the unprefixed default.
 export const routing = defineRouting({
-    locales: ['fr', 'en', 'ar'],
-    defaultLocale: 'fr',
+    locales,
+    defaultLocale,
     localePrefix: 'as-needed',
     // A URL names its language; the browser's Accept-Language never
     // redirects a visitor (or a crawler) off the address it asked for.
