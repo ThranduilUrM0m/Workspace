@@ -82,3 +82,20 @@ test('a switch click remembers the language', async ({ page, context }) => {
     const cookie = (await context.cookies()).find((c) => c.name === 'NEXT_LOCALE');
     expect(cookie?.value).toBe('en');
 });
+
+test('the 404 page echoes the path and offers the close match', async ({ page }) => {
+    const res = await page.goto('/en/proces');
+    expect(res?.status()).toBe(404);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('That room isn’t on the plan.');
+    await expect(page.locator('.nf-path code')).toHaveText('/en/proces');
+    await expect(page.locator('.nf-mean a')).toHaveAttribute('href', '/en/services#process');
+    await expect(page.getByRole('navigation', { name: 'Ways on' }).getByRole('link')).toHaveCount(4);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex');
+});
+
+test('the 404 page has no "did you mean" when nothing is close', async ({ page }) => {
+    await page.goto('/xyz-old-link');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+    await expect(page.locator('.nf-mean')).toHaveCount(0);
+    await expect(page.locator('.nf-report a')).toHaveAttribute('href', /subject=Lien%20cass%C3%A9/);
+});

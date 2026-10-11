@@ -1,0 +1,117 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/404.html
+   (locked 2026-09-27, mobile pass 2026-10-01). Dropped: the wireframe's
+   match / no-match bar (.wf-bar). The eyebrow is scoped to .nf-v1 (legal.css
+   has its own global one) and the faces read next/font variables.
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  way-on rows go name | blurb | arrow on one line
+     56rem  the plan stands beside the head instead of under it */
+.nf-v1{
+  --bg:#F7F5F2; --accent:#C4694A; --surface:#FBFAF8; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1);
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);overflow-x:clip;
+}
+.nf-v1 h1{font-family:var(--f-head);}
+.nf-v1 .wrap{max-width:68.75rem;margin:0 auto;padding-inline:1.25rem;}
+.nf-v1 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+
+.nf-v1 .eyebrow{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--accent-ink);margin:0 0 1.125rem;display:flex;align-items:center;gap:.5rem;}
+.nf-v1 .eyebrow::after{content:"";width:1.5rem;height:1px;background:var(--accent);transform-origin:0 50%;}
+[dir="rtl"] .nf-v1 .eyebrow::after{transform-origin:100% 50%;}
+.nf-head h1{font-size:clamp(2.125rem,1.75rem + 1.5vw,2.75rem);font-weight:700;line-height:1.15;margin:0 0 1rem;text-wrap:balance;}
+
+.nf-hero{display:grid;gap:2.5rem;padding-block:clamp(2.5rem,2rem + 2vw,3.5rem) clamp(2rem,1.5rem + 2vw,3rem);}
+.nf-plan{position:relative;justify-self:center;width:min(100%,22rem);aspect-ratio:404.94/384;}
+.nf-plan svg{display:block;width:100%;height:100%;overflow:visible;}
+[dir="rtl"] .nf-plan svg{transform:scaleX(-1);}
+.nf-walls{fill:var(--ink);stroke:var(--ink);stroke-width:1.5;vector-effect:non-scaling-stroke;stroke-dasharray:1;stroke-dashoffset:0;animation:nf-plot 1.4s cubic-bezier(.25,.6,.3,1) both,nf-solid .5s 1.1s ease-out both;}
+[data-room="services"]{--z:#E2A68D;}
+[data-room="portfolio"]{--z:#E6C57A;}
+[data-room="blog"]{--z:#A8BC96;}
+[data-room="contact"]{--z:#9DB2C6;}
+.nf-room{fill:var(--z);transition:filter .2s;animation:nf-flood .7s cubic-bezier(.3,.7,.3,1) both;}
+.nf-room[data-room="services"]{animation-delay:1.3s;}
+.nf-room[data-room="portfolio"]{animation-delay:1.42s;}
+.nf-room[data-room="contact"]{animation-delay:1.54s;}
+.nf-room[data-room="blog"]{animation-delay:1.66s;}
+.nf-miss-fill{animation:nf-wipe .5s 1.8s ease-out both;}
+.nf-miss-line{fill:none;stroke:var(--accent);stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke;animation:nf-fade .3s 1.8s both;}
+
+/* Room labels, placed in % of the plan so they ride its size. */
+.nf-lbl,.nf-miss{position:absolute;translate:-50% -50%;white-space:nowrap;pointer-events:none;}
+[dir="rtl"] .nf-lbl,[dir="rtl"] .nf-miss{translate:50% -50%;}
+.nf-lbl{font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);transition:color .2s;animation:nf-fade .3s 1.5s both;}
+.nf-lbl .v{display:block;writing-mode:vertical-rl;rotate:180deg;}
+.nf-lbl[data-room="services"]{inset-inline-start:19%;top:27.3%;}
+.nf-lbl[data-room="portfolio"]{inset-inline-start:42.3%;top:19.5%;}
+.nf-lbl[data-room="blog"]{inset-inline-start:42.3%;top:80.4%;}
+.nf-lbl[data-room="contact"]{inset-inline-start:73.3%;top:33.2%;}
+/* Any path can land here; past the room's width it ellipsises. The full
+   path is in "You asked for" above. */
+.nf-miss{inset-inline-start:73.3%;top:67.7%;font:.625rem ui-monospace,Consolas,monospace;color:var(--accent-ink);background:var(--bg);padding:.125rem .25rem;max-width:26%;overflow:hidden;text-overflow:ellipsis;animation:nf-fade .2s 2.2s both;}
+.nf-v1:has(.nf-ways a[data-room="services"]:hover) .nf-room[data-room="services"],
+.nf-v1:has(.nf-ways a[data-room="portfolio"]:hover) .nf-room[data-room="portfolio"],
+.nf-v1:has(.nf-ways a[data-room="blog"]:hover) .nf-room[data-room="blog"],
+.nf-v1:has(.nf-ways a[data-room="contact"]:hover) .nf-room[data-room="contact"]{filter:brightness(.88);}
+.nf-v1:has(.nf-ways a[data-room="services"]:hover) .nf-lbl[data-room="services"],
+.nf-v1:has(.nf-ways a[data-room="portfolio"]:hover) .nf-lbl[data-room="portfolio"],
+.nf-v1:has(.nf-ways a[data-room="blog"]:hover) .nf-lbl[data-room="blog"],
+.nf-v1:has(.nf-ways a[data-room="contact"]:hover) .nf-lbl[data-room="contact"]{color:var(--ink);}
+
+.nf-lede{font-size:1.0625rem;line-height:1.65;color:var(--muted);max-width:68ch;margin:0 0 1rem;}
+.nf-path{font-size:.875rem;color:var(--faint);margin:0;overflow-wrap:anywhere;}
+.nf-path code{font-family:ui-monospace,Consolas,monospace;font-size:.8125rem;color:var(--muted);}
+
+.nf-body{max-width:68ch;padding-bottom:clamp(3.5rem,2rem + 5vw,6rem);}
+.nf-mean{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;margin:0 0 2.5rem;font-size:1rem;}
+.nf-mean .k{flex-basis:100%;font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
+.nf-mean a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.3rem;font-family:var(--f-head);font-weight:700;}
+.nf-mean .u{font-size:.875rem;color:var(--faint);}
+
+.inset{position:relative;}
+.inset::before{content:"";position:absolute;top:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+.nf-ways{margin:0 0 2.5rem;}
+.nf-ways a{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"b i" "s s";gap:.25rem 1rem;align-items:baseline;padding:1rem .25rem;color:var(--ink);text-decoration:none;}
+.nf-ways a:last-child::after{content:"";position:absolute;bottom:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+.nf-ways b{grid-area:b;display:flex;align-items:center;gap:.75rem;font-family:var(--f-head);font-weight:700;font-size:1.125rem;}
+.nf-ways b::before{content:"";flex:none;width:.625rem;height:.625rem;background:var(--z);transition:scale .25s var(--ease-out);}
+.nf-ways span{grid-area:s;padding-inline-start:1.375rem;font-size:.9375rem;color:var(--muted);}
+.nf-ways i{grid-area:i;font-style:normal;color:var(--faint);transition:color .15s,translate .2s var(--ease-out);}
+[dir="rtl"] .nf-ways i{scale:-1 1;}
+.nf-ways a:hover i{color:var(--accent-ink);translate:.25rem 0;}
+.nf-ways a:hover b::before{scale:1.4;}
+.nf-report{font-size:.9375rem;color:var(--muted);line-height:1.6;margin:0;}
+.nf-report a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.2rem;}
+
+@media (min-width:40rem){
+  .nf-ways a{grid-template-columns:minmax(0,10rem) minmax(0,1fr) auto;grid-template-areas:"b s i";gap:2rem;padding-block:1.125rem;}
+  .nf-ways span{padding:0;}
+  .nf-mean .k{flex-basis:auto;}
+}
+@media (min-width:48rem){
+  .nf-v1 .wrap{padding-inline:2rem;}
+}
+@media (min-width:56rem){
+  .nf-hero{grid-template-columns:minmax(0,26rem) minmax(0,1fr);gap:4rem;align-items:center;}
+  .nf-plan{justify-self:end;width:clamp(18rem,100%,32rem);}
+  .nf-lbl,.nf-miss{font-size:.6875rem;}
+}
+
+/* SOUL PASS 2026-10-01, light (the plan already carries the motion): the
+   eyebrow rule draws in; once the missing room has appeared its dashed
+   outline keeps marching, slowly, like a room still being looked for;
+   the key square grows when its row is hovered. */
+@keyframes nf-flood{from{clip-path:circle(0 at 50% 50%);}to{clip-path:circle(75% at 50% 50%);}}
+@keyframes nf-plot{from{stroke-dashoffset:1;}}
+@keyframes nf-solid{from{fill-opacity:0;}}
+@keyframes nf-wipe{from{clip-path:inset(0 100% 0 0);}}
+@keyframes nf-fade{from{opacity:0;}}
+@keyframes nf-draw{from{scale:0 1;}}
+@keyframes nf-march{to{stroke-dashoffset:-14;}}
+@media (prefers-reduced-motion:no-preference){
+  .nf-v1 .eyebrow::after{animation:nf-draw .6s .2s var(--ease-out) both;}
+  .nf-miss-line{animation:nf-fade .3s 1.8s both,nf-march 1.6s 2.1s linear infinite;}
+}
+@media (prefers-reduced-motion:reduce){
+  .nf-walls,.nf-room,.nf-miss-fill,.nf-miss-line,.nf-lbl,.nf-miss{animation:none;}
+}

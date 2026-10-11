@@ -55,5 +55,22 @@
         "contents": "Sommaire · {count} sections",
         "onThisPage": "Sur cette page",
         "inShort": "En bref"
+    },
+    "notFound": {
+        "title": "Page introuvable",
+        "eyebrow": "404 · Introuvable",
+        "heading": "Cette pièce n’est pas sur le plan.",
+        "lede": "Chaque page de ce site est dessinée sur un seul plan, et l’adresse demandée n’y figure pas. Le lien est peut-être ancien, mal saisi, ou la page a été retirée.",
+        "askedFor": "Adresse demandée",
+        "didYouMean": "Vouliez-vous dire",
+        "waysOn": "Pour continuer",
+        "servicesBlurb": "Ce qui se construit, et ce que ça coûte.",
+        "portfolioBlurb": "Des projets pour de vraies entreprises.",
+        "blogBlurb": "Notes sur la construction et l’usage des outils.",
+        "contactBlurb": "Décrivez votre besoin.",
+        "reportBefore": "Si un lien de ce site vous a mené ici, ",
+        "reportLink": "signalez-le",
+        "reportAfter": ".",
+        "reportSubject": "Lien cassé : {path}"
     }
 }

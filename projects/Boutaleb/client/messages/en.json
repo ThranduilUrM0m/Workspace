@@ -55,5 +55,22 @@
         "contents": "Contents · {count} sections",
         "onThisPage": "On this page",
         "inShort": "In short"
+    },
+    "notFound": {
+        "title": "Page not found",
+        "eyebrow": "404 · Not found",
+        "heading": "That room isn’t on the plan.",
+        "lede": "Every page on this site is drawn on one plan, and the address you asked for isn’t on it. The link may be old, mistyped, or the page removed.",
+        "askedFor": "You asked for",
+        "didYouMean": "Did you mean",
+        "waysOn": "Ways on",
+        "servicesBlurb": "What gets built and what it costs.",
+        "portfolioBlurb": "Work for real businesses.",
+        "blogBlurb": "Notes on building and running tools.",
+        "contactBlurb": "Describe what you need.",
+        "reportBefore": "If a link on this site sent you here, ",
+        "reportLink": "report it",
+        "reportAfter": ".",
+        "reportSubject": "Broken link: {path}"
     }
 }
