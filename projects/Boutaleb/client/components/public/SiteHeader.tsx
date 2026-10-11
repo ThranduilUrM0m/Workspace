@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Link, usePathname } from '@/i18n/navigation';
-import { routing, type Locale } from '@/i18n/routing';
+import { getPathname, Link, usePathname } from '@/i18n/navigation';
+import { LOCALE_COOKIE, routing, type Locale } from '@/i18n/routing';
 import { business } from '@/lib/business';
 import { TangierClock } from './TangierClock';
 
@@ -26,6 +26,13 @@ const LANG_LABEL: Record<Locale, { short: string; aria: string }> = {
     en: { short: 'EN', aria: 'EN, English' },
     ar: { short: 'عربي', aria: 'عربي، العربية' },
 };
+
+// A chosen language is remembered so "/" does not send a returning English
+// reader back to French (proxy.ts). Set only by this switch, never by a
+// visit: a shared /en link must not change where "/" lands.
+function rememberLocale(locale: Locale) {
+    document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
 
 export function SiteHeader() {
     const t = useTranslations('nav');
@@ -65,9 +72,14 @@ export function SiteHeader() {
 
     return (
         <header className="site-bar" id="top">
+            {/* The wordmark stays Latin. dir="ltr" goes on a <bdi> inside the
+                link, never on .site-mark, or its margin-inline-end:auto flips
+                and the wordmark glues to the nav (public README item 60). */}
             <Link className="site-mark" href="/">
-                {business.brand}
-                <span className="dot">.</span>
+                <bdi dir="ltr" lang="en" translate="no">
+                    {business.brand}
+                    <span className="dot">.</span>
+                </bdi>
             </Link>
             <nav className="site-nav" id="site-nav" aria-label={t('label')} ref={nav}>
                 <ul>
@@ -97,7 +109,7 @@ export function SiteHeader() {
                     <div>
                         <span className="nf-cap">{t('writeIn')}</span>
                         <a href={`mailto:${business.email}`}>
-                            {business.email} <span aria-hidden="true">↗</span>
+                            {business.email} <span className="flip-rtl" aria-hidden="true">↗</span>
                         </a>
                     </div>
                     <div className="nf-end">
@@ -113,9 +125,19 @@ export function SiteHeader() {
                             {LANG_LABEL[l].short}
                         </span>
                     ) : (
-                        <Link key={l} href={pathname} locale={l} hrefLang={l} lang={l} aria-label={LANG_LABEL[l].aria}>
+                        // A plain link to the real address: next-intl's Link
+                        // writes /fr/... for the default language, which only
+                        // redirects. A language change reloads the page anyway.
+                        <a
+                            key={l}
+                            href={getPathname({ href: pathname, locale: l })}
+                            hrefLang={l}
+                            lang={l}
+                            aria-label={LANG_LABEL[l].aria}
+                            onClick={() => rememberLocale(l)}
+                        >
                             {LANG_LABEL[l].short}
-                        </Link>
+                        </a>
                     ),
                 )}
             </span>

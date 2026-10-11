@@ -103,7 +103,7 @@ export function SiteFooter() {
                                     </p>
                                     <Link className="ff-go" href="/contact">
                                         {t('start')}
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B1B1F" strokeWidth="2" aria-hidden="true">
+                                        <svg className="flip-rtl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B1B1F" strokeWidth="2" aria-hidden="true">
                                             <path d="M7 17L17 7M9 7h8v8" />
                                         </svg>
                                     </Link>
@@ -115,7 +115,7 @@ export function SiteFooter() {
                 <div className="ft-rule" />
                 <div className="ft-links">
                     <div className="ft-id">
-                        <div className="ft-brand">{business.brand}</div>
+                        <div className="ft-brand" lang="en" translate="no">{business.brand}</div>
                         <p className="ft-about">{t('about')}</p>
                     </div>
                     <div className="ft-cols">
@@ -161,7 +161,7 @@ export function SiteFooter() {
                     <span>
                         <span className="cr-long">{t('copyright')} </span>&copy; {year}{' '}
                         <span className="cr-long">{t('withLove')} </span>
-                        <span className="cr-brand">{business.brand}</span>.
+                        <bdi className="cr-brand" lang="en" translate="no">{business.brand}</bdi>.
                     </span>
                     <a className="ft-top-link" href="#top">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1B1B1F" strokeWidth="2" aria-hidden="true">

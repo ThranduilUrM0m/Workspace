@@ -340,3 +340,14 @@ b,strong{font-family:var(--f-head);}
 @media (prefers-reduced-motion:reduce){
   .site-nav,.site-nav li a,.nav-foot,.menu-btn span{transition:none !important;}
 }
+
+/* Arabic, everywhere (M2 RTL pass): tracking breaks the letter joins,
+   uppercase means nothing, and Questrial/Bricolage have no Arabic glyphs.
+   :lang() follows the nearest lang attribute, so English copy inside an
+   Arabic page (lang="en") and the Latin wordmark keep their own type.
+   !important on purpose: this is a script rule, not a component style, and
+   it must beat every per-component letter-spacing above. */
+:lang(ar){font-family:var(--f-ar) !important;letter-spacing:0 !important;text-transform:none !important;}
+
+/* Arrows that mean "forward" or "out" point the reading direction. */
+.flip-rtl:dir(rtl){display:inline-block;scale:-1 1;}
