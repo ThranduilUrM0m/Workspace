@@ -46,7 +46,12 @@
         "legal": "Legal",
         "privacyLong": "Privacy Policy",
         "termsLong": "Terms of Service",
-        "legalNoticeLong": "Legal Notice"
+        "legalNoticeLong": "Legal Notice",
+        "sending": "Sending…",
+        "sentTitle": "Thanks, {name}. It’s in.",
+        "sentBody": "A reply reaches {email} within two working days.",
+        "addDetail": "Add budget and timeline",
+        "notSent": "Not sent: the connection dropped. Your message is still here, so try again, or write to {email}."
     },
     "legal": {
         "eyebrow": "Legal",

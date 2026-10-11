@@ -5,7 +5,7 @@ import { FooterForm } from './forms/FooterForm';
 
 // Ported from the locked public footer (Blueprinting/wireframes/public/legal.html).
 // "Blog" sits under Navigation only — dropped from Resources, decided 2026-10-11.
-// The form (forms/FooterForm.tsx) checks its fields; T5.3 makes it send in place.
+// The form card is forms/FooterForm.tsx: it sends and answers in place.
 
 const SOCIAL_ICON: Record<SocialProfile['network'], { name: string; path: string }> = {
     github: {
@@ -54,10 +54,7 @@ export function SiteFooter() {
                         </div>
                     </div>
                     <div className="ft-form">
-                        <div className="ff-card">
-                            <p className="ft-cap">{t('missedContact')}</p>
-                            <FooterForm />
-                        </div>
+                        <FooterForm />
                     </div>
                 </div>
                 <div className="ft-rule" />

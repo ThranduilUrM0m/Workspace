@@ -36,6 +36,9 @@ export const footerEnquiry = z.object({
 /** /contact, steps 1-3. Step 3 is optional as a whole. */
 export const contactEnquiry = z.object({
     ...base,
+    /** Set when the visitor came from a footer send's "Add budget and
+     *  timeline": the server adds to that enquiry instead of a new one. */
+    lead: z.string().max(40).optional(),
     phone: optional(40),
     category: z.enum(CATEGORIES),
     company: optional(120),

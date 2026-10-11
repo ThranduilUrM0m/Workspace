@@ -414,3 +414,38 @@ test('/contact keeps every answer when the send fails', async ({ page }) => {
     await expect(page.locator('fieldset[data-s="2"] [role="alert"]')).toContainText('Not sent');
     await expect(main.getByLabel('A line or two about what you need')).toHaveValue('A shop.');
 });
+
+test('the footer form answers in place and hands its lead to /contact', async ({ page }) => {
+    await page.goto('/en/services');
+    await page.evaluate(() => sessionStorage.clear());
+    const card = page.locator('#sec-footer .ff-card');
+    await card.getByLabel('Full name').fill('Sara Alaoui');
+    await card.getByLabel('Email').fill('sara@atlas-riads.ma');
+    await card.getByLabel('A line or two about what you need').fill('A booking site for a riad.');
+    await card.getByRole('button', { name: "Let's start the conversation" }).click();
+
+    const done = card.getByRole('heading', { name: 'Thanks, Sara. It’s in.' });
+    await expect(done).toBeFocused({ timeout: 60_000 });
+    await expect(card).toContainText('A reply reaches sara@atlas-riads.ma within two working days.');
+    await expect(card).toHaveClass(/is-filled/);
+
+    // "Add budget and timeline": /contact on step 2, this send's answers in.
+    await card.getByRole('link', { name: /Add budget and timeline/ }).click();
+    await expect(page).toHaveURL(/\/en\/contact\?lead=L-/);
+    await expect(page.locator('.rail [aria-current="step"] .r-title')).toHaveText('Project');
+    await expect(page.locator('main').getByLabel('A line or two about what you need')).toHaveValue('A booking site for a riad.');
+    await expect(page.locator('.c-restored')).toHaveCount(0);
+});
+
+test('the footer form keeps every field when the send fails', async ({ page }) => {
+    await page.route('**/api/enquiries', (route) => route.abort('connectionreset'));
+    await page.goto('/services');
+    const card = page.locator('#sec-footer .ff-card');
+    await card.getByLabel('Nom complet').fill('Sara');
+    await card.getByLabel('E-mail').fill('sara@atlas-riads.ma');
+    await card.getByLabel('Une ligne ou deux sur votre besoin').fill('Un site.');
+    await card.getByRole('button', { name: 'Lancer la conversation' }).click();
+    await expect(card.getByRole('alert')).toContainText('Non envoyé');
+    await expect(card.getByLabel('Une ligne ou deux sur votre besoin')).toHaveValue('Un site.');
+    await expect(card.getByRole('button', { name: 'Lancer la conversation' })).toBeEnabled();
+});

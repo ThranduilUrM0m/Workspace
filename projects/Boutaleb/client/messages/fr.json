@@ -46,7 +46,12 @@
         "legal": "Mentions",
         "privacyLong": "Politique de confidentialité",
         "termsLong": "Conditions d’utilisation",
-        "legalNoticeLong": "Mentions légales"
+        "legalNoticeLong": "Mentions légales",
+        "sending": "Envoi…",
+        "sentTitle": "Merci, {name}. C’est reçu.",
+        "sentBody": "Une réponse arrive à {email} sous deux jours ouvrés.",
+        "addDetail": "Ajouter budget et délai",
+        "notSent": "Non envoyé : la connexion a coupé. Votre message est toujours là : réessayez, ou écrivez à {email}."
     },
     "legal": {
         "eyebrow": "Légal",

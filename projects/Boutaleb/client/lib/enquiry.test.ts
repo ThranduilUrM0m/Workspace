@@ -48,7 +48,7 @@ describe('contactEnquiry', () => {
     it('names every schema field in exactly one step', () => {
         const stepped = CONTACT_STEPS.flat().sort();
         const fields = Object.keys(contactEnquiry.shape)
-            .filter((k) => k !== 'idempotencyKey')
+            .filter((k) => k !== 'idempotencyKey' && k !== 'lead')
             .sort();
         expect(stepped).toEqual(fields);
     });

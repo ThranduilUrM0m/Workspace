@@ -67,16 +67,23 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
         refs: '',
     });
 
-    // The draft: restored once, then written on every change.
+    // The draft: restored once, then written on every change. Arriving from
+    // a footer send ("Add budget and timeline", ?lead=), the draft holds that
+    // send's answers: the form opens on step 2, where budget and timeline are.
     useEffect(() => {
         const saved = sessionStorage.getItem(DRAFT);
+        const lead = new URLSearchParams(location.search).get('lead') ?? undefined;
         if (saved) {
             try {
-                form.reset({ ...form.getValues(), ...JSON.parse(saved) });
-                setRestored(true);
+                const draft = JSON.parse(saved) as Partial<ContactEnquiry>;
+                form.reset({ ...form.getValues(), ...draft, lead: lead ?? draft.lead });
+                if (lead && draft.name && draft.email) setAt(2);
+                else setRestored(true);
             } catch {
                 sessionStorage.removeItem(DRAFT);
             }
+        } else if (lead) {
+            form.setValue('lead', lead);
         }
         const { unsubscribe } = form.watch((values) => sessionStorage.setItem(DRAFT, JSON.stringify(values)));
         return unsubscribe;

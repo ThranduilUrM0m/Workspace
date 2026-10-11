@@ -45,4 +45,17 @@ describe('POST /api/enquiries (local stand-in)', () => {
         expect(res.status).toBe(422);
         expect(await res.json()).toEqual({ errors: { name: 'required', email: 'email' } });
     });
+
+    it('answers a footer send with 201 and its lead, and no cookie', async () => {
+        const res = await send({ source: 'footer', locale: 'fr', idempotencyKey: valid.idempotencyKey, name: 'Sara', email: 'sara@x.ma', projectType: 'website', message: 'Hi' });
+        expect(res.status).toBe(201);
+        expect(await res.json()).toEqual({ lead: 'L-0B6F' });
+        expect(res.cookies.get('bt_thanks_email')).toBeUndefined();
+    });
+
+    it('answers an invalid footer send with 422', async () => {
+        const res = await send({ source: 'footer', idempotencyKey: valid.idempotencyKey, name: 'Sara', email: 'sara@x.ma', projectType: 'website', message: '' });
+        expect(res.status).toBe(422);
+        expect(await res.json()).toEqual({ errors: { message: 'required' } });
+    });
 });
