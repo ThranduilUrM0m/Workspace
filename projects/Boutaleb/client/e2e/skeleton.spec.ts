@@ -165,7 +165,7 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
-for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice']) {
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services']) {
     test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 800 });
         await page.goto(path);
@@ -173,3 +173,15 @@ for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice']) {
         expect(overflow).toBe(0);
     });
 }
+
+test('/services carries the three anchors the footer and redirects point at', async ({ page }) => {
+    const res = await page.goto('/en/services');
+    expect(res?.status()).toBe(200);
+    for (const id of ['offers', 'process', 'questions']) await expect(page.locator(`#${id}`)).toBeAttached();
+    await expect(page.locator('.p-row')).toHaveCount(7);
+    await expect(page.locator('.qa > div')).toHaveCount(8);
+    // English copy only so far: the French and Arabic URLs render it, unindexed.
+    await page.goto('/services');
+    await expect(page.locator('main')).toHaveAttribute('lang', 'en');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+});

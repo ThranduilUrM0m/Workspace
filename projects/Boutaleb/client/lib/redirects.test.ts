@@ -17,6 +17,6 @@ describe('retiredRedirects', () => {
 
     it('has one rule per address and language', () => {
         expect(new Set(all.map((r) => r.source)).size).toBe(all.length);
-        expect(all).toHaveLength(30);
+        expect(all).toHaveLength(36);
     });
 });

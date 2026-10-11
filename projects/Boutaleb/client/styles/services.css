@@ -1,0 +1,160 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/services.html
+   (locked, mobile pass 2026-09-27, soul pass 2026-09-30). Every selector is
+   scoped to .services-v1 so its generic classes (.eyebrow, .inset, .more,
+   .note) cannot reach another page; [dir="rtl"] rules became :dir(rtl), and
+   the faces read next/font variables. Breakpoints as drawn:
+     48rem  process table + questions: 4 columns / 2 columns first fit
+     56rem  offers: 4 columns need ~12rem each for the bullet lists
+     60rem  questions go two-up beside a sticky head */
+/* /services — built 2026-09-26 from about.html's shell (header, hero, footer).
+   Absorbs /process (#process) and /faq (#questions); both ids are linked from
+   the homepage and every footer, and stay English in all three languages.
+   New CSS here is rem and logical properties so it mirrors under dir="rtl".
+
+   MOBILE PASS 2026-09-27. Header + footer: public.css, menu: public.js.
+   Base styles are the phone; each block adds its desktop layout at the
+   width where the stacked version starts wasting the line:
+     48rem  process table + questions: 4 columns / 2 columns first fit
+            (the step text keeps ~16rem at 768px)
+     56rem  offers: 4 columns need ~12rem each for the bullet lists
+   The page's own tokens live on .services-v1, not :root: its --muted is
+   darker than public.css's and would otherwise repaint the header. */
+.services-v1{
+  --bg:#F7F5F2; --accent:#C4694A;
+  --surface:#FBFAF8; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1);
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);
+}
+.services-v1 h1,.services-v1 h2,.services-v1 .ghost{font-family:var(--f-head);}
+.services-v1 .wrap{max-width:68.75rem;margin:0 auto;padding-inline:1.25rem;}
+
+/* Ghost word: centred by flex, so it overflows both sides equally and the
+   same rule holds under dir="rtl" (a left:50% + translate would not). */
+.services-v1 .s-hero{position:relative;padding:1.25rem 0 3.5rem;overflow:hidden;}
+.services-v1 .s-hero .ghost{
+  position:absolute;top:-.5rem;inset-inline:0;display:flex;justify-content:center;
+  font-size:clamp(6rem,26vw,23.75rem);line-height:.78;font-weight:700;color:var(--ink);opacity:.05;
+  white-space:nowrap;pointer-events:none;letter-spacing:-.04em;
+}
+.services-v1 .eyebrow{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--accent-ink);margin:2.25rem 0 1.125rem;display:flex;align-items:center;gap:.5rem;position:relative;}
+.services-v1 .eyebrow::after{content:"";width:1.5rem;height:1px;background:var(--accent);}
+.services-v1 .s-hero h1{font-size:clamp(2rem,1.25rem + 3.2vw,2.75rem);line-height:1.15;max-width:26ch;margin:0 0 1.5rem;position:relative;text-wrap:balance;}
+.services-v1 .s-hero .lead{max-width:35rem;color:var(--muted);font-size:1rem;line-height:1.7;position:relative;margin:0;}
+
+/* SOUL PASS 2026-09-30 — the page read like a report. Four moves, each
+   tied to something the page already says, none decorative for its own sake:
+   1. Hero: the three numbers the page is built on (3 kinds, 7 steps,
+      8 answers) become the page's own index, big clay figures that jump.
+   2. Offers: the step number becomes a giant outline numeral (the footer
+      wordmark's outline treatment), and fills with clay under the pointer.
+   3. Process: seven rows become one thread. Circled steps sit on a line
+      that inks itself in clay as you scroll down it; "Your part" is a pill
+      you can pick out at a glance down the column.
+   4. Questions: the heading stays put beside the list on desktop, so the
+      section reads as a conversation, not a table.
+   Motion is scroll-driven CSS (animation-timeline), no library; browsers
+   without it, and anyone with reduced motion, get the finished state. */
+.services-v1 .s-index{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-block-start:2.5rem;max-width:40rem;}
+.services-v1 .s-index a{position:relative;display:grid;align-content:start;gap:.375rem;padding:.25rem 1rem;color:var(--muted);text-decoration:none;transition:color .18s;}
+.services-v1 .s-index a:first-child{padding-inline-start:0;}
+.services-v1 .s-index a + a::before{content:"";position:absolute;inset-inline-start:0;top:.5rem;bottom:.5rem;width:1px;background:var(--rule);}
+.services-v1 .s-index b{font:700 clamp(2.5rem,1.75rem + 3vw,3.75rem)/.9 var(--f-head);color:var(--accent);letter-spacing:-.03em;}
+.services-v1 .s-index span{font-size:.8125rem;line-height:1.35;}
+.services-v1 .s-index a:hover,.services-v1 .s-index a:focus-visible{color:var(--ink);}
+
+/* Section heads: the "002 · label" eyebrow in faint ink, then a Bricolage h2. */
+.services-v1 .s-sec{padding:3.5rem 0;}
+.services-v1 .s-sec.tint{background:var(--surface);}
+.services-v1 .s-sec .label{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--faint);margin-bottom:.75rem;}
+.services-v1 .s-sec h2{font-size:clamp(1.5rem,1.1rem + 1.6vw,1.875rem);line-height:1.2;margin:0 0 .75rem;max-width:32ch;text-wrap:balance;}
+.services-v1 .s-sec .note{color:var(--muted);font-size:.9375rem;line-height:1.6;max-width:40rem;margin:0 0 2rem;}
+
+/* Inset divider: a hairline that stops .25rem short of both container edges. */
+.services-v1 .inset{position:relative;}
+.services-v1 .inset::before{content:"";position:absolute;top:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+
+/* 002 — offers. Borderless stacked rows. Phone: the number keeps its own
+   narrow column and everything else stacks beside it. */
+.services-v1 .offer{display:grid;gap:1rem;padding:1.75rem .25rem;}
+.services-v1 .offer .n{font:700 clamp(4rem,2.5rem + 6vw,6.5rem)/.8 var(--f-head);letter-spacing:-.04em;
+  color:transparent;-webkit-text-stroke:1px var(--accent);transition:color .3s var(--ease-out);}
+.services-v1 .offer:hover .n{color:rgba(196,105,74,.16);}
+.services-v1 .offer h3{font-family:var(--f-head);font-weight:700;font-size:1.625rem;line-height:1.15;margin:0 0 .5rem;letter-spacing:-.01em;}
+.services-v1 .offer .sit{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);line-height:1.5;}
+.services-v1 .offer p{font-size:.9375rem;line-height:1.65;color:var(--muted);margin:0 0 1rem;max-width:60ch;}
+.services-v1 .offer ul{list-style:none;margin:0;padding:0;display:grid;gap:.5rem;font-size:.875rem;line-height:1.45;}
+.services-v1 .offer li{padding-inline-start:1rem;position:relative;}
+.services-v1 .offer li::before{content:"";position:absolute;inset-inline-start:0;top:.6em;width:.4375rem;height:1px;background:var(--accent);}
+.services-v1 .more{color:var(--ink);font-size:.875rem;text-decoration:none;border-bottom:1px solid var(--accent);padding-bottom:1px;}
+.services-v1 .arr{display:inline-block;}
+.services-v1 .arr:dir(rtl){transform:scaleX(-1);}
+
+/* 003 — process. Seven rows in three groups; the "Your part" column is the
+   point of the section, so it gets the accent, not the step number alone.
+   Phone: no column headers (nothing to head once stacked); "Your part"
+   rides at the end of the step's title line as a tag, the text under it. */
+.services-v1 .p-note{display:flex;gap:.75rem;align-items:baseline;font-size:.9375rem;color:var(--ink);margin:0 0 2rem;max-width:44rem;line-height:1.6;}
+.services-v1 .p-note b{font-family:var(--f-head);font-weight:700;color:var(--accent-ink);flex:none;}
+.services-v1 .p-head{display:none;}
+/* The thread: a faint line from the first circle to the last, and a clay
+   one over it that grows with scroll. --x is the circle's centre. */
+/* isolate + z-index:-1: each animated row is its own stacking context, so
+   a z-index on the circle alone cannot lift it over a line drawn later */
+.services-v1 .p-track{position:relative;isolation:isolate;--x:1.375rem;view-timeline:--track block;}
+.services-v1 .p-track::before,.services-v1 .p-track::after{content:"";position:absolute;inset-inline-start:var(--x);top:3.25rem;bottom:2.5rem;width:1px;margin-inline-start:-.5px;background:var(--rule);z-index:-1;}
+.services-v1 .p-track::after{width:2px;margin-inline-start:-1px;background:var(--accent);transform-origin:top;}
+.services-v1 .p-group{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--accent-ink);padding:2rem .25rem .75rem 3.5rem;}
+.services-v1 .p-group::after{content:"";position:absolute;inset-inline-start:var(--x);top:calc(2rem + .3em);width:.5rem;height:.5rem;margin-inline-start:-.25rem;background:var(--accent);z-index:1;}
+.services-v1 .p-group.inset::before,.services-v1 .p-row.inset::before{inset-inline-start:3.5rem;}
+.services-v1 .p-row{display:grid;grid-template-columns:2.25rem minmax(0,1fr) auto;grid-template-areas:"n h part" ". p p";gap:.375rem 1rem;padding:1.125rem .25rem;align-items:baseline;}
+.services-v1 .p-row .n{grid-area:n;position:relative;z-index:1;display:grid;place-items:center;width:2.25rem;height:2.25rem;
+  background:var(--bg);box-shadow:inset 0 0 0 1px var(--accent);font:.875rem/1 var(--f-head);color:var(--accent-ink);transition:background .18s,color .18s;}
+.services-v1 .p-row:hover .n{background:var(--accent-ink);color:#fff;}
+.services-v1 .p-row h3{grid-area:h;font-family:var(--f-head);font-weight:700;font-size:1.0625rem;margin:0;}
+.services-v1 .p-row p{grid-area:p;font-size:.9375rem;line-height:1.6;color:var(--muted);margin:0;}
+.services-v1 .p-row .part{grid-area:part;justify-self:end;white-space:nowrap;padding:.3rem .75rem;box-shadow:inset 0 0 0 1px rgba(196,105,74,.45);
+  font-size:.6875rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);transition:background .18s,color .18s;}
+.services-v1 .p-row:hover .part{background:var(--accent-ink);color:#fff;}
+
+/* 004 — questions. An open list, every answer visible: nothing to click,
+   nothing hidden from a touch screen, and room for Arabic and French to run long. */
+.services-v1 .q-layout{display:grid;grid-template-areas:"head" "list" "end";}
+.services-v1 .q-head{grid-area:head;}
+.services-v1 .qa{grid-area:list;margin:0;counter-reset:q;}
+.services-v1 .qa div{display:grid;gap:.5rem;padding:1.5rem .25rem;counter-increment:q;}
+.services-v1 .qa dt{font-family:var(--f-head);font-weight:700;font-size:1.1875rem;line-height:1.35;max-width:34ch;text-wrap:balance;}
+.services-v1 .qa dt::before{content:counter(q,decimal-leading-zero);display:block;font:.6875rem var(--f-body);letter-spacing:.1em;color:var(--accent-ink);margin-block-end:.5rem;}
+.services-v1 .qa-end{grid-area:end;}
+.services-v1 .qa dd{margin:0;font-size:.9375rem;line-height:1.7;color:var(--muted);max-width:60ch;}
+.services-v1 .qa-end{padding:2rem .25rem 0;font-size:.9375rem;color:var(--muted);}
+
+@media (min-width:48rem){
+  .services-v1 .wrap{padding-inline:2rem;}
+  .services-v1 .s-hero{padding-block-end:5rem;}
+  .services-v1 .s-hero .ghost{top:-4.375rem;}
+  .services-v1 .s-sec{padding-block:5rem;}
+  .services-v1 .s-sec .note,.services-v1 .p-note{margin-block-end:3rem;}
+  .services-v1 .p-head,.services-v1 .p-row{grid-template-columns:2.25rem minmax(0,11rem) minmax(0,1fr) minmax(0,8rem);gap:2rem;padding-inline:.25rem;}
+  .services-v1 .p-head{display:grid;font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-block:0 .75rem;}
+  .services-v1 .p-head span:last-child{text-align:end;}
+  .services-v1 .p-group{padding-inline-start:4.5rem;}
+  .services-v1 .p-group.inset::before,.services-v1 .p-row.inset::before{inset-inline-start:4.5rem;}
+  .services-v1 .p-row{grid-template-areas:"n h p part";}
+}
+@media (min-width:56rem){
+  .services-v1 .offer{grid-template-columns:8.5rem minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr);gap:2rem;padding-block:2.5rem;align-items:start;}
+}
+/* questions go two-up once the list keeps ~34rem beside a 17rem head */
+@media (min-width:60rem){
+  .services-v1 .q-layout{grid-template-columns:minmax(0,17rem) minmax(0,1fr);grid-template-areas:"head list" ". end";column-gap:4rem;}
+  .services-v1 .q-head{position:sticky;top:calc(var(--bar-h) + 2rem);align-self:start;}
+}
+
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .services-v1 .offer,.services-v1 .p-row,.services-v1 .qa > div{animation:s-rise linear both;animation-timeline:view();animation-range:entry 0% entry 35%;}
+    .services-v1 .p-track::after{animation:s-thread linear both;animation-timeline:--track;animation-range:entry 30% exit 20%;}
+  }
+}
+@keyframes s-rise{from{opacity:0;translate:0 1.25rem;}}
+@keyframes s-thread{from{scale:1 0;}}

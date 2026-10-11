@@ -46,9 +46,12 @@
 *,*::before,*::after{box-sizing:border-box;}
 html,body{margin:0;background:var(--ground);}
 html{line-height:normal;}
-/* Tailwind's preflight resets two browser defaults the wireframes lean on. */
+/* Tailwind's preflight resets three browser defaults the wireframes lean on.
+   Headings get their bold back at zero specificity, so a page rule that sets
+   its own weight still wins. */
 body{font-family:var(--f-body);color:var(--ink);}
 a{text-decoration:underline;}
+:where(h1,h2,h3,h4,h5,h6){font-weight:700;}
 /* the sticky bar would cover the top of any #anchor target */
 html{scroll-padding-top:var(--bar-h);}
 /* Questrial ships one weight: anything heavy goes to Bricolage, never a

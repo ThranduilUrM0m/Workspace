@@ -12,7 +12,10 @@ const RETIRED: [from: string, to: string][] = [
     ['/faq', '/services#questions'],
     // Renamed on the 2026-08-29 route map.
     ['/privacy-policy', '/privacy'],
-    // The French slugs of the ERP Pages fixture, switched to English.
+    // The French slugs of the ERP Pages fixture (pages + redirects lists),
+    // switched to English.
+    ['/nos-services', '/services'],
+    ['/contactez-nous', '/contact'],
     ['/realisations', '/portfolio'],
     ['/a-propos', '/about'],
     ['/journal', '/blog'],
