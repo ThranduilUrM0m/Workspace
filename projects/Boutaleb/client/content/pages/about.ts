@@ -2,24 +2,14 @@ import type { PageRecord } from '../page-record';
 
 // Copy verbatim from Blueprinting/wireframes/public/about.html. English only
 // until the French translation (plan R3, by 2026-11-15).
-// PLACEHOLDER, LAUNCH-BLOCKING: the whole `proof` block (the testimonial,
-// its name and company, and the four stats) is wireframe filler, not fact.
-// Developer decision 2026-10-11: placeholders until launch prep; the real
-// values are on the long-lead list (plan, "About proof").
+// The proof block's testimonial and stats come from content/proof.ts
+// (placeholder, launch-blocking).
 
 export type AboutBlocks = {
     hero: { ghost: string; eyebrow: string; heading: string; note: { before: string; strong: string; after: string } };
     standards: { label: string; heading: string; items: { title: string; short: string; long: string; expanded: string }[] };
     process: { label: string; heading: string; steps: { title: string; text: string }[]; focal: string };
-    proof: {
-        placeholder: boolean;
-        label: string;
-        quote: string;
-        name: string;
-        role: string;
-        company: string;
-        stats: { value: string; mark: string; title: string; text: string }[];
-    };
+    proof: { label: string };
 };
 
 export const aboutPage: PageRecord<AboutBlocks> = {
@@ -83,20 +73,7 @@ export const aboutPage: PageRecord<AboutBlocks> = {
                     ],
                     focal: '[ focal photo / mark — process in motion ]',
                 },
-                proof: {
-                    placeholder: true,
-                    label: 'Proof',
-                    quote: 'Shipped faster than I expected, and every choice was explained before it was made.',
-                    name: 'Client Name',
-                    role: 'Founder, Web Platform Project',
-                    company: 'Client One',
-                    stats: [
-                        { value: '12', mark: '+', title: 'Client Projects', text: 'Shipped end to end.' },
-                        { value: '100', mark: '%', title: 'On-Time Rate', text: 'Every project delivered on schedule.' },
-                        { value: '5', mark: 'yr', title: 'Experience', text: 'Building web platforms and tooling.' },
-                        { value: '2', mark: 'd', title: 'Response Time', text: 'Working days, reply window.' },
-                    ],
-                },
+                proof: { label: 'Proof' },
             },
         },
     },

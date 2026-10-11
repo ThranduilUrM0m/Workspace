@@ -165,7 +165,7 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
-for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about']) {
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about', '/en', '/']) {
     test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 800 });
         await page.goto(path);
@@ -194,4 +194,21 @@ test('/about renders its four blocks; standards cards take keyboard focus', asyn
     await expect(page.locator('.stat')).toHaveCount(4);
     await page.locator('.a-card').first().focus();
     await expect(page.locator('.a-card').first()).toBeFocused();
+});
+
+test('the homepage renders its sections from the shared content', async ({ page }) => {
+    const res = await page.goto('/en');
+    expect(res?.status()).toBe(200);
+    await expect(page).toHaveTitle('Boutaleb — custom web products');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Bespoke');
+    await expect(page.locator('.c3-project')).toHaveCount(2);
+    await expect(page.locator('.c3-project').first()).toHaveAttribute('href', '/en/portfolio/qasidaty');
+    await expect(page.locator('.stat')).toHaveCount(4);
+
+    // The blog card switches post with its numbered buttons.
+    const title = page.locator('.bc-title');
+    const first = await title.textContent();
+    await page.getByRole('button', { name: 'Post 2' }).click();
+    await expect(title).not.toHaveText(first!);
+    await expect(page.getByRole('button', { name: 'Post 2' })).toHaveAttribute('aria-current', 'true');
 });

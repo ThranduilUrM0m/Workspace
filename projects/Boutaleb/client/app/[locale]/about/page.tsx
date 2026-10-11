@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { pickLocale, type Locale } from '@/content/page-record';
 import { aboutPage } from '@/content/pages/about';
+import { stats, testimonials } from '@/content/proof';
 import { seoFor } from '@/lib/seo';
 import '@/styles/about.css';
 
 // Ported from Blueprinting/wireframes/public/about.html. The proof block is
-// placeholder content until launch prep (content/pages/about.ts).
+// placeholder content until launch prep (content/proof.ts).
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -26,6 +27,7 @@ export default async function AboutPage({ params }: Props) {
     setRequestLocale(locale);
     const { copy, lang } = pickLocale(aboutPage, locale as Locale);
     const { hero, standards, process, proof } = copy.blocks;
+    const quote = testimonials[0];
 
     return (
         <main className="about-v1" id="main" lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
@@ -99,21 +101,21 @@ export default async function AboutPage({ params }: Props) {
                         <div>
                             <figure className="r-figure">
                                 <blockquote>
-                                    <p className="r-quote">{proof.quote}</p>
+                                    <p className="r-quote">{quote.quote}</p>
                                 </blockquote>
                                 <figcaption className="r-people">
                                     <div className="r-avatar" aria-hidden="true" />
                                     <div className="r-who">
-                                        <span className="r-name">{proof.name}</span>
-                                        <span className="r-role">{proof.role}</span>
+                                        <span className="r-name">{quote.name}</span>
+                                        <span className="r-role">{quote.role}</span>
                                     </div>
                                     <div className="r-vdiv" aria-hidden="true" />
-                                    <div className="r-brand">{proof.company}</div>
+                                    <div className="r-brand">{quote.company}</div>
                                 </figcaption>
                             </figure>
                             <div className="full-divider inset" />
                             <div className="stats-row">
-                                {proof.stats.map((stat) => (
+                                {stats.map((stat) => (
                                     <div key={stat.title} className="stat">
                                         <div className="stat-value">
                                             {stat.value}

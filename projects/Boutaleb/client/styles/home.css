@@ -1,0 +1,243 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/homepage.html
+   (locked, mobile pass 2026-09-27; its decision list lives there). Every
+   selector is scoped to .home-v1 (the wireframe's #page-wrap), so .eyebrow,
+   .sec, .ph, .tag and .stat cannot reach other pages; [dir="rtl"] rules
+   became :dir(rtl); the script face reads --font-cookie (homepage only).
+   Breakpoints as drawn, each named by what breaks:
+     48rem  approach, about, process, portfolio: a ~36ch text column no
+            longer fits beside an image or a second card below this
+     56rem  blog: the offset card and its ghost number need the room
+     64rem  trust stats: four across still overflows at 760px */
+.home-v1{max-width:73.75rem;margin:0 auto;color:var(--ink);}
+.home-v1 .eyebrow{color:var(--clay-ink);font:.6875rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;}
+.home-v1 .ph{background:repeating-linear-gradient(45deg,#EDE7DE,#EDE7DE 8px,#E4DCD0 8px,#E4DCD0 16px);display:flex;align-items:center;justify-content:center;color:rgba(27,27,31,.62);font:.6875rem var(--f-body);text-transform:uppercase;letter-spacing:.05em;}
+.home-v1 .sec{padding:3.5rem 1.5rem 4.5rem;}
+
+/* ===== HERO — zero breakpoints: clamp() scales the type continuously ===== */
+.home-v1 #sec-hero{display:flex;flex-direction:column;height:calc(100dvh - var(--bar-h));min-height:30rem;}
+.home-v1 #sec-hero .hero-main{position:relative;flex:1;min-height:0;overflow:hidden;}
+.home-v1 .h-built{position:absolute;inset-inline-start:.5rem;top:0;bottom:0;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:#EDE7DE;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:0;}
+.home-v1 .h-word{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:1;text-align:center;}
+.home-v1 .h-word > div{position:relative;display:inline-block;}
+.home-v1 .h-care{position:absolute;top:50%;left:0;width:100%;translate:0 -50%;text-align:center;font:400 clamp(3.25rem,16vw,5rem) var(--font-cookie),cursive;color:var(--clay);white-space:nowrap;}
+.home-v1 .h-bespoke{display:block;font:700 clamp(3.5rem,17vw,5.25rem)/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;white-space:nowrap;}
+.home-v1 .h-pitch{position:absolute;inset-inline-start:4.75rem;bottom:1.75rem;max-width:13.75rem;z-index:3;}
+.home-v1 .h-pitch .eyebrow{margin-bottom:.5rem;}
+.home-v1 .h-line{font:1.375rem/1.2 var(--f-head);margin-bottom:.625rem;}
+.home-v1 .h-cta{display:inline-flex;align-items:center;min-height:var(--hit);background:#232326;color:var(--ground);font:.6875rem var(--f-body);padding:.5rem 1rem;letter-spacing:.03em;text-decoration:none;}
+.home-v1 .h-strip{border-top:var(--hair) solid var(--line);padding:.75rem 1.5rem;display:flex;justify-content:flex-end;font:.625rem var(--f-body);color:var(--muted);flex-shrink:0;}
+@media (min-width:48rem){.home-v1 #sec-hero{height:calc(100dvh - 3.6875rem);}}
+@media (min-width:48rem) and (pointer:fine){.home-v1 .h-cta{min-height:0;}}
+
+/* ===== APPROACH ===== */
+.home-v1 #sec-approach .eyebrow{text-align:center;}
+.home-v1 .ap-head{font:clamp(1.75rem,1rem + 3vw,2.5rem)/1.1 var(--f-head);max-width:14ch;margin:0 auto 1rem;text-align:center;}
+.home-v1 .ap-sub{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.62);max-width:48ch;margin:0 auto 3rem;text-align:center;}
+.home-v1 .ap-row{display:flex;flex-direction:column;gap:2.5rem;}
+.home-v1 .ap-item{padding:1.5rem 0;border-top:var(--hair) solid var(--line);}
+.home-v1 .ap-item:last-child{border-bottom:var(--hair) solid var(--line);}
+.home-v1 .ap-item-title{font:1.125rem var(--f-head);margin:0 0 .5rem;}
+.home-v1 .ap-item-body{font:.8125rem/1.6 var(--f-body);color:rgba(27,27,31,.62);max-width:36ch;}
+.home-v1 .ap-img{width:100%;aspect-ratio:4/3;}
+@media (min-width:48rem){
+.home-v1 .ap-row{flex-direction:row;gap:3rem;}
+.home-v1 .ap-left{flex:1 1 46%;display:flex;flex-direction:column;}
+.home-v1 .ap-right{flex:1 1 54%;}
+.home-v1 .ap-img{height:100%;min-height:22.5rem;aspect-ratio:auto;}
+}
+
+/* ===== ABOUT ===== */
+.home-v1 #sec-about .sec{position:relative;}
+/* phone: centred on the image's bottom edge (3rem of padding + eyebrow, image
+ is 75% of its width tall), so it sits behind the title, not the grey body */
+.home-v1 .circle-base{position:absolute;top:calc(3rem + 75vw);left:50%;translate:-50% -50%;width:min(26.25rem,90%);aspect-ratio:1;background:radial-gradient(circle,#E3A98A,var(--clay));opacity:.9;z-index:0;
+mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);
+mask-composite:intersect;}
+/* Squared 2026-10-01 (nothing round): two linear fades intersected give a
+ soft-edged square at every width; the class keeps its old name. */
+.home-v1 .split-row{position:relative;z-index:1;display:flex;flex-direction:column;gap:2rem;}
+.home-v1 .split-img{width:100%;aspect-ratio:4/3;}
+.home-v1 .frag-title{font:clamp(3rem,14vw,6.25rem)/.92 var(--f-head);margin:0 0 1.25rem;}
+.home-v1 .frag-body{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.65);max-width:38ch;}
+.home-v1 .split-cta{position:relative;z-index:1;margin-top:1.5rem;}
+.home-v1 .ct-cta{font:.8125rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);}
+@media (min-width:48rem){
+/* the edge the design always meant: soft, via mask. Body text goes full
+   ink because ink .65 on terracotta was ~3:1, under AA's 4.5:1. */
+.home-v1 .circle-base{top:50%;width:min(32rem,95%);opacity:1;}
+.home-v1 .frag-body{color:var(--ink);}
+.home-v1 .split-row{flex-direction:row;gap:3rem;}
+.home-v1 .split-left{flex:1 1 46%;}
+.home-v1 .split-right{flex:1 1 54%;padding-top:1.5rem;}
+.home-v1 .split-img{width:82%;height:20.625rem;aspect-ratio:auto;}
+.home-v1 .split-cta{position:absolute;inset-inline-end:1.5rem;bottom:1.5rem;margin:0;}
+}
+@media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
+
+/* ===== PROCESS — no auto-fit: at mid widths it leaves a 2+1 orphan ===== */
+.home-v1 .pr-head{font:clamp(1.75rem,1rem + 3vw,2.5rem)/1.1 var(--f-head);margin:0 0 1rem;}
+.home-v1 .pr-sub{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.62);max-width:48ch;margin:0 0 3rem;}
+.home-v1 .pr-grid{display:grid;gap:1.75rem;}
+.home-v1 .pr-card{display:flex;flex-direction:column;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);padding:1.25rem;}
+.home-v1 .pr-img{width:100%;aspect-ratio:16/9;margin-bottom:1.25rem;}
+.home-v1 .pr-eyebrow{font:.625rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-ink);margin-bottom:.625rem;}
+.home-v1 .pr-title{font:1.1875rem var(--f-head);margin:0 0 .625rem;}
+.home-v1 .pr-body{font:.8125rem/1.6 var(--f-body);color:rgba(27,27,31,.62);flex:1;margin:0 0 .875rem;}
+.home-v1 .pr-link{font:.75rem var(--f-body);color:var(--ink);text-decoration:none;align-self:flex-start;display:inline-flex;align-items:center;min-height:var(--hit);}
+.home-v1 .pr-link span{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
+@media (min-width:48rem){
+.home-v1 .pr-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.home-v1 .pr-img{height:10.625rem;aspect-ratio:auto;}
+}
+@media (min-width:48rem) and (pointer:fine){.home-v1 .pr-link{min-height:0;}}
+
+/* ===== PORTFOLIO TEASER — the stagger only exists side by side ===== */
+.home-v1 #sec-portfolio .sec{padding-bottom:3rem;overflow:hidden;}
+.home-v1 #sec-portfolio .eyebrow{margin-bottom:0;}
+.home-v1 .c3-row{display:flex;flex-direction:column;gap:2.5rem;margin-top:1.25rem;}
+.home-v1 .c3-media{aspect-ratio:4/3;margin-bottom:1rem;}
+.home-v1 .tag{font:.625rem var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
+.home-v1 .c3-title{font:1.375rem var(--f-head);margin:.375rem 0;}
+.home-v1 .c3-blurb{font:.8125rem/1.5 var(--f-body);color:rgba(27,27,31,.62);max-width:34ch;}
+.home-v1 .c3-accent{width:1.75rem;height:2px;background:var(--clay);margin:.875rem 0;}
+.home-v1 .seeall-row{margin-top:2rem;}
+.home-v1 .seeall{font:.75rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:var(--hit);}
+.home-v1 .seeall span{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
+@media (min-width:48rem){
+.home-v1 .c3-row{flex-direction:row;gap:1.75rem;}
+.home-v1 .c3-project{flex:1 1 0;}
+.home-v1 .c3-project:nth-child(2){margin-top:2.5rem;}
+.home-v1 .c3-media{height:13.75rem;aspect-ratio:auto;}
+}
+@media (min-width:48rem) and (pointer:fine){.home-v1 .seeall{min-height:0;}}
+
+/* ===== TRUST ===== */
+.home-v1 #sec-trust .sec{padding-bottom:2.5rem;}
+.home-v1 #sec-trust .eyebrow{text-align:center;}
+.home-v1 .slider{display:grid;max-width:40rem;margin:0 auto;}
+.home-v1 .slide{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0;animation:trustCross 12s infinite;}
+.home-v1 .slider:hover .slide,.home-v1 .slider:focus-within .slide{animation-play-state:paused;}
+.home-v1 .s2{animation-delay:4s;} .home-v1 .s3{animation-delay:8s;}
+@keyframes trustCross{0%{opacity:0;}4%{opacity:1;}29%{opacity:1;}33%{opacity:0;}100%{opacity:0;}}
+.home-v1 .r-quote{font:clamp(1.125rem,1rem + 1vw,1.375rem)/1.4 var(--f-head);color:#232326;margin:0;}
+.home-v1 .r-quote::before{content:'\201C';color:var(--clay-ink);}
+.home-v1 .r-quote::after{content:'\201D';color:var(--clay-ink);}
+.home-v1 .r-people{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.5rem .875rem;margin-top:1rem;}
+.home-v1 .r-avatar{width:2.125rem;height:2.125rem;border-radius:50%;background:linear-gradient(135deg,#E3A98A,var(--clay));flex-shrink:0;}
+.home-v1 .r-who{display:flex;flex-direction:column;align-items:flex-start;text-align:start;}
+.home-v1 .r-name{font:600 .8125rem var(--f-head);}
+.home-v1 .r-role{font:.6875rem var(--f-body);color:var(--muted);margin-top:2px;}
+.home-v1 .r-vdiv{width:var(--hair);height:1.75rem;background:rgba(27,27,31,.15);}
+.home-v1 .r-brand{font:600 .8125rem var(--f-head);letter-spacing:.02em;color:#4A4A50;}
+.home-v1 .dots{display:flex;justify-content:center;gap:.375rem;margin-top:.5rem;}
+.home-v1 .dots i{width:5px;height:5px;background:rgba(27,27,31,.18);}
+.home-v1 .dots i.on{background:var(--clay);}
+.home-v1 .full-divider{border-top:var(--hair) solid var(--line);margin-top:3rem;}
+/* 2x2 on a phone, number above its words; four across from 64rem */
+.home-v1 .stats-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 1.5rem;margin:2.75rem auto 0;}
+/* phone: each stat centred in its half, value over text */
+.home-v1 .stat{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.625rem;}
+.home-v1 .stat-value{font:700 clamp(2rem,8vw,2.875rem)/1 var(--f-head);display:flex;align-items:flex-start;white-space:nowrap;font-variant-numeric:lining-nums tabular-nums;}
+.home-v1 .stat-value .mark{color:var(--clay);margin-inline-start:1px;}
+.home-v1 .stat-text{display:flex;flex-direction:column;text-align:center;}
+.home-v1 .stat-title{font:600 .875rem/1.3 var(--f-head);letter-spacing:.02em;}
+.home-v1 .stat-desc{font:.75rem/1.4 var(--f-body);color:var(--muted);margin-top:.375rem;max-width:9.375rem;margin-inline:auto;}
+@media (min-width:64rem){
+.home-v1 .stats-row{grid-template-columns:repeat(4,minmax(0,1fr));gap:0;width:94%;}
+.home-v1 .stat{flex-direction:row;justify-content:center;align-items:center;gap:0;padding:0 .875rem;border-inline-start:var(--hair) solid var(--line);}
+.home-v1 .stat:first-child{border-inline-start:none;padding-inline-start:0;}
+.home-v1 .stat:last-child{padding-inline-end:0;}
+.home-v1 .stat{text-align:start;}
+.home-v1 .stat-text{margin-inline-start:.75rem;text-align:start;}
+.home-v1 .stat-desc{margin-inline:0;}
+.home-v1 .stat-title{white-space:nowrap;}
+}
+.home-v1 .logos-label{text-align:center;font:.625rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:3.5rem 0 1.75rem;}
+/* logos wrap on their own: zero breakpoints */
+.home-v1 .logo-grid{display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+.home-v1 .logo-row{display:flex;flex-wrap:wrap;justify-content:center;gap:1.5rem clamp(2rem,8vw,6.5rem);}
+.home-v1 .logo-item{font:600 1.1875rem var(--f-head);letter-spacing:.02em;color:#4A4A50;white-space:nowrap;-webkit-mask-image:linear-gradient(to bottom,#000 25%,transparent);mask-image:linear-gradient(to bottom,#000 25%,transparent);}
+@media (min-width:64rem){.home-v1 .logo-grid{gap:2.25rem;}}
+
+/* ===== BLOG — on a phone the card turns PORTRAIT: desktop's wide card
+ becomes a tall one (min-height, meta pinned to the bottom) so a longer
+ title or excerpt grows it instead of crowding it. The ghost index "01."
+ sits upright on the card's top edge; from 56rem it goes back to the
+ rotated number on the corner and the offset card. ===== */
+.home-v1 .bs-wrap{position:relative;padding:3rem 1.5rem 3rem;}
+.home-v1 .bc-frame{position:relative;}
+.home-v1 .bc-ghostNumWrap{position:absolute;z-index:3;top:0;inset-inline-end:.5rem;translate:0 -58%;pointer-events:none;}
+.home-v1 .bc-ghostNum,.home-v1 .bc-ghostNumOutline{font:700 4.5rem/1 var(--f-head);}
+.home-v1 .bc-ghostNum{color:#EDE7DE;}
+.home-v1 .bc-ghostNumOutline{position:absolute;top:0;left:0;color:transparent;-webkit-text-stroke:1px rgba(27,27,31,.08);translate:4px -4px;}
+.home-v1 .bc-card{position:relative;z-index:2;overflow:hidden;border:clamp(1rem,4vw,2.5rem) solid #fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);background:#fff;cursor:pointer;}
+.home-v1 .bc-ghostWord{position:absolute;inset-inline-start:1.5rem;bottom:0;translate:0 50%;font:700 4.375rem var(--f-head);color:rgba(27,27,31,.06);white-space:nowrap;z-index:0;}
+.home-v1 .bc-inner{position:relative;z-index:1;padding:.25rem;display:flex;flex-direction:column;min-height:25rem;}
+.home-v1 .bc-category{padding-block-start:1rem;}
+.home-v1 .bc-category{font:.625rem var(--f-body);letter-spacing:.02em;text-transform:uppercase;color:rgba(27,27,31,.62);margin-bottom:.625rem;}
+.home-v1 .bc-title{font:clamp(1.5rem,1rem + 2vw,2rem)/1.15 var(--f-head);margin:0 0 1rem;}
+.home-v1 .bc-excerptRow{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;}
+.home-v1 .bc-excerpt{font:.875rem/1.6 var(--f-body);color:rgba(27,27,31,.62);margin:0;max-width:44ch;}
+.home-v1 .bc-flag{display:block;font-size:.625rem;color:var(--clay-ink);margin-top:.375rem;}
+.home-v1 .bc-arrow{flex:0 0 auto;}
+/* Meta, phone: a two-row grid that never wraps by accident.
+   [avatar] author ............ [cal] 3 days ago
+                                6 · 18 · 412
+ .bc-metaLeft is display:contents so its children join this grid; from
+ 56rem it is a flex row again and the desktop line returns unchanged. */
+.home-v1 .bc-meta{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"av au when" ". . stats";align-items:center;column-gap:.5rem;row-gap:.375rem;margin-top:auto;padding-top:1.25rem;border-top:var(--hair) solid var(--line);}
+.home-v1 .bc-excerptRow{margin-block-end:1.75rem;}
+.home-v1 .bc-metaLeft{display:contents;}
+.home-v1 .bc-avatar{grid-area:av;width:1.625rem;height:1.625rem;border-radius:50%;background:linear-gradient(135deg,#E3A98A,var(--clay));flex-shrink:0;}
+.home-v1 .bc-author{grid-area:au;font:600 .75rem var(--f-head);}
+.home-v1 .bc-when{grid-area:when;justify-self:end;display:flex;align-items:center;gap:.375rem;}
+.home-v1 .bc-dateIcon{width:1.25rem;height:1.25rem;background:rgba(27,27,31,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.home-v1 .bc-dateIcon svg,.home-v1 .bc-stats svg{width:.6875rem;height:.6875rem;}
+.home-v1 .bc-date,.home-v1 .bc-stats{font:.6875rem var(--f-body);color:rgba(27,27,31,.62);white-space:nowrap;}
+.home-v1 .bc-stats{grid-area:stats;display:flex;gap:.75rem;}
+.home-v1 .bc-stats span{display:flex;align-items:center;gap:.25rem;}
+/* slide controls: a row of real buttons under the card on a phone. Each is
+ 44px TALL but only as wide as its mark, so bar and number sit together. */
+.home-v1 .bc-dots{display:flex;justify-content:center;align-items:center;gap:.5rem;margin-top:1rem;}
+.home-v1 .bc-dots button{min-width:1.5rem;height:var(--hit);display:flex;align-items:center;justify-content:center;border:0;background:none;padding:0;font:.625rem var(--f-body);color:rgba(27,27,31,.62);cursor:pointer;}
+.home-v1 .bc-dots button[aria-current]::before{content:"";width:1.875rem;height:3px;background:var(--ink);}
+@media (min-width:56rem){
+.home-v1 .bs-wrap{display:flex;align-items:flex-end;min-height:26.25rem;padding:1.5rem 2.5rem 3rem;}
+.home-v1 .bs-wrap::before{content:"";flex:0 0 2.5rem;}
+.home-v1 .bs-right{flex:1;min-width:0;position:relative;}
+.home-v1 .bc-frame{width:70%;margin-inline-start:auto;}
+.home-v1 .bc-ghostNumWrap{inset-inline-end:auto;right:0;translate:50% -50%;}
+.home-v1 .bc-ghostNum,.home-v1 .bc-ghostNumOutline{font-size:7.125rem;rotate:90deg;}
+.home-v1 .bc-ghostNumOutline{translate:6px -6px;}
+.home-v1 .bc-inner{padding:2rem;display:block;min-height:0;}
+.home-v1 .bc-category{padding-block-start:0;}
+.home-v1 .bc-excerptRow{margin-block-end:0;}
+.home-v1 .bc-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.75rem 1rem;margin-top:1.75rem;}
+.home-v1 .bc-metaLeft{display:flex;align-items:center;gap:.5rem;}
+.home-v1 .bc-when{gap:.5rem;margin-inline-start:.375rem;}
+.home-v1 .bc-dateIcon{width:1.625rem;height:1.625rem;}
+.home-v1 .bc-dateIcon svg,.home-v1 .bc-stats svg{width:.8125rem;height:.8125rem;}
+.home-v1 .bc-date,.home-v1 .bc-stats{font-size:.75rem;}
+.home-v1 .bc-stats{gap:.875rem;}
+.home-v1 .bc-dots{position:absolute;z-index:4;inset-inline-end:.5rem;bottom:2.5rem;flex-direction:column;gap:.5rem;margin:0;}
+.home-v1 .bc-dots button[aria-current]::before{width:3px;height:1.875rem;}
+}
+@media (min-width:56rem) and (pointer:fine){.home-v1 .bc-dots button{width:1rem;height:auto;min-height:1rem;}}
+
+@media (prefers-reduced-motion:reduce){
+.home-v1 .slide{animation:none;}
+.home-v1 .s1{opacity:1;}
+}
+
+/* Build additions. The whole blog card is the link (the wireframe's
+   cursor:pointer): the title's link stretches over the card. */
+.home-v1 .bc-link{color:inherit;text-decoration:none;}
+.home-v1 .bc-link::after{content:"";position:absolute;inset:0;z-index:2;}
+.home-v1 .bc-link:focus-visible{outline:none;}
+.home-v1 .bc-card:has(.bc-link:focus-visible){outline:2px solid var(--clay);outline-offset:2px;}
+/* The hero word is the page's h1 (a div with role=heading in the wireframe). */
+.home-v1 h1.h-word{margin:0;font:inherit;}
+/* Testimonials are figure + blockquote, project teasers are links. */
+.home-v1 .slide,.home-v1 .slide blockquote{margin:0;}
+.home-v1 a.c3-project{display:block;color:inherit;text-decoration:none;}
+.home-v1 .blog-head{padding-bottom:0;}
