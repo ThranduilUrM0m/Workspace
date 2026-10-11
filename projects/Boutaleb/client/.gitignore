@@ -31,3 +31,10 @@ coverage/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Playwright
+test-results/
+playwright-report/
+
+# SWC cache
+.swc/

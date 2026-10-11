@@ -1,0 +1,159 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/legal.html
+   (locked 2026-09-26, mobile pass 2026-10-01): ONE layout for /privacy,
+   /terms and /legal-notice. Only the wireframe's page-switch bar (.wf-bar)
+   is dropped, and the faces read next/font variables.
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  the legal-notice record goes label | value
+     56rem  the index stands beside the text, sticky */
+  .legal-v1{
+    --bg:#F7F5F2; --accent:#C4694A; --surface:#FBFAF8; --muted:#4A4A50; --faint:#707076;
+    --rule:rgba(27,27,31,.1);
+    font-family:var(--f-body);color:var(--ink);background:var(--bg);overflow-x:clip;
+  }
+  .legal-v1 h1,.legal-v1 h2{font-family:var(--f-head);}
+  .legal-v1 .wrap{max-width:68.75rem;margin:0 auto;padding-inline:1.25rem;}
+  .legal-v1 a:focus-visible,.legal-v1 summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+
+  /* Head: eyebrow, title, date, siblings, and the language note when a page
+     falls back to French. */
+  .l-head{position:relative;padding-block:clamp(2.5rem,2rem + 2vw,3.5rem) clamp(1.75rem,1.5rem + 1vw,2.5rem);}
+  .lghost{position:absolute;inset-inline-end:-.375rem;top:clamp(1.25rem,.5rem + 2vw,2rem);font:800 clamp(4.5rem,2.5rem + 8vw,9rem)/1 var(--f-head);
+    letter-spacing:-.04em;color:rgba(27,27,31,.045);white-space:nowrap;pointer-events:none;user-select:none;}
+  .lghost .dot{display:inline-block;width:.17em;height:.17em;margin-inline-start:.05em;background:rgba(196,105,74,.22);color:transparent;overflow:hidden;line-height:0;} /* square, not the font's round period */
+  .l-head > :not(.lghost){position:relative;}
+  .eyebrow{font-size:.6875rem;letter-spacing:.125rem;text-transform:uppercase;color:var(--accent-ink);margin:0 0 1.125rem;display:flex;align-items:center;gap:.5rem;}
+  .eyebrow::after{content:"";width:1.5rem;height:1px;background:var(--accent);transform-origin:0 50%;}
+  [dir="rtl"] .eyebrow::after{transform-origin:100% 50%;}
+  .l-head h1{font-size:clamp(2.125rem,1.75rem + 1.5vw,2.75rem);font-weight:700;line-height:1.15;margin:0 0 1rem;text-wrap:balance;}
+  .l-meta{font-size:.875rem;color:var(--faint);margin:0 0 1rem;}
+  .l-sibs{display:flex;flex-wrap:wrap;column-gap:1.5rem;font-size:.875rem;}
+  .l-sibs a{display:inline-flex;align-items:center;min-height:var(--hit);color:var(--faint);text-decoration:none;}
+  .l-sibs a:hover{color:var(--ink);}
+  .l-sibs a[aria-current="page"]{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.375rem;}
+  .l-lang{margin:1.25rem 0 0;padding-inline-start:.875rem;border-inline-start:2px solid var(--accent);font-size:.9375rem;color:var(--ink);max-width:40rem;line-height:1.6;}
+
+  /* Body + section index. The index is the ERP Settings one (.sb-ix in
+     shell/settings-business.css): number + title on one line, the current
+     section in ink and Bricolage with a 2px ink bar. Arabic mirrors it for free. */
+  .l-body{display:grid;grid-template-columns:minmax(0,1fr);gap:1.5rem;padding-bottom:clamp(3.5rem,2rem + 5vw,6rem);}
+  .l-toc{border-block:1px solid var(--rule);}
+  .l-toc summary{display:flex;align-items:center;justify-content:space-between;min-height:var(--hit);cursor:pointer;list-style:none;
+    font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .l-toc summary::-webkit-details-marker{display:none;}
+  .l-toc summary::after{content:"";width:.5rem;height:.5rem;border:solid currentColor;border-width:0 1px 1px 0;rotate:45deg;translate:0 -.125rem;transition:rotate .2s var(--ease-out);}
+  .l-toc[open] summary::after{rotate:225deg;translate:0 .125rem;}
+  .l-toc nav{display:flex;flex-direction:column;padding-bottom:.5rem;}
+  .l-ix{position:relative;display:grid;grid-template-columns:1.5rem minmax(0,1fr);align-items:center;gap:.5rem;min-height:var(--hit);padding-inline-start:.625rem;color:var(--muted);text-decoration:none;transition:color .15s;}
+  .l-ix:hover{color:var(--ink);}
+  .l-ix-n{font-size:.6875rem;font-variant-numeric:tabular-nums;}
+  .l-ix-t{font-size:.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .l-ix.is-on{color:var(--ink);}
+  .l-ix.is-on .l-ix-t{font-family:var(--f-head);font-weight:700;}
+  .l-ix.is-on::before{content:"";position:absolute;inset-inline-start:0;top:.75rem;bottom:.75rem;width:2px;background:var(--ink);}
+
+  .l-short{background:var(--surface);padding:clamp(1.25rem,1rem + 1.5vw,1.75rem) clamp(1.25rem,.75rem + 2.5vw,2rem);margin:0 0 2.5rem;}
+  .l-short .t{font-family:var(--f-head);font-weight:700;font-size:1.0625rem;margin:0 0 .875rem;}
+  .l-short ul{margin:0;padding:0;list-style:none;display:grid;gap:.625rem;font-size:.9375rem;line-height:1.6;}
+  .l-short li{padding-inline-start:1rem;position:relative;}
+  .l-short li::before{content:"";position:absolute;inset-inline-start:0;top:.8em;width:.4375rem;height:1px;background:var(--accent);transform-origin:0 50%;}
+  [dir="rtl"] .l-short li::before{transform-origin:100% 50%;}
+
+  .inset{position:relative;}
+  .inset::before{content:"";position:absolute;top:0;inset-inline:.25rem;height:1px;background:var(--rule);}
+
+  .l-sec{padding:2rem 0 .5rem;scroll-margin-top:5rem;}
+  .l-sec h2{display:flex;gap:.875rem;align-items:baseline;font-size:clamp(1.1875rem,1.125rem + .4vw,1.375rem);font-weight:700;line-height:1.3;margin:0 0 1rem;text-wrap:balance;}
+  .l-sec h2 b{font:700 1.625rem/1 var(--f-head);letter-spacing:-.04em;color:rgba(196,105,74,.16);-webkit-text-stroke:1px var(--accent);flex:none;min-width:2.25rem;}
+  .l-sec p,.l-sec li{font-size:.9375rem;line-height:1.75;color:var(--muted);}
+  .l-sec p{margin:0 0 1rem;}
+  .l-sec ul{margin:0 0 1rem;padding-inline-start:1.125rem;list-style:disc;}
+  .l-sec li + li{margin-top:.375rem;}
+  .l-sec li b{font-family:var(--f-head);font-weight:600;color:var(--ink);}
+  .legal-v1 article a{color:var(--ink);text-decoration:underline;text-decoration-color:var(--accent);text-underline-offset:.2rem;overflow-wrap:anywhere;}
+  .pending{color:var(--faint);font-style:normal;}
+
+  /* Legal notice: a record, not prose. Label above value on the phone. */
+  .l-status{position:relative;padding-inline-start:1.25rem;font-size:.9375rem;color:var(--ink);line-height:1.6;margin:0 0 2rem;max-width:68ch;}
+  .l-status::before{content:"";position:absolute;inset-inline-start:0;top:.55em;width:.375rem;height:.375rem;background:var(--accent);}
+
+  /* Registration meter: how much of the record is published. Beside the
+     record from 56rem, above it on the phone. */
+  .l-meter{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:end;gap:.25rem .75rem;background:var(--surface);padding:1.25rem;}
+  .m-n{margin:0;font:700 2.75rem/1 var(--f-head);letter-spacing:-.04em;color:rgba(196,105,74,.16);-webkit-text-stroke:1px var(--accent);}
+  .m-n span{font:400 .875rem var(--f-body);letter-spacing:0;color:var(--faint);-webkit-text-stroke:0;margin-inline-start:.25rem;}
+  .m-t{margin:0 0 .25rem;font-size:.75rem;line-height:1.4;color:var(--muted);}
+  .m-bar{grid-column:1 / -1;list-style:none;margin:.875rem 0 0;padding:0;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:.1875rem;}
+  .m-bar li{height:.375rem;background:rgba(27,27,31,.08);}
+  .m-bar li.on{background:var(--accent);transform-origin:0 50%;}
+  [dir="rtl"] .m-bar li.on{transform-origin:100% 50%;}
+  .l-rec{margin:0;max-width:68ch;}
+  .l-rec div{display:grid;gap:.25rem;padding:1rem .25rem;}
+  .l-rec dt{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);}
+  .l-rec dd{margin:0;font-size:.9375rem;line-height:1.6;color:var(--ink);}
+  .l-rec dd.pending{color:var(--faint);}
+
+  @media (min-width:40rem){
+    .l-rec div{grid-template-columns:minmax(0,13rem) minmax(0,1fr);gap:2rem;padding-block:1.125rem;}
+    .l-rec dt{padding-top:.1875rem;}
+  }
+  @media (min-width:48rem){
+    .legal-v1 .wrap{padding-inline:2rem;}
+  }
+  @media (min-width:56rem){
+    .l-body{grid-template-columns:13rem minmax(0,68ch);column-gap:clamp(2.5rem,1rem + 3vw,4rem);align-items:start;}
+    .l-meter{position:sticky;top:5rem;}
+    .l-toc{position:sticky;top:5rem;border:0;}
+    .l-toc summary{display:none;}
+    .l-toc nav{padding:0;}
+    .l-ix{min-height:0;padding-block:.4375rem;}
+    .l-ix-t{font-size:.8125rem;}
+    .l-ix.is-on::before{top:.25rem;bottom:.25rem;}
+  }
+
+  /* SOUL PASS 2026-10-01, light: the eyebrow rule and the "In short"
+     dashes draw in on arrival; the index bar grows in when the current
+     section changes; the ghost word drifts as the head scrolls away; the
+     section numerals ink in and the inset dividers open from the middle as
+     they arrive; the notice's status square pulses, its meter fills and its
+     rows rise in. */
+  @media (prefers-reduced-motion:no-preference){
+    .eyebrow::after{animation:l-draw .6s .2s var(--ease-out) both;}
+    .l-short li::before{animation:l-draw .45s var(--ease-out) both;}
+    .l-short li:nth-child(1)::before{animation-delay:.35s;}
+    .l-short li:nth-child(2)::before{animation-delay:.45s;}
+    .l-short li:nth-child(3)::before{animation-delay:.55s;}
+    .l-short li:nth-child(4)::before{animation-delay:.65s;}
+    .l-short li:nth-child(5)::before{animation-delay:.75s;}
+    .l-ix.is-on::before{animation:l-grow .3s var(--ease-out);}
+    .l-status::before{animation:l-pulse 3.2s var(--ease-out) infinite;}
+    .m-bar li.on{animation:l-draw .5s .3s var(--ease-out) both;}
+    .m-bar li.on + li.on{animation-delay:.45s;}
+  }
+  @supports (animation-timeline:view()){
+    @media (prefers-reduced-motion:no-preference){
+      .l-head{view-timeline:--lhead block;}
+      .lghost{animation:l-drift linear both;animation-timeline:--lhead;animation-range:exit 0% exit 100%;}
+      .l-sec h2 b{animation:l-ink linear both;animation-timeline:view();animation-range:entry 40% cover 40%;}
+      .inset::before{animation:l-draw linear both;animation-timeline:view();animation-range:entry 0% entry 100%;}
+      .l-rec div{animation:l-rise linear both;animation-timeline:view();animation-range:entry 0% entry 80%;}
+    }
+  }
+  @keyframes l-draw{from{scale:0 1;}}
+  @keyframes l-grow{from{scale:1 0;}}
+  @keyframes l-drift{to{translate:0 2.5rem;}}
+  @keyframes l-ink{from{color:transparent;}}
+  @keyframes l-rise{from{opacity:0;translate:0 .75rem;}}
+  @keyframes l-pulse{
+    0%{box-shadow:0 0 0 0 rgba(196,105,74,.5);}
+    45%,100%{box-shadow:0 0 0 .4375rem rgba(196,105,74,0);}
+  }
+
+  /* A legal page gets printed and filed. Keep the text, drop the chrome,
+     and spell out where each link goes. */
+  @media print{
+    .legal-v1{background:#fff;}
+    .l-body{display:block;}
+    .l-short{background:none;padding:0;}
+    .legal-v1 article a::after{content:" (" attr(href) ")";color:var(--faint);}
+  }

@@ -76,8 +76,12 @@
   --color-fam-admin-tint: rgb(107 107 114 / .10);
 
   /* ---- Type (P) ---- */
-  --font-display: "Bricolage Grotesque", "Questrial", system-ui, sans-serif;
-  --font-body: "Questrial", sans-serif;
+  /* The faces are self-hosted by next/font, which sets --font-bricolage,
+     --font-questrial and --font-plex-arabic on <html>. Neither Latin face
+     has Arabic glyphs, so Plex Arabic follows in both stacks. */
+  --font-display: var(--font-bricolage), var(--font-questrial), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-body: var(--font-questrial), var(--font-plex-arabic), system-ui, sans-serif;
+  --font-arabic: var(--font-plex-arabic), "Segoe UI", Tahoma, sans-serif;
 
   /* ---- Shape and size ---- */
   /* Square everywhere. Round only where squaring loses the meaning: icon

@@ -1,0 +1,342 @@
+/* Ported verbatim from Blueprinting/wireframes/public/public.css (locked
+   2026-09-27 mobile pass), the reference for every rule below. Changes from
+   the wireframe, and only these:
+   - the three faces come from next/font variables, not Google Fonts;
+   - html line-height, the body face and link underlines are put back to
+     the browser defaults the wireframes were drawn with, because
+     Tailwind's preflight resets them.
+   Everything else: edit the wireframe's reasoning here, not a copy of it. */
+
+/* public.css — shared by every public page (mobile pass, 2026-09-27).
+
+   Read before editing:
+   1. MOBILE-FIRST. Base rules are the phone. Every @media here is min-width
+      and ADDS layout as room appears. No max-width queries, ever — a
+      max-width override subtracts, and then the phone rule and the desktop
+      rule fight over the same property forever. Standards/responsive.md.
+   2. BREAKPOINTS ARE NAMED BY WHAT BREAKS, per component:
+        header 48rem  the five links + language switch fit on one line
+        footer 60rem  the form (up to 41rem) and a 16rem headline fit side by side
+      Anything else here needs zero breakpoints (auto-fit, clamp, container
+      query).
+   3. HIT TARGETS. Links and buttons are 44px tall by default (a thumb).
+      They shrink back to the locked desktop size only on
+      (min-width:48rem) and (pointer:fine) — wide AND a mouse. A tablet is
+      wide but touched, so it keeps the big targets.
+   4. LOGICAL PROPERTIES (inline-start/end, not left/right) on everything
+      shared, so /ar flips with dir="rtl" and no second stylesheet.
+   5. Units: rem type/spacing, clamp() fluid, fr/minmax tracks, ch measure,
+      dvh never vh, px only for hairlines and hit-target minimums. */
+
+:root{
+  --ink:#1B1B1F; --ground:#F7F5F2; --clay:#C4694A; --muted:#707076;
+  /* Text twins of the hues (2026-10-09, item 15): clay stays on fills, dots
+     and icons (3:1); text in clay needs 4.5:1, which #C4694A misses on the
+     ground (3.53). Smallest darkening of the same hue that passes. Pages
+     that set their own --accent read --accent-ink. */
+  --clay-ink:#A65336; --accent-ink:#A65336; --bad-ink:#B73629; --good-ink:#2D7449; --warn-ink:#886323;
+  --line:rgba(27,27,31,.1); --hair:1px;
+  --f-head:var(--font-bricolage),var(--font-questrial),system-ui,sans-serif;
+  --f-body:var(--font-questrial),system-ui,sans-serif;
+  --f-ar:var(--font-plex-arabic),'Segoe UI',Tahoma,sans-serif;
+  --hit:44px;
+  --bar-h:3.5rem;
+  --ease-out:cubic-bezier(.2,.8,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;background:var(--ground);}
+html{line-height:normal;}
+/* Tailwind's preflight resets two browser defaults the wireframes lean on. */
+body{font-family:var(--f-body);color:var(--ink);}
+a{text-decoration:underline;}
+/* the sticky bar would cover the top of any #anchor target */
+html{scroll-padding-top:var(--bar-h);}
+/* Questrial ships one weight: anything heavy goes to Bricolage, never a
+   synthesised bold. */
+b,strong{font-family:var(--f-head);}
+
+/* ============ HEADER ============ */
+/* DOM order: wordmark, nav, language switch, menu button. On a phone the
+   nav leaves the flow (it is the menu panel), so the bar reads
+   wordmark · FR EN عربي · menu. From 48rem the nav is back inline and the
+   button disappears. One nav, not two copies. */
+.site-bar{
+  position:sticky;top:0;z-index:30;
+  display:flex;align-items:center;gap:.75rem;
+  min-height:var(--bar-h);padding-inline:1.25rem;
+  background:var(--ground);color:var(--muted);
+  font:.6875rem var(--f-body);letter-spacing:.08em;
+  border-block-end:var(--hair) solid rgba(27,27,31,.08);
+}
+.site-bar a{color:inherit;text-decoration:none;}
+.site-mark{margin-inline-end:auto;font-family:var(--f-head);font-weight:700;color:var(--ink);font-size:.9375rem;letter-spacing:.02em;}
+.site-mark .dot{color:var(--clay);}
+/* The wordmark keeps the grey it was locked in: a logotype is exempt from
+   WCAG 1.4.3, so the 2026-10-09 --muted raise does not move it. */
+.site-bar .site-mark{color:#8a8a8f;}
+
+/* On a phone the switch is a quiet utility beside the menu button, not its
+   rival: smaller type, packed tight. Targets keep the 44px HEIGHT (free, the
+   bar is that tall anyway) but only ~28px width — above WCAG 2.5.8's 24px
+   minimum, and the three sit apart from the menu button's own 44px. */
+.lang-sw{display:flex;align-items:center;font-size:.5625rem;}
+.lang-sw a,.lang-sw [aria-current]{display:inline-flex;align-items:center;justify-content:center;min-width:1.5rem;min-height:var(--hit);padding-inline:.1875rem;}
+.lang-sw [aria-current]{color:var(--ink);}
+/* Arabic script at 10px is unreadable: it keeps .6875rem */
+.lang-sw [lang="ar"]{letter-spacing:0;text-transform:none;font-family:var(--f-ar);font-size:.6875rem;}
+/* /ar (2026-10-01, header-lang check): neither Questrial nor Bricolage has
+   Arabic glyphs, and tracking breaks the joins. The Latin codes and the
+   wordmark keep their own faces. */
+:is([dir="rtl"] .site-bar,.site-bar[dir="rtl"]){font-family:var(--f-ar);letter-spacing:0;}
+:is([dir="rtl"] .site-nav,.site-bar[dir="rtl"] .site-nav) li a{font-family:var(--f-ar);}
+.site-bar .lang-sw :is([lang="fr"],[lang="en"]){font-family:var(--f-body);letter-spacing:.08em;}
+
+/* The menu button. Two lines: the top one shorter, flush to the end. Open,
+   both become the same length and cross into an even X. Lines are 2px (px:
+   a stroke weight must not scale with the font setting). */
+.menu-btn{
+  position:relative;width:var(--hit);height:var(--hit);margin-inline-end:-.75rem;
+  border:0;padding:0;background:none;color:var(--ink);cursor:pointer;
+}
+.menu-btn span{
+  position:absolute;inset-inline-end:.75rem;height:2px;margin-block-start:-1px;background:currentColor;
+  transition:translate .35s var(--ease-out),rotate .35s var(--ease-out),width .35s var(--ease-out);
+}
+.menu-btn span:first-child{top:calc(50% - .25rem);width:.875rem;}
+.menu-btn span:last-child{top:calc(50% + .25rem);width:1.375rem;}
+.menu-btn[aria-expanded="true"] span{width:1.25rem;}
+.menu-btn[aria-expanded="true"] span:first-child{translate:0 .25rem;rotate:45deg;}
+.menu-btn[aria-expanded="true"] span:last-child{translate:0 -.25rem;rotate:-45deg;}
+.menu-btn:focus-visible{outline:2px solid var(--clay);outline-offset:-4px;}
+
+/* The panel. Closed = clipped to nothing AND visibility:hidden, so its
+   links cannot be tabbed into. visibility waits for the clip to finish
+   before hiding (the 0s .45s delay), and flips at once when opening. */
+.site-nav{
+  position:fixed;inset:var(--bar-h) 0 0;z-index:29;
+  display:flex;flex-direction:column;overflow-y:auto;
+  padding:1.5rem 1.25rem 2rem;background:var(--ground);
+  clip-path:inset(0 0 100% 0);visibility:hidden;
+  transition:clip-path .45s var(--ease-out),visibility 0s linear .45s;
+}
+.nav-open .site-nav{clip-path:inset(0 0 0 0);visibility:visible;transition:clip-path .5s var(--ease-out),visibility 0s;}
+.site-nav ul{list-style:none;margin:0;padding:0;counter-reset:nav;}
+.site-nav li{counter-increment:nav;border-block-end:var(--hair) solid var(--line);}
+/* the last big link needs no rule: the menu's one closing line is above "Write in" */
+.site-nav li:last-child{border-block-end:0;}
+.site-nav li a{
+  display:flex;align-items:baseline;gap:1rem;min-height:4rem;padding-block:1rem .75rem;
+  font:500 clamp(1.75rem,8vw,2.5rem)/1 var(--f-head);letter-spacing:-.01em;color:var(--ink);text-transform:none;
+  opacity:0;translate:0 1rem;
+  transition:opacity .3s,translate .45s var(--ease-out),color .18s;
+}
+/* The site numbers its sections 002, 003… — the menu keeps the habit. */
+.site-nav li a::before{content:counter(nav,decimal-leading-zero);flex:none;min-width:1.35em;font:700 .8em/1 var(--f-head);letter-spacing:-.04em;
+  color:transparent;-webkit-text-stroke:1px var(--clay);transition:color .2s var(--ease-out);}
+/* 2026-09-30: outline numerals, matching the footer's; the current page's
+   number is filled, so "you are here" reads from the number too. */
+.site-nav li a:hover::before,.site-nav li a:focus-visible::before{color:rgba(196,105,74,.22);}
+.site-nav li a[aria-current]{color:var(--clay-ink);}
+.site-nav li a[aria-current]::before{color:var(--clay-ink);}
+.nav-open .site-nav li a{opacity:1;translate:0 0;transition-delay:calc(.12s + var(--i,0) * .04s);}
+/* The panel's signature, two cells in the menu's own grammar: a small caption
+   set like the 01 numbers, a Bricolage value under it. Email to the start
+   (the action), Tangier's live clock to the end (the context). */
+.nav-foot{padding-block-start:1rem;border-block-start:var(--hair) solid var(--line);display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:1rem;opacity:0;transition:opacity .3s;}
+.nav-foot > div{display:grid;}
+.nf-cap{font:.625rem var(--f-body);letter-spacing:.08em;color:var(--clay-ink);}
+.nf-end{text-align:end;}
+.nf-end .nf-cap{color:var(--muted);}
+.nav-foot a,.nf-clock{font:500 1rem var(--f-head);letter-spacing:-.01em;}
+.nav-foot a{color:var(--ink);min-height:var(--hit);display:inline-flex;align-items:center;gap:.25em;}
+.nf-clock{color:var(--muted);font-variant-numeric:tabular-nums;min-height:var(--hit);display:flex;align-items:center;justify-content:flex-end;}
+.nav-open .nav-foot{opacity:1;transition-delay:.35s;}
+/* Small print, phone only: Resources + legal, moved here from the footer.
+   Sits low (margin auto pushes it down), just above the signature, well
+   away from the big links. Set like the site's eyebrows (tiny caps, wide
+   tracking) and spread edge to edge, so it reads as a band sitting on the
+   menu's one closing line, not a leftover list. 44px-tall targets; short
+   labels so the five fit one line at 320px. Overrides .site-nav li a. */
+.site-nav .nav-more{margin-block-start:auto;padding-block-start:2rem;display:flex;justify-content:space-between;column-gap:.5rem;counter-reset:none;}
+.site-nav .nav-more li{border:0;counter-increment:none;}
+.site-nav .nav-more a{min-height:var(--hit);padding:0;gap:0;font:.5625rem var(--f-body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);translate:none;}
+.site-nav .nav-more a::before{content:none;}
+.nav-open .site-nav .nav-more a{transition-delay:.3s;}
+.nav-open{overflow:hidden;} /* on <html>: the page behind does not scroll */
+
+@media (min-width:48rem){
+  html{scroll-padding-top:0;}
+  .site-bar{position:static;gap:0;padding:1.25rem 3.5rem;min-height:0;max-width:73.75rem;margin-inline:auto;}
+  .menu-btn,.nav-foot,.site-nav .nav-more{display:none;}
+  .site-nav{position:static;display:block;padding:0;overflow:visible;background:none;clip-path:none;visibility:visible;transition:none;}
+  .site-nav ul{display:flex;}
+  .site-nav li{border:0;}
+  /* links breathe (the dot sits in 1em each side); the switch below is
+     packed tighter, so the eye reads nav and languages as two groups */
+  .site-nav li + li::before{content:"\00B7";padding-inline:1em;}
+  .site-nav li a{display:inline;min-height:0;padding:0;font:inherit;letter-spacing:inherit;color:inherit;opacity:1;translate:none;transition:none;}
+  .site-nav li a::before{content:none;}
+  .site-nav li a[aria-current]{color:var(--ink);}
+  /* the switch, split from the nav by a short inset hairline */
+  .lang-sw{font-size:inherit;gap:.375rem;margin-inline-start:1.5rem;padding-inline-start:1.5rem;position:relative;}
+  .lang-sw::before{content:"";position:absolute;inset-inline-start:0;top:50%;width:var(--hair);height:.75rem;translate:0 -50%;background:rgba(27,27,31,.2);}
+}
+@media (min-width:48rem) and (pointer:fine){
+  .lang-sw a,.lang-sw [aria-current]{min-width:0;min-height:0;padding:0;}
+}
+
+/* ============ FOOTER ============ */
+/* The terracotta sits on the footer itself. The old margin:0 -9999px bleed
+   made every page scroll sideways on a phone (README item 10). */
+/* 2026-09-30 "island" pass: the card floats above a clay ground.
+   - The clay carries a grain (SVG noise, multiplied) so it reads as a
+     material, not a flat fill.
+   - The lift is the receipt email's island shadow (2026-10-01, developer's
+     pick, replacing a five-layer stack and a cast-shadow ellipse that read
+     too heavy): a hairline edge, a zero-offset glow so the SIDES lift as
+     much as the bottom, a soft drop under it. Warm tint, never grey (a grey
+     shadow on terracotta is mud). Same three values as
+     email-receipt.html's .er-stage > table: change one, change both.
+   - Padding is even top and bottom now: no cast shadow needs room below.
+     overflow:clip keeps the shadows from widening the page on a
+     phone (README item 10) without making a scroll container.
+   Tried and rejected 2026-09-30: a postmark, a hand-drawn underline, a
+   turned second sheet under the card. Padding cut ~40% on request: the
+   footer read too tall. */
+.site-foot{position:relative;isolation:isolate;overflow:clip;color:var(--ink);font-family:var(--f-body);
+  background:var(--clay) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-blend-mode:multiply;
+  padding:clamp(1.25rem,4vw,3rem) clamp(1rem,4vw,3rem);}
+.ft-card{position:relative;max-width:73.75rem;margin-inline:auto;background:var(--ground);border-radius:0;
+  box-shadow:0 0 0 var(--hair) rgba(27,27,31,.04),0 0 1.5rem rgba(60,40,30,.08),0 .5rem 1.5rem rgba(60,40,30,.12);
+  padding:clamp(1.25rem,4vw,3rem) clamp(1.25rem,4vw,3rem) clamp(.5rem,1.5vw,1rem);}
+.ft-cap{font:.6875rem var(--f-body);text-transform:uppercase;letter-spacing:.06em;color:rgba(27,27,31,.62);margin:0 0 .875rem;}
+
+/* DOM order is question, then answer: headline + contact first, form
+   second. From 60rem grid-template-areas puts the form back on the left —
+   placement, not an order: hack. */
+.ft-top{display:grid;gap:2.5rem;}
+.ft-head{display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem;}
+.fit-headline{font:700 clamp(2.25rem,4vw + 1rem,4.5rem)/1.15 var(--f-head);color:var(--ink);margin:0;}
+.ft-contact dl{display:grid;gap:.875rem;margin:0;font-size:.875rem;}
+.ft-contact dt{color:rgba(27,27,31,.62);font-size:.6875rem;text-transform:uppercase;letter-spacing:.06em;margin-block-end:.2rem;}
+.ft-contact dd{margin:0;}
+.ft-contact a{color:var(--ink);text-decoration:none;}
+@media (min-width:60rem){
+  .ft-top{grid-template-columns:minmax(0,41rem) minmax(16rem,1fr);grid-template-areas:"form head";gap:3rem;}
+  .ft-head{grid-area:head;text-align:end;}
+  .ft-form{grid-area:form;}
+}
+
+/* The form card is a CONTAINER: name + email go two-up when the CARD has
+   28rem, whatever the viewport. The same card would work in a sidebar. */
+.ff-card{container-type:inline-size;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);border-radius:0;padding:clamp(1.25rem,4cqi,1.75rem);}
+.ff-form{display:grid;gap:1.5rem;}
+.ff-pair{display:grid;gap:1.5rem;}
+@container (min-width:28rem){.ff-pair{grid-template-columns:1fr 1fr;gap:1.25rem;}}
+.ff-field{position:relative;}
+/* Field text is 1rem = 16px on a phone ON PURPOSE: iOS Safari zooms the whole
+   page into any input under 16px when it gets focus, and never zooms back.
+   The fields read lighter through less padding and shorter option text
+   instead. Any screen with a mouse (no iOS zoom there) gets .875rem, at any
+   width -- so a narrow desktop window shows the small size too. */
+.ff-field input,.ff-field select,.ff-field textarea{width:100%;background:var(--ground);border:var(--hair) solid rgba(27,27,31,.15);border-radius:0;color:var(--ink);font:1rem var(--f-body);padding-block:.6875rem;padding-inline:2.5rem .875rem;outline:none;}
+@media (pointer:fine){.ff-field input,.ff-field select,.ff-field textarea{font-size:.875rem;}}
+.ff-field textarea{resize:none;height:6.5rem;display:block;}
+.ff-icon{position:absolute;inset-inline-start:.875rem;top:50%;translate:0 -50%;pointer-events:none;width:1rem;height:1rem;}
+.ff-field-top .ff-icon{top:1.4rem;translate:none;}
+.ff-field label{position:absolute;inset-inline-start:2.5rem;top:50%;translate:0 -50%;font:.875rem var(--f-body);color:rgba(27,27,31,.62);pointer-events:none;transition:.15s ease;}
+.ff-field-top label{top:1.4rem;translate:none;}
+.ff-field input:focus,.ff-field select:focus,.ff-field textarea:focus{border-color:var(--clay);}
+.ff-field input:focus + label,.ff-field input:not(:placeholder-shown) + label,.ff-field textarea:focus + label,.ff-field textarea:not(:placeholder-shown) + label,.ff-field-static label{top:-.5625rem;inset-inline-start:.75rem;translate:none;line-height:1.125rem;font-size:.625rem;letter-spacing:.04em;text-transform:uppercase;background:linear-gradient(#fff 50%,var(--ground) 50%);padding:0 .25rem;color:var(--clay-ink);}
+.ff-send{display:flex;justify-content:space-between;align-items:center;gap:0 1rem;flex-wrap:wrap;margin-block-start:-.75rem;}
+.ff-send p{font-size:.75rem;color:rgba(27,27,31,.62);margin:0;}
+.ff-send p a{color:inherit;}
+.ff-go{display:inline-flex;margin-inline-start:auto;align-items:center;gap:.5rem;min-height:var(--hit);color:var(--ink);text-decoration:underline;font:600 .9375rem var(--f-head);}
+/* honeypot: out of sight without an offset that could scroll in RTL */
+.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
+
+.ft-rule{height:var(--hair);background:rgba(27,27,31,.12);margin:2.25rem 0 1.75rem;}
+.ft-rule.sm{margin:.75rem 0 1rem;} /* phone: the outline wordmark sits on it */
+
+/* PHONE: "the menu, at rest". The footer's Navigation IS the open hamburger
+   menu laid flat: same Bricolage words, clay 01-06 counters, inset hairlines,
+   in a 2x3 grid. Social is a row of icons under it. The blurb follows, then
+   the page signs off with a full-width outline "Boutaleb" standing on the
+   last hairline; under it only copyright and Back to the top. Grid areas
+   move the brand below the links — placement, not an order: hack; desktop
+   puts it back on the left.
+   Resources and the legal links are NOT in the phone footer: they moved to
+   the menu panel's small print (.nav-more), developer's call 2026-09-27.
+   From 60rem the footer shows them again, exactly as locked. */
+.ft-links{container-type:inline-size;display:grid;gap:2.5rem;grid-template-areas:"cols" "id";}
+.ft-id{grid-area:id;display:grid;grid-template-areas:"about" "mark";gap:1.75rem;}
+.ft-cols{grid-area:cols;display:grid;gap:2rem;}
+.ft-cols .ft-cap{margin:0 0 .5rem;color:var(--clay-ink);letter-spacing:.08em;}
+.ft-cols ul{list-style:none;padding:0;margin:0;display:grid;}
+.ft-cols a{color:var(--ink);text-decoration:none;display:flex;align-items:center;min-height:var(--hit);font-size:1rem;}
+.ft-grp-res{display:none;}
+
+.ft-grp-nav ul{grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:1.25rem;counter-reset:ft;}
+.ft-grp-nav li{counter-increment:ft;border-block-end:var(--hair) solid var(--line);}
+.ft-grp-nav a{gap:.625rem;min-height:3.5rem;padding-block:.75rem;font:500 clamp(1rem,6.8cqi,1.5rem)/1 var(--f-head);letter-spacing:-.01em;}
+/* 2026-09-30: the counters are the outline numeral used across the public
+   pages (services offers, about standards, portfolio featured), sized with
+   the word; they fill with clay under the pointer and on the current page. */
+.ft-grp-nav a::before{content:counter(ft,decimal-leading-zero);flex:none;min-width:1.35em;font:700 clamp(1.25rem,8.5cqi,1.875rem)/1 var(--f-head);letter-spacing:-.04em;
+  color:transparent;-webkit-text-stroke:1px var(--clay);transition:color .2s var(--ease-out);}
+.ft-grp-nav a:hover::before,.ft-grp-nav a:focus-visible::before{color:rgba(196,105,74,.22);}
+/* social, phone: icons in a row. Each is a 44px target with the glyph at
+   its start edge, so the row lines up with the caption above. The name
+   stays in the link for screen readers. */
+.ft-grp-soc ul{display:flex;gap:.5rem;}
+.ft-grp-soc a{min-width:var(--hit);justify-content:flex-start;}
+.soc-ic{width:1.25rem;height:1.25rem;}
+.soc-txt{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;}
+
+.ft-about{grid-area:about;font:.875rem/1.5 var(--f-body);color:rgba(27,27,31,.62);max-width:34ch;margin:0;}
+/* 25.5cqi: measured, the word fills ~98% of the card width at any phone
+   size (cqi scales with the card, not the viewport) */
+.ft-brand{grid-area:mark;margin:0;white-space:nowrap;font:700 25.5cqi/.78 var(--f-head);letter-spacing:-.035em;color:transparent;-webkit-text-stroke:var(--hair) rgba(27,27,31,.4);}
+
+/* base row, phone: one line, copyright at the start, Back to the top as a
+   plain text link at the end */
+.ft-base{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"copy top";column-gap:1rem;align-items:center;font-size:.75rem;color:rgba(27,27,31,.62);}
+.ft-base > span{grid-area:copy;}
+.ft-base nav{display:none;grid-area:legal;flex-wrap:wrap;column-gap:1.5rem;}
+.ft-base nav a,.ft-top-link{color:var(--ink);display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);text-decoration:underline;}
+.ft-top-link{grid-area:top;white-space:nowrap;}
+.cr-brand{font-family:var(--f-head);font-weight:700;}
+/* phone: the copyright keeps only "© 2026 Boutaleb." so it fits one line */
+.cr-long{display:none;}
+
+@media (min-width:60rem){
+  .ft-rule.sm{margin:2rem 0 1rem;}
+  .ft-links{container-type:normal;grid-template-columns:minmax(0,20rem) auto;grid-template-areas:"id cols";justify-content:space-between;gap:2rem;}
+  .ft-id{display:block;}
+  .ft-brand{white-space:normal;font:700 1.375rem var(--f-head);letter-spacing:normal;color:var(--ink);-webkit-text-stroke:0;margin:0 0 .75rem;}
+  .ft-cols{display:flex;gap:3rem;}
+  .ft-cols .ft-cap{margin:0 0 .875rem;color:rgba(27,27,31,.62);letter-spacing:.06em;}
+  .ft-cols a{display:inline-flex;font-size:.875rem;}
+  .ft-grp-res{display:block;}
+  .ft-grp-nav ul{grid-template-columns:none;column-gap:normal;}
+  .ft-grp-nav li{border:0;}
+  .ft-grp-nav a{gap:0;min-height:var(--hit);padding-block:0;font:.875rem var(--f-body);letter-spacing:normal;}
+  .ft-grp-nav a::before{content:none;}
+  .ft-grp-soc ul{display:grid;gap:0;}
+  .ft-grp-soc a{min-width:0;}
+  .soc-ic{display:none;}
+  .soc-txt{position:static;width:auto;height:auto;overflow:visible;clip-path:none;}
+  .ft-base{grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"copy top legal";column-gap:1.5rem;font-size:.8125rem;}
+  .ft-base nav{display:flex;}
+  .cr-long{display:inline;}
+}
+@media (min-width:48rem) and (pointer:fine){
+  .ft-cols ul{gap:.625rem;}
+  .ft-cols a,.ft-base nav a,.ft-top-link,.ff-go{min-height:0;}
+  .ff-field input,.ff-field select,.ff-field textarea{padding-block:.875rem;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .site-nav,.site-nav li a,.nav-foot,.menu-btn span{transition:none !important;}
+}
