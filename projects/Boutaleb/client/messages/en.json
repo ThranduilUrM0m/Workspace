@@ -54,7 +54,10 @@
         "siblings": "Legal pages",
         "contents": "Contents · {count} sections",
         "onThisPage": "On this page",
-        "inShort": "In short"
+        "inShort": "In short",
+        "frenchOnly": "This page is only available in French for now.",
+        "registration": "Registration status",
+        "published": "entries published, the rest follow registration"
     },
     "notFound": {
         "title": "Page not found",

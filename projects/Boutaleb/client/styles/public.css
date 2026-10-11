@@ -348,6 +348,12 @@ b,strong{font-family:var(--f-head);}
    !important on purpose: this is a script rule, not a component style, and
    it must beat every per-component letter-spacing above. */
 :lang(ar){font-family:var(--f-ar) !important;letter-spacing:0 !important;text-transform:none !important;}
+/* A block in another language inside an Arabic page (the French legal
+   record) would inherit the Arabic face: it takes the Latin body face back.
+   Zero specificity, so any element's own face still wins (wordmarks,
+   headings). The wordmark's <bdi> takes the display face back the same way. */
+:where(:lang(ar) [lang]:not(:lang(ar))){font-family:var(--f-body);}
+.site-mark bdi{font-family:var(--f-head);letter-spacing:.02em;}
 
 /* Arrows that mean "forward" or "out" point the reading direction. */
 .flip-rtl:dir(rtl){display:inline-block;scale:-1 1;}

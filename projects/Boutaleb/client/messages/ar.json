@@ -54,7 +54,10 @@
         "siblings": "الصفحات القانونية",
         "contents": "المحتويات · {count, plural, one {قسم واحد} two {قسمان} few {# أقسام} many {# قسمًا} other {# قسم}}",
         "onThisPage": "في هذه الصفحة",
-        "inShort": "باختصار"
+        "inShort": "باختصار",
+        "frenchOnly": "هذه الصفحة متوفرة بالفرنسية فقط حاليًا.",
+        "registration": "حالة التسجيل",
+        "published": "بيانات منشورة، والباقي بعد التسجيل"
     },
     "notFound": {
         "title": "الصفحة غير موجودة",

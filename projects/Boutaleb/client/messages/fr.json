@@ -54,7 +54,10 @@
         "siblings": "Pages légales",
         "contents": "Sommaire · {count} sections",
         "onThisPage": "Sur cette page",
-        "inShort": "En bref"
+        "inShort": "En bref",
+        "frenchOnly": "",
+        "registration": "État de l’immatriculation",
+        "published": "mentions publiées, les autres suivront l’immatriculation"
     },
     "notFound": {
         "title": "Page introuvable",

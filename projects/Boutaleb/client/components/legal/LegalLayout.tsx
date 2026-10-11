@@ -31,6 +31,11 @@ export type LegalDoc = {
     updated: string;
     short?: string[];
     sections?: LegalSection[];
+    /** Language of the article when it differs from the head's (the legal
+     *  notice: head in the URL's language, record in French). */
+    bodyLang?: string;
+    /** Says the page is not translated, under the siblings. */
+    note?: string;
 };
 
 const SIBLINGS: { page: LegalPage; key: 'privacy' | 'terms' | 'legalNotice' }[] = [
@@ -73,6 +78,7 @@ export async function LegalLayout({ doc, aside, children }: { doc: LegalDoc; asi
                             </Link>
                         ))}
                     </nav>
+                    {doc.note && <p className="l-lang">{doc.note}</p>}
                 </div>
 
                 <div className="l-body">
@@ -84,7 +90,7 @@ export async function LegalLayout({ doc, aside, children }: { doc: LegalDoc; asi
                         />
                     )}
                     {aside}
-                    <article>
+                    <article lang={doc.bodyLang} dir={doc.bodyLang ? 'ltr' : undefined}>
                         {doc.short && (
                             <div className="l-short">
                                 <p className="t">{t('inShort')}</p>

@@ -144,3 +144,32 @@ test('pages carry canonical, hreflang and a share image; untranslated copies sta
     const og = await request.get('/en/opengraph-image');
     expect(og.headers()['content-type']).toBe('image/png');
 });
+
+test('terms and the legal notice render on the shared legal layout', async ({ page }) => {
+    const res = await page.goto('/en/terms');
+    expect(res?.status()).toBe(200);
+    await expect(page.getByRole('heading', { level: 1, name: 'Terms of service' })).toBeVisible();
+    await expect(page.locator('.l-sec')).toHaveCount(12);
+
+    await page.goto('/en/legal-notice');
+    await expect(page.getByRole('heading', { level: 1, name: 'Legal notice' })).toBeVisible();
+    await expect(page.locator('.l-lang')).toHaveText('This page is only available in French for now.');
+    await expect(page.locator('article')).toHaveAttribute('lang', 'fr');
+    await expect(page.locator('.l-rec dt')).toHaveCount(10);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+
+    // French is the real one: indexed, no "French only" note.
+    await page.goto('/legal-notice');
+    await expect(page.getByRole('heading', { level: 1, name: 'Mentions légales' })).toBeVisible();
+    await expect(page.locator('.l-lang')).toHaveCount(0);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+});
+
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice']) {
+    test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
+        await page.setViewportSize({ width: 320, height: 800 });
+        await page.goto(path);
+        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        expect(overflow).toBe(0);
+    });
+}
