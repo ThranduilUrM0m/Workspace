@@ -165,7 +165,7 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
-for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services']) {
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about']) {
     test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 800 });
         await page.goto(path);
@@ -184,4 +184,14 @@ test('/services carries the three anchors the footer and redirects point at', as
     await page.goto('/services');
     await expect(page.locator('main')).toHaveAttribute('lang', 'en');
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+});
+
+test('/about renders its four blocks; standards cards take keyboard focus', async ({ page }) => {
+    const res = await page.goto('/en/about');
+    expect(res?.status()).toBe(200);
+    await expect(page.locator('.a-card')).toHaveCount(4);
+    await expect(page.locator('.a-step')).toHaveCount(4);
+    await expect(page.locator('.stat')).toHaveCount(4);
+    await page.locator('.a-card').first().focus();
+    await expect(page.locator('.a-card').first()).toBeFocused();
 });
