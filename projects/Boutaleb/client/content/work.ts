@@ -16,6 +16,21 @@ export const workCategoryLabel: Record<WorkCategory, string> = {
     'landing-page': 'Landing page',
 };
 
+export type CaseStudy = {
+    role: string;
+    tools: string[];
+    /** Hidden when absent (portfolio-detail-modal.html OPEN notes). */
+    liveUrl?: string;
+    pdfUrl?: string;
+    hero: string;
+    overview: string;
+    problem: string;
+    solution: string;
+    shots: { label: string; caption?: string }[];
+    tokens?: { colors: { hex: string; name: string }[]; type: { family: string; sample: string; use: [string, string] }[] };
+    details?: string[];
+};
+
 export type Project = {
     slug: string;
     title: string;
@@ -25,7 +40,32 @@ export type Project = {
     blurb: string;
     /** Shown in the homepage teaser and at the top of /portfolio. */
     featured: boolean;
+    caseStudy: CaseStudy;
 };
+
+// The wireframe's sample case study (Cedar & Stone), until real write-ups.
+const sample = (title: string): CaseStudy => ({
+    role: 'Design and build',
+    tools: ['Next.js', 'Figma'],
+    hero: `hero image — ${title}, full bleed, static`,
+    overview: 'A full identity system for an independent furniture studio — wordmark, packaging, and a restrained material palette built around the brand’s focus on longevity over trend.',
+    problem: 'The studio’s existing identity looked dated next to newer, design-forward competitors, and undersold the quality of the craftsmanship behind each piece.',
+    solution: 'A quieter, type-led system — a single custom serif mark, natural paper stocks, and packaging that photographs as well unboxed as it does on a shelf.',
+    shots: [{ label: 'screen — homepage', caption: 'Homepage, before/after comparison' }, { label: 'screen — product page' }],
+    tokens: {
+        colors: [
+            { hex: '#B85C38', name: 'Terracotta' },
+            { hex: '#3F4B3B', name: 'Sage' },
+            { hex: '#2B2622', name: 'Charcoal oak' },
+            { hex: '#EFE6D8', name: 'Bone' },
+        ],
+        type: [
+            { family: "'Playfair Display', serif", sample: 'Canela — Aa Gg', use: ['Display serif', 'headlines, wordmark'] },
+            { family: "'Inter', sans-serif", sample: 'Suisse Int’l — Aa Gg', use: ['Body / UI sans', 'copy, packaging labels'] },
+        ],
+    },
+    details: ['packaging close-up', 'business card'],
+});
 
 export const projects: Project[] = [
     {
@@ -35,6 +75,7 @@ export const projects: Project[] = [
         year: 2024,
         blurb: 'A poetry publishing platform built from scratch, from manuscript intake to reader-facing storefront.',
         featured: true,
+        caseStudy: sample('Qasidaty'),
     },
     {
         slug: 'risala',
@@ -43,11 +84,13 @@ export const projects: Project[] = [
         year: 2024,
         blurb: 'An ERP system replacing three disconnected spreadsheets with one source of truth.',
         featured: true,
+        caseStudy: sample('Risala'),
     },
-    { slug: 'project-03', title: 'Project 03', category: 'e-commerce', year: 2025, blurb: 'Placeholder project.', featured: false },
-    { slug: 'project-04', title: 'Project 04', category: 'web-app', year: 2025, blurb: 'Placeholder project.', featured: false },
-    { slug: 'project-05', title: 'Project 05', category: 'brand-site', year: 2025, blurb: 'Placeholder project.', featured: false },
-    { slug: 'project-06', title: 'Project 06', category: 'landing-page', year: 2026, blurb: 'Placeholder project.', featured: false },
+    { slug: 'project-03', title: 'Project 03', category: 'e-commerce', year: 2025, blurb: 'Placeholder project.', featured: false, caseStudy: sample('Project 03') },
+    { slug: 'project-04', title: 'Project 04', category: 'web-app', year: 2025, blurb: 'Placeholder project.', featured: false, caseStudy: sample('Project 04') },
+    { slug: 'project-05', title: 'Project 05', category: 'brand-site', year: 2025, blurb: 'Placeholder project.', featured: false, caseStudy: sample('Project 05') },
+    { slug: 'project-06', title: 'Project 06', category: 'landing-page', year: 2026, blurb: 'Placeholder project.', featured: false, caseStudy: sample('Project 06') },
 ];
 
 export const featuredProjects = () => projects.filter((p) => p.featured);
+export const projectBySlug = (slug: string) => projects.find((p) => p.slug === slug);

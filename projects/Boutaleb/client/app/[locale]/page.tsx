@@ -155,7 +155,7 @@ export default async function HomePage({ params }: Props) {
                         <div className="eyebrow">{work.eyebrow}</div>
                         <div className="c3-row">
                             {featuredProjects().map((p) => (
-                                <Link key={p.slug} className="c3-project" href={`/portfolio/${p.slug}`}>
+                                <Link key={p.slug} className="c3-project" href={`/portfolio/${p.slug}`} scroll={false}>
                                     <div className="c3-media ph" aria-hidden="true">
                                         {work.image}
                                     </div>

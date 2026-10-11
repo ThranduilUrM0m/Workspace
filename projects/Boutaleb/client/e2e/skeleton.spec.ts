@@ -165,7 +165,7 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
-for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about', '/en', '/']) {
+for (const path of ['/en/terms', '/legal-notice', '/ar/legal-notice', '/en/services', '/ar/services', '/en/about', '/ar/about', '/en', '/', '/en/portfolio', '/en/portfolio/qasidaty']) {
     test(`${path} has no horizontal scroll on a 320px phone`, async ({ page }) => {
         await page.setViewportSize({ width: 320, height: 800 });
         await page.goto(path);
@@ -211,4 +211,32 @@ test('the homepage renders its sections from the shared content', async ({ page 
     await page.getByRole('button', { name: 'Post 2' }).click();
     await expect(title).not.toHaveText(first!);
     await expect(page.getByRole('button', { name: 'Post 2' })).toHaveAttribute('aria-current', 'true');
+});
+
+test('a portfolio card opens its case study in a dialog; the URL alone is a full page', async ({ page }) => {
+    await page.goto('/en/portfolio');
+    await expect(page.locator('.g3 .card')).toHaveCount(6);
+
+    // Filters: one per category that has projects, each with its count.
+    await page.getByRole('button', { name: /^E-commerce/ }).click();
+    await expect(page.locator('.g3 .card:visible')).toHaveCount(1);
+    await page.getByRole('button', { name: /^All/ }).click();
+
+    await page.locator('.g3 .card').first().click();
+    await expect(page).toHaveURL(/\/en\/portfolio\/qasidaty$/);
+    const dialog = page.locator('dialog.case-v1[open]');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('heading', { level: 1, name: 'Qasidaty' })).toBeVisible();
+    // No live site or PDF on the record: no buttons drawn.
+    await expect(dialog.getByRole('link', { name: 'View live site' })).toHaveCount(0);
+
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveURL(/\/en\/portfolio$/);
+    await expect(page.locator('dialog.case-v1[open]')).toHaveCount(0);
+
+    // Loaded directly: the full page, no dialog.
+    const res = await page.goto('/en/portfolio/risala');
+    expect(res?.status()).toBe(200);
+    await expect(page.locator('article.case-page')).toBeVisible();
+    await expect(page.locator('dialog')).toHaveCount(0);
 });

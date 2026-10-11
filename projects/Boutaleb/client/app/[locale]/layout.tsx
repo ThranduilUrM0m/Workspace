@@ -22,9 +22,12 @@ export function generateStaticParams() {
 
 export default async function LocaleLayout({
     children,
+    modal,
     params,
 }: {
     children: ReactNode;
+    /** Case studies opened from inside the site (@modal). */
+    modal: ReactNode;
     params: Promise<{ locale: string }>;
 }) {
     const { locale } = await params;
@@ -38,6 +41,7 @@ export default async function LocaleLayout({
                     <SiteHeader />
                     {children}
                     <SiteFooter />
+                    {modal}
                 </NextIntlClientProvider>
             </body>
         </html>
