@@ -1,0 +1,274 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/blog.html
+   (v6, mobile pass 2026-09-30). Every selector is scoped to .blog-v1;
+   [dir="rtl"] rules became :dir(rtl); faces read next/font variables.
+   Filters, sort and view are links to query strings in the build, so the
+   wireframe's [aria-pressed="true"] reads [aria-current] here. */
+/* /blog — v6 (full-bleed Best of the Week, two-layer ghost number, aligned
+   columns). MOBILE PASS 2026-09-30. Header + footer: public.css, menu: public.js.
+   The review scaffolding went with it: the grey page mat and the notes block
+   (their history is in git).
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  post grid 2-up; Top Rated stops scrolling and sits 3-up;
+            Most Viewed splits (big card beside the rows)
+     48rem  the featured post goes side by side; list rows get a real thumbnail
+     60rem  post grid 3-up
+     64rem  Most Viewed becomes the rail beside Best of the Week + Top Rated
+   New: a page head (the index had no h1; its h1 was the featured post's
+   title). Fixed on the way: the footer stub (shared footer now), 26px view
+   buttons (now 44px targets), a "Load more" link to #, category and sort
+   spans that were not buttons, physical left/right, inline styles. */
+.blog-v1{
+  --bg:#F7F5F2; --accent:#C4694A; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1); --card:#fff; --ring:0 0 0 1px rgba(27,27,31,.08); --fill:#232326;
+  --gx:28%; --off:.4375rem; --drift:-1.5rem;
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);padding-bottom:3.5rem;
+}
+.blog-v1:dir(rtl){--gx:-28%; --off:-.4375rem; --drift:1.5rem;}
+.blog-v1 .wrap{max-width:73.75rem;margin:0 auto;padding-inline:1.25rem;}
+.blog-v1 h1,.blog-v1 h2,.blog-v1 h3{margin:0;font-family:var(--f-head);}
+.blog-v1 a{color:inherit;text-decoration:none;}
+.blog-v1 .meta{font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
+.blog-v1 .desc{font-size:.8125rem;color:var(--muted);line-height:1.55;margin:.5rem 0 0;max-width:46ch;}
+/* Placeholder image: the hatch sits on ::before so hover can scale it
+   inside the frame (a real <img> takes the same rule in the build). */
+.blog-v1 .ph{position:relative;overflow:hidden;display:block;}
+.blog-v1 .ph::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,#EDE7DE,#EDE7DE .5rem,#E4DCD0 .5rem,#E4DCD0 1rem);transition:scale .6s var(--ease-out,ease);}
+.blog-v1 .pill{display:inline-block;font-size:.625rem;letter-spacing:.02em;color:rgba(27,27,31,.62);border:1px solid rgba(27,27,31,.16);padding:.125rem .5rem;}
+.blog-v1 .pill.on-dark{color:rgba(247,245,242,.85);border-color:rgba(247,245,242,.35);}
+.blog-v1 .avatar{width:1.25rem;height:1.25rem;border-radius:50%;background:var(--fill);flex:none;}
+.blog-v1 .author{display:inline-flex;align-items:center;gap:.5rem;color:var(--ink);}
+.blog-v1 .btn{display:inline-flex;align-items:center;min-height:var(--hit);padding-inline:1.5rem;border:0;background:var(--fill);color:var(--bg);
+  font:.875rem var(--f-body);cursor:pointer;transition:background .2s;}
+.blog-v1 .btn:hover{background:var(--ink);}
+.blog-v1 .btn:active{translate:0 1px;}
+.blog-v1 a:focus-visible,.blog-v1 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* Page head: same build as /portfolio, ghost BLOG. behind the title. */
+.blog-v1 .b-hero{position:relative;padding-block:1.75rem 0;overflow:hidden;}
+.blog-v1 .gblog{position:absolute;top:-.875rem;inset-inline-start:1.25rem;font:800 clamp(4rem,2.5rem + 6vw,5.75rem)/1.2 var(--f-head);color:rgba(27,27,31,.055);letter-spacing:-.04em;pointer-events:none;}
+.blog-v1 .gblog .dot{display:inline-block;width:.17em;height:.17em;margin-inline-start:.05em;background:rgba(196,105,74,.22);color:transparent;overflow:hidden;line-height:0;} /* square, not the font's round period */
+.blog-v1 .b-hero-row{position:relative;display:grid;gap:1rem;}
+.blog-v1 .b-hero h1{font-size:2rem;font-weight:700;margin-top:.625rem;line-height:1.1;}
+.blog-v1 .b-hero h1 span{display:inline-block;width:.17em;height:.17em;margin-inline-start:.06em;background:var(--accent);color:transparent;overflow:hidden;line-height:0;}
+
+/* Featured post: image then text on the phone. */
+.blog-v1 .feat{display:grid;gap:1.25rem;margin-top:2.5rem;}
+.blog-v1 .feat .ph{aspect-ratio:16/10;}
+.blog-v1 .eyebrow{font-size:.625rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink);}
+.blog-v1 .feat h2{font-size:clamp(1.5rem,1.2rem + 1.4vw,1.875rem);font-weight:700;line-height:1.15;letter-spacing:-.01em;margin:.625rem 0 .875rem;text-wrap:balance;}
+.blog-v1 .feat p{font-size:.875rem;color:var(--muted);line-height:1.6;margin:0 0 1.125rem;max-width:46ch;}
+.blog-v1 .byline{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;font-size:.6875rem;color:var(--faint);margin-bottom:1.375rem;}
+
+/* Section labels: a clay dot, small caps. The space under a label is
+   taken from the gap above it (see .cur / .cur-main), so the cards below
+   stay where they were. The .blog-v1 prefix is load-bearing:
+   `.blog-v1 h2 { margin: 0 }` outranks a bare .label and silently ate this
+   margin before. */
+.blog-v1 .label{display:flex;align-items:center;gap:.5rem;font:.6875rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:1rem;}
+.blog-v1 .label::before{content:"";width:5px;height:5px;background:var(--accent);}
+/* The dot breathes: a clay ring leaves it and fades, like a "live" light,
+   since these three lists are the ones that change week to week. Each
+   label is out of step with the others so they never pulse in unison. */
+@media (prefers-reduced-motion:no-preference){
+  .blog-v1 .label::before{animation:b-pulse 3.2s var(--ease-out) infinite;}
+  .blog-v1 .cur-main section + section .label::before{animation-delay:1.1s;}
+  .blog-v1 .cur-side .label::before{animation-delay:2.1s;}
+}
+@keyframes b-pulse{
+  0%{box-shadow:0 0 0 0 rgba(196,105,74,.5);}
+  45%,100%{box-shadow:0 0 0 .4375rem rgba(196,105,74,0);}
+}
+
+.blog-v1 .cur{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem;margin-top:3.5rem;}
+.blog-v1 .cur-side{min-width:0;}
+.blog-v1 .cur-main{display:grid;grid-template-columns:minmax(0,1fr);gap:1.5rem;min-width:0;}
+
+/* Best of the Week: full-bleed photo, definition from a hairline ring.
+   The number is two layers (fill + an offset outline copy), as on the
+   homepage blog slider. */
+.blog-v1 .best{position:relative;display:block;min-height:18.75rem;overflow:hidden;box-shadow:var(--ring);
+  background:repeating-linear-gradient(135deg,rgba(27,27,31,.08) 0 2px,transparent 2px 10px),#c9c2b4;}
+.blog-v1 .best .tag{position:absolute;top:.75rem;inset-inline-start:.75rem;z-index:3;font-size:.5625rem;letter-spacing:.04em;text-transform:uppercase;color:#fff;background:rgba(27,27,31,.4);padding:.1875rem .5rem;}
+.blog-v1 .best .scrim{position:absolute;inset:auto 0 0;height:70%;opacity:.85;background:linear-gradient(rgba(27,27,31,0),rgba(27,27,31,.8));}
+.blog-v1 .gnum{position:absolute;top:0;inset-inline-end:0;z-index:2;translate:var(--gx) -38%;font:700 clamp(4.5rem,3.5rem + 4vw,6rem)/1 var(--f-head);}
+.blog-v1 .gnum span{color:rgba(247,245,242,.5);}
+.blog-v1 .gnum span + span{position:absolute;inset:0;color:transparent;-webkit-text-stroke:1px rgba(247,245,242,.4);translate:var(--off) calc(-1 * .4375rem);}
+.blog-v1 .gword{position:absolute;inset-inline-start:-.25rem;bottom:0;z-index:1;translate:0 38%;font:600 3.25rem/1 var(--f-head);color:rgba(247,245,242,.14);white-space:nowrap;}
+.blog-v1 .best .body{position:absolute;inset-inline:1.375rem;bottom:1.125rem;z-index:3;color:var(--bg);}
+.blog-v1 .best .cat{font-size:.625rem;letter-spacing:.02em;text-transform:uppercase;color:rgba(247,245,242,.65);margin-bottom:.375rem;}
+.blog-v1 .best h3{font-size:1.1875rem;font-weight:500;line-height:1.22;margin-bottom:.625rem;max-width:26ch;text-wrap:balance;}
+.blog-v1 .best .bmeta{display:flex;flex-wrap:wrap;align-items:center;gap:.375rem .75rem;font-size:.6875rem;color:rgba(247,245,242,.7);}
+.blog-v1 .best .bmeta .pill{margin-inline-start:auto;}
+
+/* Top Rated: on the phone a sideways strip (three stacked cards would
+   push the archive a screen further down); each card snaps. */
+.blog-v1 .rated{display:grid;grid-auto-flow:column;grid-auto-columns:min(72%,15rem);gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin-inline:-1.25rem;padding:1px 1.25rem;scroll-padding-inline:1.25rem;scrollbar-width:none;}
+.blog-v1 .rated::-webkit-scrollbar{display:none;}
+.blog-v1 .rate{scroll-snap-align:start;display:block;background:var(--card);box-shadow:var(--ring);padding:.75rem;}
+.blog-v1 .rate .ph{aspect-ratio:16/10;}
+.blog-v1 .kicker{font-size:.625rem;letter-spacing:.02em;text-transform:uppercase;color:rgba(27,27,31,.62);margin:.625rem 0 .25rem;}
+.blog-v1 .rate h3{font-size:.875rem;font-weight:500;line-height:1.3;margin-bottom:.5rem;}
+.blog-v1 .rmeta{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.6875rem;color:var(--faint);}
+
+/* Most Viewed: one big card, then rows. Titles clamp to one line so the
+   date/views line lands on the same baseline row to row. */
+.blog-v1 .mv{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem;}
+.blog-v1 .mv-big{display:block;background:var(--card);box-shadow:var(--ring);padding:.625rem;}
+.blog-v1 .mv-big .ph{aspect-ratio:16/9;}
+.blog-v1 .mv-big h3{font-size:.9375rem;font-weight:500;line-height:1.3;margin-bottom:.375rem;}
+.blog-v1 .mv-row{display:flex;gap:.875rem;align-items:center;background:var(--card);box-shadow:var(--ring);padding:.625rem;}
+.blog-v1 .mv-row .ph{width:7.125rem;aspect-ratio:114/82;flex:none;}
+.blog-v1 .mv-t{flex:1;min-width:0;}
+.blog-v1 .mv-t h3{font:.8125rem/1.3 var(--f-body);margin-bottom:.375rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.blog-v1 .mv .kicker{margin-top:0;}
+.blog-v1 .mv-big .kicker{margin-top:.625rem;}
+.blog-v1 .mmeta{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .5rem;font-size:.6875rem;color:var(--faint);}
+.blog-v1 .mmeta .pill{margin-inline-start:auto;}
+
+/* Archive. Categories: the /portfolio filter strip (scrolls sideways on
+   the phone, counts in clay). Sort + view toggle share the next line. */
+.blog-v1 .arch{margin-top:clamp(4rem,3rem + 3vw,5.5rem);}
+.blog-v1 .arch > h2{font-size:clamp(1.75rem,1.3rem + 2vw,2.375rem);font-weight:700;letter-spacing:-.01em;line-height:1.1;}
+.blog-v1 .cats{display:flex;column-gap:1.5rem;margin:1.25rem -1.25rem 0;padding-inline:1.25rem;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:1.25rem;
+  scrollbar-width:none;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 3rem),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 3rem),transparent);}
+.blog-v1 .cats:dir(rtl){-webkit-mask-image:linear-gradient(to left,#000 calc(100% - 3rem),transparent);mask-image:linear-gradient(to left,#000 calc(100% - 3rem),transparent);}
+.blog-v1 .cats::-webkit-scrollbar{display:none;}
+.blog-v1 .cats::after{content:"";flex:0 0 1.75rem;}
+.blog-v1 .cats a,.blog-v1 .sort a{appearance:none;display:inline-flex;align-items:center;flex:none;border:0;background:none;padding:0;min-height:var(--hit);white-space:nowrap;cursor:pointer;
+  font:.6875rem var(--f-body);color:var(--faint);text-underline-offset:.3125rem;transition:color .18s;}
+.blog-v1 .cats a{scroll-snap-align:start;letter-spacing:.06em;text-transform:uppercase;text-decoration:underline;text-decoration-color:rgba(27,27,31,.25);}
+.blog-v1 .cats sup{font-size:.5625rem;color:var(--accent-ink);margin-inline-start:.25rem;display:inline-block;}
+.blog-v1 .cats a:hover,.blog-v1 .sort a:hover{color:var(--ink);}
+.blog-v1 .cats a[aria-current]{color:var(--ink);text-decoration-color:var(--accent);text-decoration-thickness:2px;}
+.blog-v1 .ctl{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0 1rem;}
+/* Two different controls, two different looks. Categories FILTER: caps,
+   underlined, counts. Sort only REORDERS: a "Sort by" caption, sentence
+   case, no underline; the current order is ink with a small clay square. */
+.blog-v1 .sort{display:flex;align-items:center;gap:1.125rem;}
+.blog-v1 .ctl-cap{font-size:.625rem;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+.blog-v1 .sort a{display:inline-flex;align-items:center;gap:.375rem;font-size:.75rem;}
+.blog-v1 .sort a::before{content:"";width:.3125rem;height:.3125rem;background:var(--accent);opacity:0;transition:opacity .18s;}
+.blog-v1 .sort a[aria-current]{color:var(--ink);}
+.blog-v1 .sort a[aria-current]::before{opacity:1;}
+/* View toggle: 44px targets, the visible square drawn inside. */
+.blog-v1 .view{display:flex;margin-inline-end:-.5rem;}
+.blog-v1 .view a{position:relative;width:var(--hit);height:var(--hit);display:grid;place-items:center;border:0;background:none;padding:0;color:var(--faint);cursor:pointer;}
+.blog-v1 .view a::before{content:"";position:absolute;inset:.5rem;box-shadow:inset 0 0 0 1px rgba(27,27,31,.16);}
+.blog-v1 .view a[aria-current]{color:var(--bg);}
+.blog-v1 .view a[aria-current]::before{background:var(--fill);box-shadow:none;}
+.blog-v1 .view svg{position:relative;width:.8125rem;height:.8125rem;}
+.blog-v1 .arch-rule{height:1px;background:var(--rule);margin:.75rem .25rem 1.75rem;}
+
+/* Post cards: topline, image, body; the body row takes the slack so the
+   author line pins to the card bottom in every row. */
+.blog-v1 .posts{display:grid;gap:1.25rem;}
+.blog-v1 .post{display:grid;grid-template-rows:auto auto 1fr;background:var(--card);box-shadow:var(--ring);padding:.625rem;}
+.blog-v1 .post[hidden]{display:none;}
+.blog-v1 .post .ph{aspect-ratio:16/10;}
+.blog-v1 .top{display:flex;justify-content:space-between;align-items:center;font-size:.625rem;letter-spacing:.02em;margin-bottom:.5rem;}
+.blog-v1 .top .c{color:var(--accent-ink);text-transform:uppercase;}
+.blog-v1 .top .d{color:var(--faint);}
+.blog-v1 .pbody{display:flex;flex-direction:column;min-width:0;}
+.blog-v1 .post h3{font-size:.9375rem;font-weight:500;line-height:1.3;margin:.625rem 0 .5rem;text-wrap:balance;}
+.blog-v1 .teaser{font-size:.75rem;color:var(--muted);line-height:1.55;margin:0 0 .75rem;}
+.blog-v1 .tags{display:flex;flex-wrap:wrap;gap:.375rem;margin-bottom:.875rem;}
+.blog-v1 .pfoot{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.6875rem;}
+.blog-v1 .stats{display:flex;gap:.625rem;color:var(--faint);}
+.blog-v1 .stats span{display:flex;align-items:center;gap:.1875rem;}
+.blog-v1 .stats svg{width:.6875rem;height:.6875rem;flex:none;}
+/* List mode: the image becomes a start-edge column spanning both rows.
+   On the phone it is a thumbnail and the tags drop, so a row stays a row. */
+.blog-v1 .posts.list .post{grid-template-columns:6.5rem minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"img top" "img body";column-gap:.875rem;}
+.blog-v1 .posts.list .ph{grid-area:img;aspect-ratio:auto;}
+.blog-v1 .posts.list .top{grid-area:top;}
+.blog-v1 .posts.list .pbody{grid-area:body;}
+.blog-v1 .posts.list h3{margin-top:0;}
+.blog-v1 .posts.list .tags{display:none;}
+.blog-v1 .posts.list .teaser{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+.blog-v1 .more{display:flex;justify-content:center;padding-top:1.875rem;}
+
+@media (min-width:40rem){
+  .blog-v1 .posts{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .blog-v1 .rated{grid-auto-flow:row;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible;margin-inline:0;padding:0;}
+  .blog-v1 .mv{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .blog-v1 .mv-big{grid-row:span 3;}
+}
+@media (min-width:48rem){
+  .blog-v1 .wrap{padding-inline:3.5rem;}
+  .blog-v1 .gblog{inset-inline-start:3.5rem;}
+  .blog-v1 .b-hero-row{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:2rem;}
+  .blog-v1 .b-hero .desc{max-width:16rem;text-align:end;}
+  .blog-v1 .feat{grid-template-columns:55fr 45fr;gap:2rem;align-items:center;}
+  .blog-v1 .feat .ph{aspect-ratio:auto;align-self:stretch;min-height:18.75rem;}
+  .blog-v1 .cats{margin-inline:0;padding-inline:0;overflow:visible;flex-wrap:wrap;-webkit-mask-image:none;mask-image:none;}
+  .blog-v1 .cats::after{content:none;}
+  .blog-v1 .posts.list .post{grid-template-columns:15rem minmax(0,1fr);column-gap:1.5rem;padding:.875rem;}
+  .blog-v1 .posts.list .ph{min-height:9rem;}
+  .blog-v1 .posts.list h3{font-size:1.1875rem;}
+  .blog-v1 .posts.list .teaser{font-size:.8125rem;display:block;}
+  .blog-v1 .posts.list .tags{display:flex;}
+}
+@media (min-width:60rem){
+  .blog-v1 .posts{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+/* 64rem: both columns end on one line. Top Rated sits at the foot of the
+   left column and Best of the Week grows to take whatever the rail is
+   taller by (its content is absolutely placed, so the photo just gets
+   taller); if the left side is the taller one, the rail's last row drops
+   to the foot instead. Either way the bottom edges meet. */
+@media (min-width:64rem){
+  .blog-v1 .cur{grid-template-columns:66fr 34fr;gap:2.75rem;}
+  .blog-v1 .cur-main,.blog-v1 .cur-side,.blog-v1 .cur-main > section:first-child{display:flex;flex-direction:column;}
+  .blog-v1 .cur-main > section:first-child{flex:1;}
+  .blog-v1 .best{flex:1;}
+  .blog-v1 .mv{display:flex;flex-direction:column;flex:1;}
+  .blog-v1 .mv-row:last-child{margin-top:auto;}
+}
+.blog-v1 .posts.list{grid-template-columns:minmax(0,1fr);gap:1rem;}
+
+/* Card hover, fine pointers only: the ring warms to clay, the image eases
+   in a few percent inside its frame, the title picks up a clay underline.
+   Best of the Week: the scrim deepens and its ghost word surfaces. */
+.blog-v1 .rate,.blog-v1 .mv-big,.blog-v1 .mv-row,.blog-v1 .post,.blog-v1 .best{transition:box-shadow .25s;}
+.blog-v1 .rate h3,.blog-v1 .mv-big h3,.blog-v1 .mv-t h3,.blog-v1 .post h3,.blog-v1 .best h3{text-decoration:underline 1px transparent;text-underline-offset:.25em;transition:text-decoration-color .25s;}
+.blog-v1 .scrim,.blog-v1 .gword{transition:opacity .35s,color .35s;}
+@media (hover:hover) and (pointer:fine){
+  .blog-v1 :is(.rate,.mv-big,.mv-row,.post,.best):hover{box-shadow:0 0 0 1px rgba(196,105,74,.45);}
+  .blog-v1 :is(.rate,.mv-big,.mv-row,.post):hover h3,.blog-v1 .best:hover h3{text-decoration-color:var(--accent);}
+  .blog-v1 :is(.rate,.mv-big,.mv-row,.post):hover .ph::before,.blog-v1 .feat:hover .ph::before{scale:1.04;}
+  .blog-v1 .best:hover .scrim{opacity:1;}
+  .blog-v1 .best:hover .gword{color:rgba(247,245,242,.24);}
+}
+
+/* SOUL PASS 2026-09-30, light: images unveil bottom-up as they enter (the
+   /portfolio print coming off the press); the Best of the Week outline
+   number starts in register with its fill and slips off it as the card
+   scrolls in; the ghost word drifts along the card's foot; the rated and
+   most-viewed cards rise a little as they arrive. */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .blog-v1 .feat .ph,.blog-v1 .post .ph{animation:b-unveil linear both;animation-timeline:view();animation-range:entry 0% entry 60%;}
+    .blog-v1 .best{view-timeline:--best block;}
+    .blog-v1 .gnum span + span{animation:b-slip linear both;animation-timeline:--best;animation-range:entry 30% cover 55%;}
+    .blog-v1 .gword{animation:b-drift linear both;animation-timeline:--best;}
+    .blog-v1 .rate,.blog-v1 .mv > *{animation:b-rise linear both;animation-timeline:view();animation-range:entry 0% entry 40%;}
+  }
+}
+@keyframes b-unveil{from{clip-path:inset(100% 0 0 0);}to{clip-path:inset(0);}}
+@keyframes b-slip{from{translate:0 0;}}
+@keyframes b-rise{from{opacity:0;translate:0 1rem;}}
+@keyframes b-drift{to{translate:var(--drift) 38%;}}
+
+/* Build additions. A tag reached from a post's pills: named above the
+   categories with a way back; a category and tag with nothing in common
+   say so instead of showing an empty grid. */
+.blog-v1 .tagged{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem .625rem;margin:1rem 0 0;font-size:.75rem;color:var(--faint);}
+.blog-v1 .tagged a{display:inline-flex;align-items:center;min-height:var(--hit);color:var(--ink);text-decoration:underline;text-underline-offset:.25em;}
+.blog-v1 .empty{font-size:.875rem;color:var(--muted);margin:0;}
+.blog-v1 .empty a{text-decoration:underline;text-underline-offset:.25em;}
+/* The counts' screen-reader words are positioned out of sight; the card
+   holds them, or they escape a scrolling strip and widen the page. In list
+   view on the phone the author and counts share a narrow column: they wrap. */
+.blog-v1 .post{position:relative;}
+.blog-v1 .pfoot{flex-wrap:wrap;}

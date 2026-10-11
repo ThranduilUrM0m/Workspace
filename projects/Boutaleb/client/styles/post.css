@@ -1,0 +1,234 @@
+/* Ported from the <style> block of Blueprinting/wireframes/public/blog-post.html
+   ("Option B v2", mobile pass 2026-09-30). Every selector is scoped to
+   .post-v1; [dir="rtl"] rules became :dir(rtl); faces read next/font
+   variables. The comment form reuses the footer's .ff-* fields (public.css). */
+/* /blog/<slug> — "Option B v2". MOBILE PASS 2026-09-30. Header + footer:
+   public.css, menu: public.js; the comment form reuses the footer's .ff-*
+   fields. The review scaffolding went with it: the grey page mat and the
+   notes block (their history is in git).
+   Now a page, not an overlay: the old bar had a Close button and no site
+   header, but a post is a long read with its own URL, shared and indexed
+   on its own; a "back to all posts" link does the Close button's job.
+   Contents on the phone: a closed "Contents" disclosure between the
+   stats and the article, the /legal mechanism (legal.html .l-toc). The
+   side column's list would land after the article it indexes, so the
+   phone gets its own; picking a section shuts it. Gone from 56rem.
+   Base styles are the phone; layouts are added where the stack wastes the line:
+     40rem  related posts 2-up
+     48rem  hero caption sits on the photo; comment name/email side by side
+     56rem  article + sticky side column (author, contents, tags);
+            comment form beside the thread
+     60rem  related posts 3-up
+   Fixed on the way: Inter (a third face) dropped from the form label, the
+   hero caption and TOC's physical left, 30px close and 4px icon buttons (now
+   44px targets), the rotate() inline style on the downvote icon, the
+   honeypot and privacy line inline styles, fake bold on the stats.
+   "Not for me" carries no count, on purpose (decided 2026-10-06): a
+   public dislike tally invites piling on and says nothing a reader
+   needs. The vote is still recorded; the owner sees it in the ERP blog
+   console (blog-data.js `downs`). Likes keep their public count. */
+.post-v1{
+  --bg:#F7F5F2; --accent:#C4694A; --muted:#4A4A50; --faint:#707076;
+  --rule:rgba(27,27,31,.1); --card:#fff; --ring:0 0 0 1px rgba(27,27,31,.08); --fill:#232326;
+  font-family:var(--f-body);color:var(--ink);background:var(--bg);padding-bottom:3.5rem;
+}
+.post-v1 .wrap{max-width:73.75rem;margin:0 auto;padding-inline:1.25rem;}
+.post-v1 h1,.post-v1 h2,.post-v1 h3{margin:0;font-family:var(--f-head);}
+.post-v1 a{color:inherit;}
+.post-v1 a:focus-visible,.post-v1 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.post-v1 .ph{position:relative;overflow:hidden;display:block;}
+.post-v1 .ph::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,#EDE7DE,#EDE7DE .5rem,#E4DCD0 .5rem,#E4DCD0 1rem);transition:scale .6s var(--ease-out,ease);}
+.post-v1 .pill{display:inline-block;font-size:.625rem;letter-spacing:.02em;color:rgba(27,27,31,.62);border:1px solid rgba(27,27,31,.16);padding:.125rem .5rem;text-decoration:none;}
+.post-v1 a.pill:hover{color:var(--ink);border-color:var(--accent);}
+.post-v1 .avatar{width:1.25rem;height:1.25rem;border-radius:50%;background:var(--fill);flex:none;}
+.post-v1 .author{display:inline-flex;align-items:center;gap:.5rem;color:var(--ink);}
+.post-v1 .label{display:flex;align-items:center;gap:.5rem;font:.6875rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);}
+.post-v1 h2.label{margin-bottom:1rem;}
+.post-v1 .label::before{content:"";width:5px;height:5px;background:var(--accent);}
+
+/* Reading progress: the old 7px clay bar at the top of the overlay, now
+   3px along the top of the window, filling as you read. */
+.post-v1 .progress{display:none;}
+@supports (animation-timeline:scroll()){
+  @media (prefers-reduced-motion:no-preference){
+    .post-v1 .progress{display:block;position:fixed;inset-inline:0;top:0;z-index:40;height:3px;background:var(--accent);transform-origin:0 50%;
+      animation:p-read linear both;animation-timeline:scroll(root);}
+    .post-v1 .progress:dir(rtl){transform-origin:100% 50%;}
+  }
+}
+@keyframes p-read{from{scale:0 1;}to{scale:1 1;}}
+
+/* Head: back link, category and date, title, byline. */
+.post-v1 .back{display:inline-flex;align-items:center;gap:.5rem;min-height:var(--hit);margin-top:.5rem;font-size:.75rem;color:var(--faint);text-decoration:none;}
+.post-v1 .back:hover{color:var(--ink);}
+.post-v1 .back .arr{display:inline-block;transition:translate .2s var(--ease-out,ease);}
+.post-v1 .back:hover .arr{translate:-.25rem 0;}
+.post-v1 .back:dir(rtl) .arr{scale:-1 1;}
+.post-v1 .back:hover:dir(rtl) .arr{translate:.25rem 0;}
+.post-v1 .p-head{padding-block:.75rem 1.5rem;}
+.post-v1 .eyebrow{display:flex;align-items:center;gap:.625rem;margin-bottom:.75rem;font-size:.6875rem;}
+.post-v1 .eyebrow .cat{letter-spacing:.06em;text-transform:uppercase;color:var(--accent-ink);text-decoration:none;}
+.post-v1 .eyebrow .sep{width:3px;height:3px;background:var(--faint);}
+.post-v1 .eyebrow time{color:var(--faint);}
+.post-v1 .p-head h1{font-size:clamp(1.75rem,1.2rem + 2.4vw,2.375rem);font-weight:700;line-height:1.12;letter-spacing:-.015em;max-width:24ch;text-wrap:balance;margin-bottom:1.125rem;}
+.post-v1 .p-head .author{font-size:.8125rem;}
+.post-v1 .p-head .avatar{width:1.5rem;height:1.5rem;}
+
+/* Hero: photo, caption under it on the phone, on the photo from 48rem. */
+.post-v1 .hero{margin:0;}
+.post-v1 .hero .ph{aspect-ratio:16/9;}
+.post-v1 .hero figcaption{font-size:.75rem;line-height:1.5;color:var(--faint);padding-top:.625rem;max-width:60ch;}
+
+/* Engagement: read-only stats, then the actions. Stats in Questrial at
+   one weight; actions are 44px icon buttons, no fill. */
+.post-v1 .engage{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:.25rem 1.375rem;padding-block:.75rem;}
+.post-v1 .engage::after{content:"";position:absolute;inset-inline-start:0;bottom:0;width:10rem;height:1px;background:var(--rule);}
+.post-v1 .stat{display:inline-flex;align-items:center;gap:.3125rem;font-size:.75rem;color:var(--faint);}
+.post-v1 a.stat{text-decoration:none;transition:color .18s;}
+.post-v1 a.stat:hover{color:var(--ink);}
+.post-v1 .stat svg,.post-v1 .ibtn svg{width:.875rem;height:.875rem;flex:none;}
+.post-v1 .acts{display:flex;align-items:center;gap:.25rem;margin-inline-start:auto;}
+.post-v1 .ibtn{display:inline-flex;align-items:center;gap:.3125rem;min-height:var(--hit);min-width:var(--hit);justify-content:center;padding-inline:.375rem;border:0;background:none;cursor:pointer;
+  font:.75rem var(--f-body);color:var(--faint);transition:color .18s;}
+.post-v1 .ibtn:hover,.post-v1 .ibtn[aria-pressed="true"]{color:var(--accent-ink);}
+.post-v1 .ibtn[aria-pressed="true"] svg{fill:currentColor;}
+.post-v1 .ibtn .down{rotate:180deg;}
+.post-v1 .ibtn[aria-pressed="true"] svg{animation:p-pop .35s var(--ease-out,ease);}
+@keyframes p-pop{50%{scale:1.3;}}
+
+/* Article + side column. */
+.post-v1 .body{display:grid;gap:2.5rem;margin-top:2rem;}
+.post-v1 .prose{min-width:0;max-width:68ch;}
+.post-v1 .prose p{font-size:1rem;line-height:1.75;color:rgba(27,27,31,.78);margin:0 0 1.125rem;}
+.post-v1 .prose h2{font-size:1.375rem;font-weight:600;line-height:1.25;margin:2rem 0 .75rem;scroll-margin-top:5rem;}
+.post-v1 .prose section{scroll-margin-top:5rem;}
+/* Pull quote: the clay rule draws down as the quote comes in. */
+.post-v1 .pull{position:relative;margin:1.75rem 0;padding:.25rem 0;padding-inline-start:1.25rem;font:500 1.1875rem/1.4 var(--f-head);color:var(--ink);}
+.post-v1 .pull::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:3px;background:var(--accent);transform-origin:50% 0;}
+.post-v1 .pull p{margin:0;font:inherit;color:inherit;}
+.post-v1 .inline{margin:1.75rem 0;}
+.post-v1 .inline .ph{aspect-ratio:16/9;}
+
+.post-v1 .aside{display:grid;gap:1.75rem;align-content:start;}
+.post-v1 .acard{background:var(--card);box-shadow:var(--ring);padding:1.125rem;}
+.post-v1 .acard .who{display:flex;align-items:center;gap:.75rem;margin-bottom:.625rem;}
+.post-v1 .acard .avatar{width:2.625rem;height:2.625rem;}
+.post-v1 .acard .name{font:600 .9375rem var(--f-head);margin:0;}
+.post-v1 .acard .role{font-size:.6875rem;letter-spacing:.03em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 .75rem;}
+.post-v1 .acard .bio{font-size:.75rem;color:var(--muted);line-height:1.55;margin:0 0 .75rem;}
+.post-v1 .acard .astats{font-size:.6875rem;color:var(--faint);padding-top:.75rem;border-top:1px solid var(--rule);}
+.post-v1 .acard .astats b{color:var(--ink);font-weight:600;}
+.post-v1 .side-block{padding-bottom:1.75rem;border-bottom:1px solid var(--rule);margin-inline:.25rem;}
+.post-v1 .side-block:last-child{border-bottom:0;padding-bottom:0;}
+.post-v1 .side-cap{font-size:.65625rem;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin:0 0 .75rem;}
+.post-v1 .tags{display:flex;flex-wrap:wrap;gap:.375rem;}
+/* Contents: only in the side column. On the phone it would land after
+   the article it indexes, so it stays hidden until there is a column. */
+.post-v1 .toc{display:none;}
+.post-v1 .toc ol,.post-v1 .ptoc ol{list-style:none;margin:0;padding:0;}
+.post-v1 .ptoc{margin-top:.25rem;border-bottom:1px solid var(--rule);} /* the stats' inset rule is its top edge */
+.post-v1 .ptoc summary{display:flex;align-items:center;justify-content:space-between;min-height:var(--hit);cursor:pointer;list-style:none;
+  font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+.post-v1 .ptoc summary::-webkit-details-marker{display:none;}
+.post-v1 .ptoc summary::after{content:"";width:.5rem;height:.5rem;border:solid currentColor;border-width:0 1px 1px 0;rotate:45deg;translate:0 -.125rem;transition:rotate .2s var(--ease-out);}
+.post-v1 .ptoc[open] summary::after{rotate:225deg;translate:0 .125rem;}
+.post-v1 .ptoc ol{padding-bottom:.5rem;}
+.post-v1 .ptoc a{min-height:var(--hit);}
+.post-v1 .toc a,.post-v1 .ptoc a{position:relative;display:flex;align-items:center;min-height:2.25rem;padding-inline-start:.75rem;font-size:.8125rem;color:var(--faint);text-decoration:none;transition:color .2s;}
+.post-v1 .toc a::before,.post-v1 .ptoc a::before{content:"";position:absolute;inset-inline-start:0;inset-block:.375rem;width:2px;background:var(--accent);scale:1 0;transition:scale .3s var(--ease-out,ease);}
+.post-v1 .toc a:hover{color:var(--ink);}
+.post-v1 .toc a[aria-current],.post-v1 .ptoc a[aria-current]{color:var(--ink);}
+.post-v1 .toc a[aria-current]::before,.post-v1 .ptoc a[aria-current]::before{scale:1 1;}
+
+/* Comments. Form first on the phone (the thread can be long). */
+.post-v1 .comments{position:relative;margin-top:3.5rem;padding-top:2.5rem;}
+.post-v1 .comments::before{content:"";position:absolute;inset-inline-start:.25rem;top:0;width:10rem;height:1px;background:var(--rule);}
+.post-v1 .comments > h2{display:flex;align-items:center;gap:.5rem;font-size:1.125rem;font-weight:600;margin-bottom:1.5rem;}
+.post-v1 .comments > h2 svg{width:1.125rem;height:1.125rem;}
+.post-v1 .c-layout{display:grid;gap:1.5rem;align-items:start;}
+.post-v1 .c-form .ft-cap{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 1.25rem;}
+.post-v1 .c-form .hp{position:absolute;inset-inline-start:-100rem;}
+.post-v1 .c-note{font-size:.75rem;color:var(--faint);line-height:1.5;margin:0;}
+.post-v1 .c-note a{color:inherit;}
+.post-v1 .c-send{justify-self:start;display:inline-flex;align-items:center;gap:.5rem;min-height:var(--hit);padding-inline:1.5rem;border:0;background:var(--fill);color:var(--bg);
+  font:.875rem var(--f-body);cursor:pointer;transition:background .2s;}
+.post-v1 .c-send:hover{background:var(--ink);}
+.post-v1 .c-send svg{transition:translate .2s var(--ease-out,ease);}
+.post-v1 .c-send:hover svg{translate:.125rem -.125rem;}
+.post-v1 .thread{list-style:none;margin:0;padding:1.25rem;background:var(--card);box-shadow:var(--ring);}
+.post-v1 .thread ol{list-style:none;margin:1rem 0 0;padding:0;padding-inline-start:1.5rem;border-inline-start:1px solid var(--rule);}
+.post-v1 .cmt{display:flex;gap:.75rem;}
+.post-v1 .thread > .cmt + .cmt{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--rule);}
+.post-v1 .cmt .avatar{width:2rem;height:2rem;}
+.post-v1 .cmt-body{flex:1;min-width:0;}
+.post-v1 .cmt-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .5rem;margin-bottom:.25rem;}
+.post-v1 .cmt-head b{font-size:.8125rem;font-weight:600;}
+.post-v1 .cmt-head .you{font-size:.5625rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);border:1px solid rgba(196,105,74,.4);padding:.0625rem .3125rem;}
+.post-v1 .cmt-head time{font-size:.6875rem;color:var(--faint);}
+.post-v1 .cmt p{font-size:.84375rem;line-height:1.65;color:rgba(27,27,31,.78);margin:0 0 .125rem;}
+.post-v1 .cmt-acts{display:flex;margin-inline-start:-.375rem;}
+
+/* Related: the blog archive card. A sideways strip on the phone, a grid from 40rem. */
+.post-v1 .related{margin-top:3.5rem;}
+.post-v1 .rel{display:grid;grid-auto-flow:column;grid-auto-columns:min(80%,17rem);gap:1rem;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin-inline:-1.25rem;padding:1px 1.25rem;scroll-padding-inline:1.25rem;scrollbar-width:none;}
+.post-v1 .rel::-webkit-scrollbar{display:none;}
+.post-v1 .card{scroll-snap-align:start;display:grid;grid-template-rows:auto auto 1fr;background:var(--card);box-shadow:var(--ring);padding:.625rem;text-decoration:none;transition:box-shadow .25s;}
+.post-v1 .card .ph{aspect-ratio:16/10;}
+.post-v1 .top{display:flex;justify-content:space-between;align-items:center;font-size:.625rem;letter-spacing:.02em;margin-bottom:.5rem;}
+.post-v1 .top .c{color:var(--accent-ink);text-transform:uppercase;}
+.post-v1 .top .d{color:var(--faint);}
+.post-v1 .pbody{display:flex;flex-direction:column;min-width:0;}
+.post-v1 .card h3{font-size:.9375rem;font-weight:500;line-height:1.3;margin:.625rem 0 .5rem;text-wrap:balance;
+  text-decoration:underline 1px transparent;text-underline-offset:.25em;transition:text-decoration-color .25s;}
+.post-v1 .teaser{font-size:.75rem;color:var(--muted);line-height:1.55;margin:0 0 .75rem;}
+.post-v1 .card .tags{margin-bottom:.875rem;}
+.post-v1 .pfoot{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--rule);font-size:.6875rem;}
+.post-v1 .stats{display:flex;gap:.625rem;color:var(--faint);}
+.post-v1 .stats span{display:flex;align-items:center;gap:.1875rem;}
+.post-v1 .stats svg{width:.6875rem;height:.6875rem;flex:none;}
+@media (hover:hover) and (pointer:fine){
+  .post-v1 .card:hover{box-shadow:0 0 0 1px rgba(196,105,74,.45);}
+  .post-v1 .card:hover h3{text-decoration-color:var(--accent);}
+  .post-v1 .card:hover .ph::before{scale:1.04;}
+}
+
+@media (min-width:40rem){
+  .post-v1 .rel{grid-auto-flow:row;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;margin-inline:0;padding:0;}
+}
+@media (min-width:48rem){
+  .post-v1 .wrap{padding-inline:3.5rem;}
+  .post-v1 .hero{position:relative;}
+  .post-v1 .hero .ph{aspect-ratio:auto;height:clamp(18rem,30vw,22rem);}
+  .post-v1 .hero figcaption{position:absolute;inset:auto 0 0;padding:1.25rem 1.75rem 1rem;max-width:none;color:rgba(247,245,242,.9);
+    background:linear-gradient(rgba(27,27,31,0),rgba(27,27,31,.75));}
+  .post-v1 .hero figcaption span{display:block;max-width:32.5rem;}
+}
+@media (min-width:56rem){
+  .post-v1 .body{grid-template-columns:minmax(0,64fr) minmax(0,32fr);gap:2.75rem;}
+  .post-v1 .aside{position:sticky;top:1.5rem;align-self:start;}
+  .post-v1 .toc{display:block;}
+  .post-v1 .ptoc{display:none;}
+  .post-v1 .c-layout{grid-template-columns:minmax(17.5rem,38fr) 62fr;gap:1.75rem;}
+}
+@media (min-width:60rem){
+  .post-v1 .rel{grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+
+/* SOUL PASS 2026-09-30, light: the reading bar above; the hero unveils
+   bottom-up (the /blog print off the press); the pull quote's rule draws
+   down as it arrives; the contents marker slides to the section you are in;
+   a like pops once. */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .post-v1 .hero .ph,.post-v1 .inline .ph,.post-v1 .card .ph{animation:p-unveil linear both;animation-timeline:view();animation-range:entry 0% entry 60%;}
+    .post-v1 .pull::before{animation:p-draw linear both;animation-timeline:view();animation-range:entry 20% cover 45%;}
+  }
+}
+@keyframes p-unveil{from{clip-path:inset(100% 0 0 0);}to{clip-path:inset(0);}}
+@keyframes p-draw{from{scale:1 0;}}
+
+/* Build addition: the counts' screen-reader words are positioned out of
+   sight; the card holds them, or they escape the related strip and widen
+   the page. */
+.post-v1 .card{position:relative;}

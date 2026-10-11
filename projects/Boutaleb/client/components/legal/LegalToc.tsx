@@ -1,16 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
+import { useSectionSpy } from '@/lib/use-section-spy';
 
 type Item = { id: string; n: string; label: string };
 
 // Contents: always open from 56rem, where it is the sticky column; on the
 // phone a closed disclosure that shuts again once a section is picked.
-// Settings' spy rule: the current section is the last one whose top has
-// passed the upper third; at the bottom of the page, the last one.
+// The current section follows the reader (lib/use-section-spy.ts).
 export function LegalToc({ items, summary, label }: { items: Item[]; summary: string; label: string }) {
     const ref = useRef<HTMLDetailsElement>(null);
-    const [on, setOn] = useState(items[0]?.id);
+    const on = useSectionSpy(items.map((i) => i.id));
 
     useEffect(() => {
         const wide = matchMedia('(min-width:56rem)');
@@ -18,25 +18,8 @@ export function LegalToc({ items, summary, label }: { items: Item[]; summary: st
         fit();
         wide.addEventListener('change', fit);
 
-        const spy = () => {
-            let current = items[0]?.id;
-            if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
-                current = items[items.length - 1]?.id;
-            } else {
-                for (const { id } of items) {
-                    const sec = document.getElementById(id);
-                    if (sec && sec.getBoundingClientRect().top < innerHeight / 3) current = id;
-                }
-            }
-            setOn(current);
-        };
-        spy();
-        addEventListener('scroll', spy, { passive: true });
-        return () => {
-            wide.removeEventListener('change', fit);
-            removeEventListener('scroll', spy);
-        };
-    }, [items]);
+        return () => wide.removeEventListener('change', fit);
+    }, []);
 
     const pick = () => {
         if (ref.current && !matchMedia('(min-width:56rem)').matches) ref.current.open = false;
