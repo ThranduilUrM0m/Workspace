@@ -13,3 +13,6 @@ npm-debug.log
 yarn.lock
 package-lock.json
 .next
+
+# Graphify code graph - generated, rebuilt with `graphify update .`
+graphify-out/
