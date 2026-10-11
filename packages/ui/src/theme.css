@@ -1,0 +1,124 @@
+/* Boutaleb design tokens. Import once from the app's global stylesheet:
+   @import "@repo/ui/theme.css";
+
+   Rebuilt 2026-10-10 from the locked wireframes (Blueprinting/wireframes/
+   shell/shell.css :root, public/public.css, HANDOFF §3 and §22), replacing
+   the 2026-08-25 set that predated them. Component map: Blueprinting/tech/
+   component-map.md, row C1.
+
+   BRAND IS STILL PARKED. Names here are settled; values marked (P) are
+   provisional and change at the brand-identity phase without touching any
+   component, because no component reads a raw hex. Everything not marked
+   (P) is an accessibility or system rule, not a taste. */
+
+@theme {
+  /* ---- Ground and ink (P) ---- */
+  --color-bg: #F7F5F2;
+  --color-ink: #1B1B1F;
+  /* The single filled-button background (design-system.md §1). */
+  --color-dark-fill: #232326;
+  /* Cards, dialogs, fields. White in every locked screen; the old
+     --color-surface #FBFAF8 had no consumer and is gone. */
+  --color-card: #fff;
+
+  /* ---- The contrast floor (item 15, 2026-10-09) ----
+     .62 is the lightest ink that holds 4.5:1 on the page ground (4.68) and
+     on white (4.82). Muted takes .65 because it also sits on tinted chips
+     and hover rows. Icon-only greys need 3:1, so .5. NEVER fade text twice:
+     no opacity on top of these. If brand moves ink or ground, re-measure
+     these alphas; do not carry them over blind. */
+  --color-ink-muted: rgb(27 27 31 / .65);
+  --color-label-float: rgb(27 27 31 / .62);
+  --color-icon-muted: rgb(27 27 31 / .5);
+  /* Public pages use the solid equivalent (public.css --muted / --faint). */
+  --color-ink-muted-solid: #707076;
+  /* Light text on dark panels. */
+  --color-on-dark-muted: rgb(255 255 255 / .55);
+  /* A logotype is exempt from the floor. Wordmarks only, never body text.
+     (Was --color-faint, which read like a text grey and failed the floor.) */
+  --color-wordmark: #8a8a8f;
+
+  /* ---- Lines ---- */
+  --color-line: rgb(27 27 31 / .08);        /* inset dividers, card ring */
+  --color-field-line: rgb(27 27 31 / .15);  /* field and chip borders */
+
+  /* ---- Hues and their text twins ----
+     The hue stays on fills, bars, dots and icons (3:1). Text in a hue, and
+     white text on a clay fill, use the -ink twin (4.5:1 on white, ground and
+     the hue's own tint). Large text (>=24px, or >=18.66px bold) may keep the
+     hue. Accent is (P); status hues are fixed. */
+  --color-accent: #C4694A;       /* (P) */
+  --color-accent-ink: #A65336;   /* (P) */
+  --color-accent-tint: rgb(196 105 74 / .08);
+  --color-good: #2F7A4D;
+  --color-good-ink: #2D7449;
+  --color-good-tint: rgb(58 140 84 / .12);
+  --color-bad: #C0392B;
+  --color-bad-ink: #B73629;
+  --color-bad-tint: rgb(192 57 43 / .12);
+  --color-warn: #B8862F;
+  --color-warn-ink: #886323;
+  --color-warn-tint: rgb(217 169 74 / .15);
+  --color-info: #3A5FA0;
+  --color-info-tint: rgb(76 120 196 / .15);
+
+  /* ---- Work families (the board's whole palette, HANDOFF §3) ----
+     Project identity is ink, never hue; colour is spent on these four.
+     #C4694A here is the money family's hex, not the brand accent. */
+  --color-fam-build: #3A5FA0;
+  --color-fam-build-tint: rgb(58 95 160 / .10);
+  --color-fam-craft: #7B5EA7;
+  --color-fam-craft-tint: rgb(123 94 167 / .10);
+  --color-fam-money: #C4694A;
+  --color-fam-money-ink: #A65336;   /* clay is 3.4:1 on its own tint */
+  --color-fam-money-tint: rgb(196 105 74 / .10);
+  --color-fam-admin: #6B6B72;
+  --color-fam-admin-tint: rgb(107 107 114 / .10);
+
+  /* ---- Type (P) ---- */
+  --font-display: "Bricolage Grotesque", "Questrial", system-ui, sans-serif;
+  --font-body: "Questrial", sans-serif;
+
+  /* ---- Shape and size ---- */
+  /* Square everywhere. Round only where squaring loses the meaning: icon
+     strokes, profile pictures, unread/status dots. shadcn-derived parts
+     reading rounded-[var(--radius)] inherit it. */
+  --radius: 0rem;
+  /* A thumb. px on purpose: a hit target must not scale. min-h-hit, size-hit. */
+  --spacing-hit: 44px;
+  --spacing-header: 3.5rem;
+
+  /* ---- Breakpoints, named by what breaks (min-width only) ----
+     Tailwind's device-named defaults are removed so nobody reaches for md:.
+     Each is a line a locked screen found; components pick the one they need,
+     and a component-only line goes inline as min-[56rem]:. */
+  --breakpoint-*: initial;
+  --breakpoint-rail: 48rem;    /* desktop rail and topbar return; two-up fits */
+  --breakpoint-row: 60rem;     /* a list row fits on one line; record header unstacks */
+  --breakpoint-form: 72rem;    /* form + preview side by side */
+  --breakpoint-editor: 78rem;  /* editor sheet + settings rail side by side */
+  --breakpoint-wide: 80rem;    /* list or record + rail side by side */
+
+  /* ---- Motion ----
+     Hover is a tone shift over .18s; nothing moves, so nothing needs
+     disabling for reduced motion. Entrances use settle. */
+  --ease-standard: cubic-bezier(.22, 1, .36, 1);
+  --ease-settle: cubic-bezier(.2, .7, .2, 1);
+  --ease-close: cubic-bezier(.4, 0, .2, 1);
+  --default-transition-duration: .18s;
+}
+
+@layer base {
+  /* One focus ring for the whole product, keyboard only. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+/* Questrial ships weight 400 only — any font-weight >= 600 on it is
+   browser-synthesised fake bold. Heavy UI text uses the display face. */
+.font-body-bold {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
