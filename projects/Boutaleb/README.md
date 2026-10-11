@@ -10,21 +10,26 @@ pnpm install
 pnpm run dev
 ```
 
-## Deployment (Render)
+## Deployment (Netlify + Oracle Cloud/Coolify)
 
-### Client
+### Client (Netlify)
 
-- Root Directory: `projects/Boutaleb/client`
+- Base directory: `projects/Boutaleb/client`
 - Build Command: `pnpm install --frozen-lockfile && pnpm build`
-- Start Command: `pnpm start`
-- Set environment variables in Render dashboard (see .env)
+- Publish directory: `.next`
+- Set environment variables in Netlify site settings (see .env)
 
-### Server
+### Server (Oracle Cloud Always Free, via Coolify)
 
-- Root Directory: `projects/Boutaleb/server`
-- Build Command: `pnpm install --frozen-lockfile && pnpm build`
-- Start Command: `node dist/main.js`
-- Set environment variables in Render dashboard (see .env)
+- Deployed as a Docker container per `server/Dockerfile`, orchestrated by
+  Coolify running on an Oracle Cloud Always Free `VM.Standard.A1.Flex`
+  instance, alongside self-hosted MongoDB.
+- Build/start handled by Coolify from the Dockerfile (`pnpm install
+  --frozen-lockfile && pnpm build`, then `node dist/main.js`).
+- Secrets managed via Infisical, not committed `.env` files.
+- Full design/reasoning:
+  `Blueprinting/plans/2026-07-31-boutaleb-deployment-infra-implementation.md`
+  and ADR-006 through ADR-011 in `decisions/`.
 
 ## Environment Variables
 
