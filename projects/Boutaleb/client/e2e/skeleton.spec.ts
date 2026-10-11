@@ -127,3 +127,20 @@ test('/thanks shows the email line only when the intake cookie is there', async 
     await expect(page.locator('.ty-lede b')).toHaveText('sara@atlas-riads.ma');
     await expect(page.locator('.ty-steps li.now b')).toHaveText('sara@atlas-riads.ma');
 });
+
+test('pages carry canonical, hreflang and a share image; untranslated copies stay out of the index', async ({ page, request }) => {
+    await page.goto('/en/privacy');
+    await expect(page).toHaveTitle('Privacy policy — Boutaleb');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', /\/en\/privacy$/);
+    await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', /\/en\/privacy$/);
+    await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+    await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute('content', 'en_US');
+
+    // French copy of the page does not exist yet: no index, not in hreflang.
+    await page.goto('/privacy');
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    await expect(page.locator('link[rel="alternate"][hreflang="fr"]')).toHaveCount(0);
+
+    const og = await request.get('/en/opengraph-image');
+    expect(og.headers()['content-type']).toBe('image/png');
+});

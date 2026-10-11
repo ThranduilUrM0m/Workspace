@@ -26,6 +26,8 @@ export type LegalDoc = {
     order: string;
     ghost: string;
     title: string;
+    /** Search-result description, written for the page (SEO tier 1). */
+    description: string;
     updated: string;
     short?: string[];
     sections?: LegalSection[];

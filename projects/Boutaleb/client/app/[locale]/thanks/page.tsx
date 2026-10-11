@@ -4,6 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { SITE_PLAN_VIEWBOX, SITE_PLAN_WALLS } from '@/components/public/site-plan';
 import { business } from '@/lib/business';
+import type { Locale } from '@/i18n/routing';
+import { seoFor } from '@/lib/seo';
 import { readableEmail, THANKS_COOKIE } from '@/lib/thanks';
 import '@/styles/thanks.css';
 
@@ -16,7 +18,10 @@ type Props = { params: Promise<{ locale: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
     const t = await getTranslations({ locale, namespace: 'thanks' });
-    return { title: `${t('title')} — ${business.brand}`, robots: { index: false } };
+    return seoFor({ title: t('title'), seo: { description: t('description') } }, locale as Locale, {
+        path: '/thanks',
+        noindex: true,
+    });
 }
 
 export default async function ThanksPage({ params }: Props) {

@@ -75,6 +75,7 @@
     },
     "thanks": {
         "title": "Demande reçue",
+        "description": "Votre demande est bien arrivée. La suite, et quand.",
         "eyebrow": "Demande reçue",
         "heading": "Votre projet a sa pièce sur le plan",
         "copyOnItsWay": "Une copie part vers <b>{email}</b>. Rien reçu ? Vérifiez vos spams, ou écrivez à <a>{address}</a>.",

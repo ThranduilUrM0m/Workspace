@@ -13,6 +13,8 @@ export const privacyEn: LegalDoc = {
     order: '001',
     ghost: 'Privacy',
     title: 'Privacy policy',
+    description:
+        'What is collected through this site, why, how long it is kept, who else sees it, and how to see, correct or delete it under Moroccan law 09-08.',
     updated: '2026-06-14',
     short: [
         'What is collected is what you send (the contact form, your project brief, emails) and what a payment needs. Nothing else.',

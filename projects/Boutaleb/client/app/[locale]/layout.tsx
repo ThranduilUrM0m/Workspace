@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
@@ -6,7 +7,14 @@ import { routing } from '@/i18n/routing';
 import { fontVariables } from '../fonts';
 import { SiteHeader } from '@/components/public/SiteHeader';
 import { SiteFooter } from '@/components/public/SiteFooter';
+import { SITE_URL } from '@/lib/seo';
 import '../globals.css';
+
+// Every public page's own metadata comes from seoFor() (lib/seo.ts).
+export const metadata: Metadata = {
+    metadataBase: new URL(SITE_URL),
+    title: { template: '%s — Boutaleb', default: 'Boutaleb' },
+};
 
 export function generateStaticParams() {
     return routing.locales.map((locale) => ({ locale }));
