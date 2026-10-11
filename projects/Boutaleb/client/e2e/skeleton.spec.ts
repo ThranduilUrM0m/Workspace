@@ -304,3 +304,47 @@ test('on a phone the post contents fold and shut once a section is picked', asyn
     await expect(fold).not.toHaveAttribute('open', '');
     await expect(page).toHaveURL(/#s2$/);
 });
+
+test('form fields float their label, flag errors on leaving and clear them on return', async ({ page }) => {
+    await page.goto('/en/about');
+    const foot = page.locator('#sec-footer form');
+    const email = foot.getByLabel('Email');
+
+    // The select's label is raised from the start; it always has a value.
+    await expect(foot.getByLabel('Project type')).toHaveValue('website');
+
+    // Nothing is flagged while typing; leaving the field checks it.
+    await email.fill('not-an-email');
+    await expect(foot.locator('.f-badge')).toHaveCount(0);
+    await email.blur();
+    const badge = foot.locator('.f-badge');
+    await expect(badge).toHaveText('Check email');
+    await expect(email).toHaveAttribute('aria-invalid', 'true');
+    await expect(email).toHaveAttribute('aria-describedby', (await badge.getAttribute('id'))!);
+    // The text ends where the badge begins.
+    expect(await email.evaluate((el) => parseFloat(getComputedStyle(el).paddingInlineEnd))).toBeGreaterThan(40);
+
+    // Coming back to fix it clears the flag; the value stays.
+    await email.focus();
+    await expect(badge).toHaveCount(0);
+    await expect(email).toHaveValue('not-an-email');
+
+    // The honeypot is out of reach.
+    await expect(foot.locator('input[name="nickname"]')).toHaveAttribute('tabindex', '-1');
+});
+
+test('the comment form flags its required fields on submit, in place', async ({ page }) => {
+    await page.goto('/en/blog/longevity-beats-trend');
+    const form = page.locator('.c-form form');
+    await form.getByRole('button', { name: 'Join the conversation' }).click();
+    await expect(form.locator('.f-badge')).toHaveCount(3);
+    await expect(form.getByLabel('Full name')).toBeFocused();
+});
+
+test('error words follow the page language', async ({ page }) => {
+    await page.goto('/ar/about');
+    const email = page.locator('#sec-footer form input[type="email"]');
+    await email.fill('x');
+    await email.blur();
+    await expect(page.locator('#sec-footer .f-badge')).toHaveText('بريد غير صالح');
+});

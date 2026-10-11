@@ -1,10 +1,11 @@
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { business, type SocialProfile } from '@/lib/business';
+import { FooterForm } from './forms/FooterForm';
 
 // Ported from the locked public footer (Blueprinting/wireframes/public/legal.html).
 // "Blog" sits under Navigation only — dropped from Resources, decided 2026-10-11.
-// The form is markup until ticket T5.3 makes it send in place.
+// The form (forms/FooterForm.tsx) checks its fields; T5.3 makes it send in place.
 
 const SOCIAL_ICON: Record<SocialProfile['network'], { name: string; path: string }> = {
     github: {
@@ -20,8 +21,6 @@ const SOCIAL_ICON: Record<SocialProfile['network'], { name: string; path: string
         path: 'M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z',
     },
 };
-
-const ICON = { fill: 'none', stroke: 'rgba(27,27,31,.4)', strokeWidth: 2 } as const;
 
 export function SiteFooter() {
     const t = useTranslations('footer');
@@ -57,58 +56,7 @@ export function SiteFooter() {
                     <div className="ft-form">
                         <div className="ff-card">
                             <p className="ft-cap">{t('missedContact')}</p>
-                            <form className="ff-form">
-                                <div className="ff-pair">
-                                    <div className="ff-field">
-                                        <svg className="ff-icon" viewBox="0 0 24 24" aria-hidden="true" {...ICON}>
-                                            <circle cx="12" cy="8" r="4" />
-                                            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                                        </svg>
-                                        <input type="text" id="ff-name" name="name" placeholder=" " autoComplete="name" />
-                                        <label htmlFor="ff-name">{t('fullName')}</label>
-                                    </div>
-                                    <div className="ff-field">
-                                        <svg className="ff-icon" viewBox="0 0 24 24" aria-hidden="true" {...ICON}>
-                                            <rect x="3" y="5" width="18" height="14" rx="2" />
-                                            <path d="M3 7l9 6 9-6" />
-                                        </svg>
-                                        <input type="email" id="ff-email" name="email" placeholder=" " autoComplete="email" />
-                                        <label htmlFor="ff-email">{t('email')}</label>
-                                    </div>
-                                </div>
-                                <div className="ff-field ff-field-static">
-                                    <svg className="ff-icon" viewBox="0 0 24 24" aria-hidden="true" {...ICON}>
-                                        <path d="M20 12l-8 8-9-9V4h7l10 8z" />
-                                        <circle cx="7.5" cy="7.5" r="1" />
-                                    </svg>
-                                    <select id="ff-type" name="type">
-                                        <option>{t('typeWebsite')}</option>
-                                        <option>{t('typeErp')}</option>
-                                        <option>{t('typeBoth')}</option>
-                                        <option>{t('typeUnsure')}</option>
-                                    </select>
-                                    <label htmlFor="ff-type">{t('projectType')}</label>
-                                </div>
-                                <div className="ff-field ff-field-top">
-                                    <svg className="ff-icon" viewBox="0 0 24 24" aria-hidden="true" {...ICON}>
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                                    </svg>
-                                    <textarea id="ff-msg" name="message" placeholder=" " />
-                                    <label htmlFor="ff-msg">{t('message')}</label>
-                                </div>
-                                <input className="hp" type="text" name="nickname" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-                                <div className="ff-send">
-                                    <p>
-                                        {t('usedOnlyToReply')} <Link href="/privacy">{t('privacyPolicy')}</Link>.
-                                    </p>
-                                    <Link className="ff-go" href="/contact">
-                                        {t('start')}
-                                        <svg className="flip-rtl" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1B1B1F" strokeWidth="2" aria-hidden="true">
-                                            <path d="M7 17L17 7M9 7h8v8" />
-                                        </svg>
-                                    </Link>
-                                </div>
-                            </form>
+                            <FooterForm />
                         </div>
                     </div>
                 </div>

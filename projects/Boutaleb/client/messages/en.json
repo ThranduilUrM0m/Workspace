@@ -95,5 +95,10 @@
         "step4": "Talked through with you, adjusted, then built.",
         "meantime": "In the meantime:",
         "home": "Home"
+    },
+    "formErrors": {
+        "required": "Required",
+        "email": "Check email",
+        "tooLong": "Too long"
     }
 }

@@ -233,31 +233,18 @@ b,strong{font-family:var(--f-head);}
 
 /* The form card is a CONTAINER: name + email go two-up when the CARD has
    28rem, whatever the viewport. The same card would work in a sidebar. */
-.ff-card{container-type:inline-size;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);border-radius:0;padding:clamp(1.25rem,4cqi,1.75rem);}
+/* The fields themselves are @repo/ui's (field.css); the card only sets
+   their tones: page ground inside, white card above, clay focus, and the
+   smaller text under a mouse. */
+.ff-card{--fld:var(--ground);--lbl-top:#fff;--fld-focus:var(--clay);--fld-fine:.875rem;
+  container-type:inline-size;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);border-radius:0;padding:clamp(1.25rem,4cqi,1.75rem);}
 .ff-form{display:grid;gap:1.5rem;}
 .ff-pair{display:grid;gap:1.5rem;}
 @container (min-width:28rem){.ff-pair{grid-template-columns:1fr 1fr;gap:1.25rem;}}
-.ff-field{position:relative;}
-/* Field text is 1rem = 16px on a phone ON PURPOSE: iOS Safari zooms the whole
-   page into any input under 16px when it gets focus, and never zooms back.
-   The fields read lighter through less padding and shorter option text
-   instead. Any screen with a mouse (no iOS zoom there) gets .875rem, at any
-   width -- so a narrow desktop window shows the small size too. */
-.ff-field input,.ff-field select,.ff-field textarea{width:100%;background:var(--ground);border:var(--hair) solid rgba(27,27,31,.15);border-radius:0;color:var(--ink);font:1rem var(--f-body);padding-block:.6875rem;padding-inline:2.5rem .875rem;outline:none;}
-@media (pointer:fine){.ff-field input,.ff-field select,.ff-field textarea{font-size:.875rem;}}
-.ff-field textarea{resize:none;height:6.5rem;display:block;}
-.ff-icon{position:absolute;inset-inline-start:.875rem;top:50%;translate:0 -50%;pointer-events:none;width:1rem;height:1rem;}
-.ff-field-top .ff-icon{top:1.4rem;translate:none;}
-.ff-field label{position:absolute;inset-inline-start:2.5rem;top:50%;translate:0 -50%;font:.875rem var(--f-body);color:rgba(27,27,31,.62);pointer-events:none;transition:.15s ease;}
-.ff-field-top label{top:1.4rem;translate:none;}
-.ff-field input:focus,.ff-field select:focus,.ff-field textarea:focus{border-color:var(--clay);}
-.ff-field input:focus + label,.ff-field input:not(:placeholder-shown) + label,.ff-field textarea:focus + label,.ff-field textarea:not(:placeholder-shown) + label,.ff-field-static label{top:-.5625rem;inset-inline-start:.75rem;translate:none;line-height:1.125rem;font-size:.625rem;letter-spacing:.04em;text-transform:uppercase;background:linear-gradient(#fff 50%,var(--ground) 50%);padding:0 .25rem;color:var(--clay-ink);}
 .ff-send{display:flex;justify-content:space-between;align-items:center;gap:0 1rem;flex-wrap:wrap;margin-block-start:-.75rem;}
 .ff-send p{font-size:.75rem;color:rgba(27,27,31,.62);margin:0;}
 .ff-send p a{color:inherit;}
 .ff-go{display:inline-flex;margin-inline-start:auto;align-items:center;gap:.5rem;min-height:var(--hit);color:var(--ink);text-decoration:underline;font:600 .9375rem var(--f-head);}
-/* honeypot: out of sight without an offset that could scroll in RTL */
-.hp{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
 
 .ft-rule{height:var(--hair);background:rgba(27,27,31,.12);margin:2.25rem 0 1.75rem;}
 .ft-rule.sm{margin:.75rem 0 1rem;} /* phone: the outline wordmark sits on it */
@@ -337,7 +324,6 @@ b,strong{font-family:var(--f-head);}
 @media (min-width:48rem) and (pointer:fine){
   .ft-cols ul{gap:.625rem;}
   .ft-cols a,.ft-base nav a,.ft-top-link,.ff-go{min-height:0;}
-  .ff-field input,.ff-field select,.ff-field textarea{padding-block:.875rem;}
 }
 
 @media (prefers-reduced-motion:reduce){

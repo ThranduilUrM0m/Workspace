@@ -1,0 +1,138 @@
+/* C3 Field + C4 SelectField (component map), one stylesheet for the ERP
+   (shell.css .b-field-w) and the public site (public.css .ff-field), which
+   drew the same field twice. Import once beside theme.css:
+     @import "@repo/ui/field.css";
+   Plain CSS rather than utilities on purpose: the floating label is a pure
+   CSS state (:placeholder-shown on placeholder=" "), read through sibling
+   selectors, and its chip is a two-stop gradient over two variables.
+
+   A surface tunes the field with variables, never with overrides:
+     --fld        the field's ground          (ERP #fff, public: page ground)
+     --lbl-top    what sits above the border  (the card or page behind it)
+     --fld-focus  the focused border          (ERP ink fill, public clay)
+     --fld-fine   text size under a mouse     (ERP .9375rem, public .875rem)
+
+   One geometry everywhere: 46px tall, icon well at the start, label at the
+   first line (a textarea keeps its icon beside the opening line). */
+
+.f-field {
+  position: relative;
+}
+
+.f-field :is(input, textarea, select) {
+  width: 100%;
+  background: var(--fld, #fff);
+  border: 1px solid var(--color-field-line);
+  border-radius: 0;
+  color: var(--color-ink);
+  /* 1rem on a touch screen: iOS zooms the page into any field under 16px
+     and never zooms back. A mouse has no such zoom. */
+  font: 1rem/1.25rem var(--font-body);
+  padding-block: .8125rem;
+  padding-inline: 2.5rem .8125rem;
+  outline: none;
+  transition: border-color .18s ease;
+}
+@media (pointer: fine) {
+  .f-field :is(input, textarea, select) { font-size: var(--fld-fine, .9375rem); }
+}
+.f-field textarea {
+  display: block;
+  min-height: 6.5rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+.f-field :is(input, textarea, select):focus {
+  border-color: var(--fld-focus, var(--color-dark-fill));
+}
+
+.f-ico {
+  position: absolute;
+  inset-inline-start: .875rem;
+  top: 1.4375rem;
+  translate: 0 -50%;
+  display: flex;
+  color: var(--color-icon-muted);
+  pointer-events: none;
+}
+.f-ico svg { width: 1rem; height: 1rem; }
+
+.f-lbl {
+  position: absolute;
+  inset-inline-start: 2.5rem;
+  top: 1.4375rem;
+  translate: 0 -50%;
+  font: .875rem var(--font-body);
+  color: var(--color-ink-muted);
+  pointer-events: none;
+  transition: top .18s ease, inset-inline-start .18s ease, font-size .18s ease, color .18s ease;
+}
+/* Floated: straddles the top border, faded (--color-label-float), its chip
+   page-ground above the line and field-ground below. */
+.f-field :is(input, textarea):is(:focus, :not(:placeholder-shown)) + .f-lbl,
+.f-field--sel .f-lbl {
+  top: 0;
+  inset-inline-start: .75rem;
+  padding-inline: .375rem;
+  font-size: .625rem;
+  line-height: 1.125rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--color-label-float);
+  background: linear-gradient(var(--lbl-top, var(--color-bg)) 50%, var(--fld, #fff) 50%);
+}
+
+/* C4: a select always has a value, so its label is drawn raised and never
+   moves. The platform arrow is redrawn as a chevron: Windows draws it in a
+   grey well no square system can match. */
+.f-field--sel .f-lbl { transition: none; }
+.f-field--sel select {
+  appearance: none;
+  padding-inline-end: 2.25rem;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%236B6B70' stroke-width='1.4'%3E%3Cpath d='M1 1.5 6 6.5l5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .8125rem center;
+}
+.f-field--sel select:dir(rtl) { background-position: left .8125rem center; }
+
+/* The error badge sits inside the field, two words, WHAT not WHY. The
+   field measures it and ends its text where the badge begins (Field.tsx),
+   so a long value never runs under it. Errors arrive on blur or submit;
+   focusing the field clears them. */
+.f-badge {
+  position: absolute;
+  inset-inline-end: .625rem;
+  top: 1.4375rem;
+  translate: 0 -50%;
+  padding: .3125rem .4375rem;
+  background: var(--color-bad-tint);
+  color: var(--color-bad-ink);
+  font-size: .6875rem;
+  line-height: 1;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* Carried by border, label and badge: never by colour alone. */
+.f-field[data-invalid] :is(input, textarea, select) { border-color: var(--color-bad); }
+.f-field[data-invalid] .f-lbl { color: var(--color-bad-ink); }
+
+/* The form-level failure (C20): above the actions, a clay rule at its
+   start edge. Every field keeps its value; nothing re-renders. */
+.f-fail {
+  margin: 0;
+  padding-inline-start: .75rem;
+  border-inline-start: 2px solid var(--color-accent);
+  font-size: .875rem;
+  line-height: 1.55;
+  color: var(--color-ink);
+}
+
+/* The honeypot: out of sight without an offset that could scroll in RTL. */
+.f-hp {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

@@ -1,7 +1,7 @@
 /* Ported from the <style> block of Blueprinting/wireframes/public/blog-post.html
    ("Option B v2", mobile pass 2026-09-30). Every selector is scoped to
    .post-v1; [dir="rtl"] rules became :dir(rtl); faces read next/font
-   variables. The comment form reuses the footer's .ff-* fields (public.css). */
+   variables. The comment form sits on @repo/ui's fields (field.css). */
 /* /blog/<slug> — "Option B v2". MOBILE PASS 2026-09-30. Header + footer:
    public.css, menu: public.js; the comment form reuses the footer's .ff-*
    fields. The review scaffolding went with it: the grey page mat and the
@@ -147,7 +147,6 @@
 .post-v1 .comments > h2 svg{width:1.125rem;height:1.125rem;}
 .post-v1 .c-layout{display:grid;gap:1.5rem;align-items:start;}
 .post-v1 .c-form .ft-cap{font-size:.6875rem;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 1.25rem;}
-.post-v1 .c-form .hp{position:absolute;inset-inline-start:-100rem;}
 .post-v1 .c-note{font-size:.75rem;color:var(--faint);line-height:1.5;margin:0;}
 .post-v1 .c-note a{color:inherit;}
 .post-v1 .c-send{justify-self:start;display:inline-flex;align-items:center;gap:.5rem;min-height:var(--hit);padding-inline:1.5rem;border:0;background:var(--fill);color:var(--bg);

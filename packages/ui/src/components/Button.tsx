@@ -31,6 +31,14 @@ const button = cva(
         link:
           /* .8125rem, the size of the quiet and solid labels. Hover is a placeholder until hi-fi. */
           'p-0 text-[.8125rem] text-ink underline underline-offset-[.2em] decoration-1 hover:decoration-accent',
+        /* Public forms (contact.html .lbtn.go, thanks.html .ff-go): the
+           send / continue action, words and an arrow, no box. Sending
+           fades it and drops the underline. */
+        go:
+          'p-0 bg-transparent min-h-hit font-display font-semibold text-[.9375rem] text-ink underline underline-offset-[.25rem] aria-busy:opacity-50 aria-busy:no-underline aria-busy:cursor-default [&_svg]:transition-[translate] hover:[&_svg]:translate-x-[.125rem] hover:[&_svg]:-translate-y-[.125rem] rtl:[&_svg]:-scale-x-100',
+        /* Public forms (.lbtn.muted): Back, "+ Add more detail". */
+        back:
+          'p-0 bg-transparent min-h-hit font-body text-[.875rem] text-ink-muted-solid underline underline-offset-[.25rem] hover:text-ink',
       },
     },
     defaultVariants: { variant: 'solid' },

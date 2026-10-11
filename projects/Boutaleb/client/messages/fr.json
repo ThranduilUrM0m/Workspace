@@ -95,5 +95,10 @@
         "step4": "Discuté avec vous, ajusté, puis construit.",
         "meantime": "En attendant :",
         "home": "Accueil"
+    },
+    "formErrors": {
+        "required": "Requis",
+        "email": "E-mail invalide",
+        "tooLong": "Trop long"
     }
 }

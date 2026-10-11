@@ -4,18 +4,22 @@
     "main": "src/index.ts",
     "exports": {
         ".": "./src/index.ts",
-        "./theme.css": "./src/theme.css"
+        "./theme.css": "./src/theme.css",
+        "./field.css": "./src/field.css"
     },
     "files": [
         "src"
     ],
     "dependencies": {
+        "@hookform/resolvers": "5.9.1",
         "@radix-ui/react-dialog": "1.1.15",
         "@radix-ui/react-slot": "1.2.4",
         "class-variance-authority": "0.7.1",
         "clsx": "2.1.1",
         "framer-motion": "12.27.5",
-        "tailwind-merge": "3.4.0"
+        "react-hook-form": "7.89.0",
+        "tailwind-merge": "3.4.0",
+        "zod": "4.6.5"
     },
     "peerDependencies": {
         "react": "19.2.3",

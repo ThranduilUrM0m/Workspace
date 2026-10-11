@@ -139,7 +139,7 @@ export default async function PostPage({ params }: Props) {
                         Comments ({post.comments})
                     </h2>
                     <div className="c-layout">
-                        <CommentForm />
+                        <CommentForm slug={post.slug} />
                         {post.thread.length > 0 && (
                             <ol className="thread">
                                 {post.thread.map((c) => (

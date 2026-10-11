@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "@repo/ui/theme.css";
+@import "@repo/ui/field.css";
 @source "../../../../packages/ui/src";
 
 @import "../styles/public.css";
