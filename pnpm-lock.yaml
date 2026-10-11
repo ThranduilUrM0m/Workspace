@@ -4,6 +4,12 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    typescript:
+      specifier: 5.9.3
+      version: 5.9.3
+
 overrides:
   jest-mock: 30.4.1
   jest-environment-node: 30.4.1
@@ -70,7 +76,7 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
       typescript:
-        specifier: 5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Boutaleb/client:
@@ -122,7 +128,7 @@ importers:
         specifier: 4.1.18
         version: 4.1.18
       typescript:
-        specifier: 5.9.3
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Boutaleb/server:
@@ -231,7 +237,7 @@ importers:
         specifier: '*'
         version: 2.0.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Maxconfort/client:
@@ -355,7 +361,7 @@ importers:
         specifier: '*'
         version: 4.1.18
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Maxconfort/server:
@@ -455,7 +461,7 @@ importers:
         specifier: '*'
         version: 2.0.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Qasidaty/client:
@@ -579,7 +585,7 @@ importers:
         specifier: '*'
         version: 4.1.18
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Qasidaty/server:
@@ -679,7 +685,7 @@ importers:
         specifier: '*'
         version: 2.0.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Risala/client:
@@ -803,7 +809,7 @@ importers:
         specifier: '*'
         version: 4.1.18
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
   projects/Risala/server:
@@ -903,7 +909,7 @@ importers:
         specifier: '*'
         version: 2.0.0(@swc/core@1.16.13(@swc/helpers@0.5.23))(@types/node@25.5.0)(typescript@5.9.3)
       typescript:
-        specifier: '*'
+        specifier: 'catalog:'
         version: 5.9.3
 
 packages:

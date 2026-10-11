@@ -2,6 +2,10 @@ packages:
     - 'projects/*/client'
     - 'projects/*/server'
     - 'packages/*'
+# One TypeScript for every project: packages write "typescript": "catalog:"
+# and this line is the only place its version lives.
+catalog:
+    typescript: 5.9.3
 
 # Force a single jest-mock/jest-environment-node version across the graph.
 # react-native (pulled in via @react-spring/native) pins jest-environment-node

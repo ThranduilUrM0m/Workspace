@@ -46,7 +46,7 @@
         "postcss": "*",
         "autoprefixer": "*",
         "sass": "*",
-        "typescript": "*",
+        "typescript": "catalog:",
         "@types/react": "*",
         "@types/react-dom": "*",
         "@types/nprogress": "*",
