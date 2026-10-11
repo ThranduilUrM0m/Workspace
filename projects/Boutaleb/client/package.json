@@ -1,32 +1,33 @@
 {
-    "name": "boutaleb-client",
-    "private": true,
-    "version": "1.0.0",
-    "scripts": {
-        "dev": "next dev -p 3002",
-        "build": "next build",
-        "start": "next start -p 3002",
-        "test": "jest",
-        "test:e2e": "playwright test"
-    },
-    "dependencies": {
-        "@repo/ui": "workspace:*",
-        "fastest-levenshtein": "1.0.16",
-        "next": "16.4.0",
-        "next-intl": "4.14.9",
-        "react": "19.2.3",
-        "react-dom": "19.2.3",
-        "sharp": "0.34.5"
-    },
-    "devDependencies": {
-        "@playwright/test": "1.64.0",
-        "@tailwindcss/postcss": "4.1.18",
-        "@types/jest": "30.0.0",
-        "@types/node": "25.0.9",
-        "@types/react": "19.2.8",
-        "@types/react-dom": "19.2.3",
-        "jest": "30.4.2",
-        "tailwindcss": "4.1.18",
-        "typescript": "5.9.3"
-    }
+  "name": "boutaleb-client",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node scripts/free-port.mjs 3002 && next dev -p 3002",
+    "build": "next build",
+    "start": "next start -p 3002",
+    "test": "jest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/ui": "workspace:*",
+    "fastest-levenshtein": "1.0.16",
+    "next": "16.4.0",
+    "next-intl": "4.14.9",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "sharp": "0.34.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/jest": "30.0.0",
+    "@types/node": "25.0.9",
+    "@types/react": "19.2.8",
+    "@types/react-dom": "19.2.3",
+    "jest": "30.4.2",
+    "tailwindcss": "4.1.18",
+    "typescript": "5.9.3"
+  }
 }

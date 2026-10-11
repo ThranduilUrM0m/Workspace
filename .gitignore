@@ -16,3 +16,6 @@ package-lock.json
 
 # Graphify code graph - generated, rebuilt with `graphify update .`
 graphify-out/
+
+# TypeScript incremental build cache: rebuilt on every typecheck.
+*.tsbuildinfo
