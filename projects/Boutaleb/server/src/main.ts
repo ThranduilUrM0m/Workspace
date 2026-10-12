@@ -1,23 +1,13 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
-import * as compression from 'compression';
-import helmet from 'helmet';
+import { configureApp } from './app.js';
+import { AppModule } from './app.module.js';
+import type { Env } from './env.js';
 
 async function bootstrap(): Promise<void> {
-    const app = await NestFactory.create(AppModule);
-
-    // Enable compression
-    app.use(compression());
-
-    // Enable helmet for security headers
-    app.use(helmet({ contentSecurityPolicy: false }));
-
-    // Global validation pipe
-    app.useGlobalPipes(new ValidationPipe());
-
-    const port = process.env.PORT || 4000;
+    const app = configureApp(await NestFactory.create(AppModule));
+    const port = app.get<ConfigService<Env, true>>(ConfigService).get('PORT', { infer: true });
     await app.listen(port);
-    console.log('Server running on port', port);
 }
-bootstrap();
+
+void bootstrap();

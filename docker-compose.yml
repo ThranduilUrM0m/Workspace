@@ -23,10 +23,23 @@ services:
             - boutaleb-server
 
     boutaleb-server:
-        build: ./projects/Boutaleb/server
+        build:
+            context: .
+            dockerfile: projects/Boutaleb/server/Dockerfile
         ports:
             - '4002:4002'
         env_file: ./projects/Boutaleb/server/.env
+        depends_on:
+            - boutaleb-mongo
+
+    # Local dev only: `docker compose up -d boutaleb-mongo`. Production Mongo is
+    # Coolify's (ADR-007). The server's default MONGODB_URI points here.
+    boutaleb-mongo:
+        image: mongo:8.0.32
+        ports:
+            - '127.0.0.1:27017:27017'
+        volumes:
+            - boutaleb-mongo-data:/data/db
 
     maxconfort-client:
         build: ./projects/Maxconfort/client
@@ -55,3 +68,6 @@ services:
         ports:
             - '4004:4000'
         env_file: ./projects/Qasidaty/server/.env
+
+volumes:
+    boutaleb-mongo-data:

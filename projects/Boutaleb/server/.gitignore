@@ -6,6 +6,7 @@ dist/
 
 # Environment variables
 .env*
+!.env.example
 # (we generate a plain .env file; keep env files ignored by default)
 
 # Logs
