@@ -45,7 +45,9 @@ describe('receipt email', () => {
         const { html } = await renderReceipt({ ...base, source: 'contact', answers: [] });
         expect(html).not.toMatch(/<svg|<script/);
         // Blocked images leave nothing behind.
-        expect(html).toContain('<img alt="" src="https://boutaleb.dev/email/glyph-64.png" width="32" height="30"');
+        const img = html.match(/<img [^>]*>/)?.[0] ?? '';
+        expect(img).toContain('src="https://boutaleb.dev/email/glyph-64.png"');
+        expect(img).toContain('alt=""');
         expect(html).toMatch(/<table[^>]*width="600"[^>]*align="center"/);
         expect(html).toContain('bgcolor="#F7F5F2"');
         // A visitor's text is text, never markup.

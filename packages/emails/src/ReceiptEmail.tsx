@@ -101,7 +101,7 @@ export function ReceiptEmail({ source, name, email, answers, message, site, addD
 
             <tr>
               <td className="er-px" style={px(40)}>
-                <h1 style={{ margin: 0, font: `700 28px/1.2 ${HEAD}`, color: INK }}>Thanks, {first}. It&rsquo;s in.</h1>
+                <h1 style={{ margin: 0, font: `700 28px/1.2 ${HEAD}`, color: INK }}>{`Thanks, ${first}. It’s in.`}</h1>
                 <p style={{ margin: '12px 0 0', font: `400 15px/1.6 ${BODY}`, color: MUTED }}>
                   A reply follows within two working days. Here is a copy of what you sent, for your records.
                 </p>
@@ -170,7 +170,8 @@ export function ReceiptEmail({ source, name, email, answers, message, site, addD
 
             <tr>
               <td className="er-px" style={{ ...px(20, 40), font: `400 12px/1.6 ${BODY}`, color: '#6b6b70' }}>
-                You are getting this once, because you wrote in through {new URL(site).host}. Your details are used only to reply (law 09-08).{' '}
+                {/* One string, so React leaves no <!-- --> markers in the mail. */}
+                {`You are getting this once, because you wrote in through ${new URL(site).host}. Your details are used only to reply (law 09-08). `}
                 <a href={`${site}/privacy`} style={{ color: '#6b6b70', textDecoration: 'underline' }}>
                   Privacy policy
                 </a>
