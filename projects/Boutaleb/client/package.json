@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dev": "node scripts/free-port.mjs 3002 && next dev -p 3002",
+    "dev": "node scripts/free-port.mjs 3002 && infisical run -- next dev -p 3002",
     "build": "next build",
     "start": "next start -p 3002",
     "test": "jest",
