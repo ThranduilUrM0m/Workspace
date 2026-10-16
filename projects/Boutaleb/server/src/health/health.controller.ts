@@ -1,8 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService, MongooseHealthIndicator } from '@nestjs/terminus';
+import { Public } from '../auth/public.decorator.js';
 
 // 200 when the API and Mongo answer, 503 otherwise. Coolify and the uptime
 // monitor (T13.7) read this.
+@Public()
 @Controller('health')
 export class HealthController {
     constructor(

@@ -12,6 +12,7 @@ let app: INestApplication;
 beforeAll(async () => {
     mongo = await MongoMemoryServer.create();
     process.env.MONGODB_URI = mongo.getUri('boutaleb');
+    process.env.CLERK_JWT_KEY = 'unused-by-health';
     // ConfigModule reads the environment when app.module loads, so it loads now.
     const { AppModule } = await import('../app.module.js');
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();

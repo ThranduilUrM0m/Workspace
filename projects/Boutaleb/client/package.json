@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@clerk/nextjs": "7.9.13",
     "@repo/schemas": "workspace:*",
     "@repo/ui": "workspace:*",
     "fastest-levenshtein": "1.0.16",
