@@ -18,14 +18,20 @@ interface Common {
 }
 
 export interface FieldProps extends Common {
-  type?: 'text' | 'email' | 'tel' | 'url';
+  type?: 'text' | 'email' | 'tel' | 'url' | 'password';
   multiline?: boolean;
+  /* A password field's show/hide toggle, at the end edge. The badge sits
+     before it and the padding measure absorbs both (field.css .f-reveal). */
+  reveal?: boolean;
+  /* Extra ids for aria-describedby: a checklist the field is judged by. */
+  describedBy?: string;
   autoComplete?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
   required?: boolean;
   maxLength?: number;
 }
 
-export function Field({ name, label, icon, type = 'text', multiline, autoComplete, required, maxLength, className }: FieldProps) {
+export function Field({ name, label, icon, type = 'text', multiline, reveal, describedBy, autoComplete, inputMode, required, maxLength, className }: FieldProps) {
   const { field, fieldState } = useController({ name });
   const { clearErrors } = useFormContext();
   const words = useErrorWords();
@@ -33,6 +39,8 @@ export function Field({ name, label, icon, type = 'text', multiline, autoComplet
   const badgeId = `${id}-err`;
   const error = fieldState.error?.message;
   const pad = useBadgePadding(error);
+  const [shown, setShown] = React.useState(false);
+  const describe = [error && badgeId, describedBy].filter(Boolean).join(' ') || undefined;
 
   const control = {
     id,
@@ -43,22 +51,27 @@ export function Field({ name, label, icon, type = 'text', multiline, autoComplet
     onFocus: () => error && clearErrors(name),
     placeholder: ' ',
     autoComplete,
+    inputMode,
     required,
     maxLength,
     'aria-invalid': error ? true : undefined,
-    'aria-describedby': error ? badgeId : undefined,
+    'aria-describedby': describe,
     style: pad.style,
   };
 
   return (
-    <div ref={pad.ref} className={className ? `f-field ${className}` : 'f-field'} data-invalid={error ? '' : undefined}>
+    <div
+      ref={pad.ref}
+      className={['f-field', reveal && 'f-field--reveal', className].filter(Boolean).join(' ')}
+      data-invalid={error ? '' : undefined}
+    >
       <span className="f-ico" aria-hidden="true">
         {icon}
       </span>
       {multiline ? (
         <textarea {...control} ref={field.ref} />
       ) : (
-        <input {...control} ref={field.ref} type={type} />
+        <input {...control} ref={field.ref} type={reveal && shown ? 'text' : type} />
       )}
       <label className="f-lbl" htmlFor={id}>
         {label}
@@ -67,6 +80,17 @@ export function Field({ name, label, icon, type = 'text', multiline, autoComplet
         <span className="f-badge" id={badgeId}>
           {words[error] ?? error}
         </span>
+      )}
+      {reveal && (
+        <button
+          type="button"
+          className="f-reveal"
+          aria-pressed={shown}
+          aria-label={shown ? 'Hide password' : 'Show password'}
+          onClick={() => setShown((v) => !v)}
+        >
+          {shown ? EYE_OFF : EYE}
+        </button>
       )}
     </div>
   );
@@ -99,6 +123,18 @@ export function SelectField({ name, label, icon, options, className }: SelectFie
     </div>
   );
 }
+
+const EYE = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" />
+    <circle cx="12" cy="12" r="3" />
+  </svg>
+);
+const EYE_OFF = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+    <path d="M2 2l20 20M10.6 6.2A9.9 9.9 0 0 1 12 6c7 0 11 6 11 6a18 18 0 0 1-3.4 4M6.3 8.3A18 18 0 0 0 1 12s4 6 11 6a10 10 0 0 0 3.6-.7" />
+  </svg>
+);
 
 /* The text box ends where the badge begins: measure the badge's start edge
    to the field's end edge and pad by that much. Errors never arrive

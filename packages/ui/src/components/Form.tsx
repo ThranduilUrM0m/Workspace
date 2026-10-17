@@ -10,17 +10,22 @@ import type { z } from 'zod';
    with the first ERP create screen; public forms bring their own layout.
 
    Errors arrive on blur or submit and never mid-keystroke: RHF's default
-   (re-validate on change) would light a field red while it is typed in. */
+   (re-validate on change) would light a field red while it is typed in.
+
+   focusError: false keeps focus where it is on a failed submit. A field
+   clears its badge when focused, so focusing it for the person would hide
+   the very error being reported; the auth screens opt out for that. */
 export function useSchemaForm<S extends z.ZodType<FieldValues, FieldValues>>(
   schema: S,
   defaultValues: z.input<S>,
+  { focusError = true }: { focusError?: boolean } = {},
 ): UseFormReturn<z.input<S>, unknown, z.output<S>> {
   return useForm<z.input<S>, unknown, z.output<S>>({
     resolver: zodResolver(schema as never) as never,
     defaultValues: defaultValues as never,
     mode: 'onBlur',
     reValidateMode: 'onBlur',
-    shouldFocusError: true,
+    shouldFocusError: focusError,
   });
 }
 

@@ -1,0 +1,272 @@
+/* The three auth screens: /login, /forgot-password, /reset-password.
+   Ported from Blueprinting/wireframes/shell/auth.css and the three pages'
+   own <style> blocks (HANDOFF §4). Fields come from @repo/ui field.css; this
+   file holds the frame, the card and what is the auth screens' own.
+
+   Phone first. ONE breakpoint, 60rem, named by what breaks: below it the
+   left half is under ~30rem and the card (27.5rem + gutter) no longer fits
+   beside the image slot. The slot is desktop-only (decided 2026-10-07). */
+
+.au {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* Fields carry focus on their border (field.css), not a ring. */
+.au :focus-visible:not(input) { outline: 2px solid var(--color-dark-fill); outline-offset: 2px; }
+
+.au-left { flex: 1; display: flex; flex-direction: column; position: relative; z-index: 2; }
+.au-right { display: none; }
+
+.au-nav { display: flex; align-items: center; height: 3.5rem; flex-shrink: 0; padding-inline: 1.25rem; }
+.au-wordmark {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.au-wordmark span { color: var(--color-accent); }
+
+/* Near the top on a phone, so the keyboard does not cover the field just tapped. */
+.au-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: .5rem 1.25rem 2.5rem;
+}
+.au-card {
+  width: 100%;
+  max-width: 27.5rem;
+  background: var(--color-card);
+  box-shadow: 0 0 0 1px var(--color-line);
+  padding: 2rem 1.5rem 1.75rem;
+  /* The floated label's chip: white above the line as well as below. */
+  --lbl-top: var(--color-card);
+}
+.au-card h1 {
+  margin: 0 0 .5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 1.05rem + .55vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* The form-level message takes the subtitle's slot: same place, one line,
+   so the card never changes size when it appears (HANDOFF §4). */
+.au-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: .4375rem;
+  min-height: 1.25rem;
+  margin: 0 0 1.625rem;
+  font-size: .8125rem;
+  line-height: 1.35;
+  color: var(--color-ink-muted);
+}
+.au-msg svg { display: none; flex-shrink: 0; width: .875rem; height: .875rem; margin-top: .125rem; }
+.au-msg[data-tone] svg { display: block; }
+.au-msg[data-tone='err'] { color: var(--color-bad-ink); }
+.au-msg[data-tone='warn'] { color: var(--color-warn-ink); }
+.au-msg[data-tone='ok'] { color: var(--color-good-ink); }
+
+.au-card .f-field { margin-bottom: 1.5rem; }
+
+/* ---------- OAuth ---------- */
+.au-oauth { display: flex; gap: .625rem; margin-bottom: 1.25rem; }
+.au-oauth button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  min-height: var(--spacing-hit);
+  padding: .6875rem .5rem;
+  background: var(--color-card);
+  border: 1px solid var(--color-field-line);
+  color: var(--color-ink);
+  font: .8125rem var(--font-body);
+  cursor: pointer;
+  transition: border-color .18s ease, background-color .18s ease;
+}
+.au-oauth button:hover { border-color: rgb(27 27 31 / .35); background: var(--color-bg); }
+.au-oauth button:disabled { opacity: .55; cursor: not-allowed; }
+.au-oauth svg { width: .9375rem; height: .9375rem; }
+
+.au-or { display: flex; align-items: center; gap: .75rem; margin: 0 0 1.25rem; }
+.au-or::before, .au-or::after { content: ''; flex: 1; height: 1px; background: var(--color-line); }
+.au-or span { font-size: .6875rem; letter-spacing: .06em; text-transform: uppercase; color: var(--color-ink-muted); }
+
+/* Below the password: Forgot password, at the end edge. */
+.au-sub { display: flex; justify-content: flex-end; margin: -1.25rem 0 .75rem; font-size: .75rem; }
+
+.au-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--spacing-hit);
+  color: var(--color-ink-muted);
+  text-decoration: underline;
+  text-underline-offset: .1875rem;
+}
+
+/* The lockout freezes the password path only; Forgot password and both
+   OAuth buttons stay live. */
+.au-card[data-locked] .f-field { opacity: .5; pointer-events: none; }
+
+/* ---------- The one filled button ----------
+   Its hover is a tone shift toward ink; nothing moves. Busy shows one
+   spinner, still under reduced motion. */
+.au-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: 100%;
+  padding: .8125rem;
+  background: var(--color-dark-fill);
+  border: 1px solid var(--color-dark-fill);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: .9375rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .18s ease, border-color .18s ease, opacity .18s ease;
+}
+.au-submit:hover { background: var(--color-ink); border-color: var(--color-ink); }
+.au-submit:active { background: #000; border-color: #000; }
+.au-submit:disabled { opacity: .55; cursor: not-allowed; }
+.au-submit:disabled:hover { background: var(--color-dark-fill); border-color: var(--color-dark-fill); }
+
+/* The circle exemption to the square rule, the same one avatars take. */
+.au-spin {
+  flex-shrink: 0;
+  width: .875rem;
+  height: .875rem;
+  border: 2px solid rgb(247 245 242 / .3);
+  border-top-color: var(--color-bg);
+  border-radius: 50%;
+  animation: au-spin .7s linear infinite;
+}
+@keyframes au-spin { to { rotate: 360deg; } }
+
+.au-legal { margin-top: 1.25rem; text-align: center; font-size: .6875rem; color: var(--color-ink-muted); }
+.au-legal .au-link { font-size: inherit; }
+.au-legal .sep { margin-inline: .5rem; }
+.au-back { margin-top: 1.25rem; text-align: center; font-size: .8125rem; }
+
+/* ---------- Panels that replace the form ----------
+   Sent, code expired, password changed: the form is not the thing to look
+   at any more, so it goes. */
+.au-panel-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin-bottom: 1.125rem;
+}
+.au-panel-icon svg { width: 1.125rem; height: 1.125rem; }
+.au-panel-icon[data-tone='ok'] { background: var(--color-good-tint); color: var(--color-good-ink); }
+.au-panel-icon[data-tone='warn'] { background: var(--color-warn-tint); color: var(--color-warn-ink); }
+.au-panel p { margin: 0 0 .75rem; font-size: .875rem; line-height: 1.5; }
+.au-panel p.fine { font-size: .8125rem; color: var(--color-ink-muted); }
+.au-panel b { font-weight: 400; box-shadow: inset 0 -1px 0 var(--color-field-line); overflow-wrap: anywhere; }
+.au-panel .au-submit { margin-top: .5rem; }
+.au-panel .f-field { margin-top: 1.25rem; }
+
+.au-resend {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.25rem;
+  padding-top: .25rem;
+  border-top: 1px solid var(--color-line);
+  font-size: .8125rem;
+  color: var(--color-ink-muted);
+}
+.au-resend button {
+  min-height: var(--spacing-hit);
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--color-ink);
+  font: .8125rem var(--font-body);
+  text-decoration: underline;
+  text-underline-offset: .1875rem;
+  cursor: pointer;
+}
+.au-resend button:disabled { color: var(--color-ink-muted); text-decoration: none; cursor: not-allowed; }
+
+/* ---------- Password requirements ----------
+   Shown up front, ticked live. Met is the tick AND the colour. */
+.au-reqs { display: flex; flex-direction: column; gap: .3125rem; margin: -.75rem 0 1.25rem; padding: 0; list-style: none; }
+.au-reqs li { display: flex; align-items: center; gap: .4375rem; font-size: .75rem; color: var(--color-ink-muted); transition: color .18s ease; }
+.au-reqs .box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: .875rem;
+  height: .875rem;
+  border: 1px solid var(--color-field-line);
+  color: transparent;
+  transition: border-color .18s ease, background-color .18s ease, color .18s ease;
+}
+.au-reqs .box svg { width: .5625rem; height: .5625rem; }
+.au-reqs li[data-met] { color: var(--color-good-ink); }
+.au-reqs li[data-met] .box { border-color: var(--color-good); background: var(--color-good-tint); color: var(--color-good-ink); }
+
+/* ---------- Desktop: two columns, the image slot returns ---------- */
+@media (min-width: 60rem) {
+  .au { flex-direction: row; }
+  .au-right { display: block; flex: 1; position: relative; z-index: 1; }
+  /* Runs under the left column so the halves interlock instead of meeting on a seam. */
+  .au-frame {
+    position: absolute;
+    inset: 2.5% 2.5% 2.5% -25%;
+    display: flex;
+    align-items: flex-end;
+    padding: 2rem;
+    background: rgb(15 15 17 / .9);
+  }
+  .au-nav { height: 4.5rem; padding-inline: 2.5rem; }
+  .au-main { justify-content: center; padding: 0 2.5rem 4.5rem; }
+  .au-card { padding: 2.5rem 2.75rem; }
+  .au-oauth button { min-height: 0; }
+  .au-link, .au-resend button { min-height: 0; }
+  .au-sub { margin: -.75rem 0 1.25rem; }
+}
+
+/* ---------- One entrance, on load ----------
+   The card lifts in, its contents follow in reading order, then the
+   wordmark's clay full stop drops in last. Nothing moves after that. */
+@media (prefers-reduced-motion: no-preference) {
+  .au-card { animation: au-lift .55s var(--ease-settle) both; }
+  .au-card > * { animation: au-rise .5s var(--ease-settle) both; }
+  .au-card > :nth-child(2) { animation-delay: 60ms; }
+  .au-card > :nth-child(3) { animation-delay: 120ms; }
+  .au-card > :nth-child(4) { animation-delay: 180ms; }
+  .au-card > :nth-child(5) { animation-delay: 240ms; }
+  .au-card > :nth-child(6) { animation-delay: 300ms; }
+  .au-card > :nth-child(n + 7) { animation-delay: 360ms; }
+  .au-wordmark span { display: inline-block; animation: au-dot .5s cubic-bezier(.3, 1.5, .5, 1) .55s both; }
+  .au-oauth button:active, .au-submit:active { scale: .985; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .au-spin { animation: none; border-top-color: rgb(247 245 242 / .3); }
+}
+@keyframes au-lift { from { opacity: 0; translate: 0 1rem; } }
+@keyframes au-rise { from { opacity: 0; translate: 0 .5rem; } }
+@keyframes au-dot { from { opacity: 0; translate: 0 -.75rem; } }
+
+/* A link-styled button: "Use another account" on the code step. */
+.au-linkbtn { padding: 0; background: none; border: 0; font: inherit; cursor: pointer; }
