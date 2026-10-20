@@ -183,6 +183,9 @@ importers:
 
   projects/Boutaleb/server:
     dependencies:
+      '@casl/ability':
+        specifier: 7.0.2
+        version: 7.0.2
       '@clerk/backend':
         specifier: 3.23.1
         version: 3.23.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -1548,6 +1551,9 @@ packages:
 
   '@cacheable/utils@2.3.3':
     resolution: {integrity: sha512-JsXDL70gQ+1Vc2W/KUFfkAJzgb4puKwwKehNLuB+HrNKWf91O736kGfxn4KujXCCSuh6mRRL4XEB0PkAFjWS0A==}
+
+  '@casl/ability@7.0.2':
+    resolution: {integrity: sha512-NOYbLTaw080a1Na4CpBtyGpL+i9NZhtGGt/tPrrNpLEv8EawFusHZCgc58ewyPBiZ0NER0iudB0et+IP8xJbLg==}
 
   '@clerk/backend@2.33.1':
     resolution: {integrity: sha512-DRwmFu6gEmzHRUeXXB5y02QxMihHDEgetSQrb0ME6KaYe29+LnenBUQAmlASXmsovIi9cBqk4hE4WHWNRXX+Bw==}
@@ -4011,6 +4017,18 @@ packages:
 
   '@types/yargs@17.0.35':
     resolution: {integrity: sha512-qUHkeCyQFxMXg79wQfTtfndEC+N9ZZg76HJftDJp+qH2tV7Gj4OJi7l+PiWwJ+pWtW8GwSmqsDj/oymhrTWXjg==}
+
+  '@ucast/core@2.0.0':
+    resolution: {integrity: sha512-4XVx6LzPXZGvnZO5jp39cm/G4UvuwvEdtmg+9+4+zl6uFkCcB7UJacvtMYeBE56GJVT99Zqy6Pii7dGJq3Kz9Q==}
+
+  '@ucast/js@4.0.1':
+    resolution: {integrity: sha512-9O5xPBvwEWQk2WvO69Eh2WJB8QljVZ2vRVdFvfnKjlZwWXcYxp1lqLBhwXBU1AtuSgCvKhJPkXdjKJggUmAmQQ==}
+
+  '@ucast/mongo2js@2.0.0':
+    resolution: {integrity: sha512-vNBZzRnsfLr/TSxEoxz6W6hHQ5tmWsfEeC0nCq5z8RezC1AqIRy3cfHm8AGvlGtcn+cTSFQcZremfqnz6wm+nQ==}
+
+  '@ucast/mongo@3.0.0':
+    resolution: {integrity: sha512-kwuSH+kdB4GCR0LGhy/PEDm4PCflur89AlK82kNiYD0FvsA8A/p+0sx7m+/R8mMFAlmlkAd3VXp7sM/cLLYWYg==}
 
   '@ungap/structured-clone@1.3.3':
     resolution: {integrity: sha512-60YRaenCQcVjYEKOcG824+DRGGIQ3VKErcBoAEDJZz5bKIs2ZG+X/H9Nk+Q6EVkwJk5QNApxbrc5QtBSwtrXAg==}
@@ -9471,6 +9489,10 @@ snapshots:
       hashery: 1.4.0
       keyv: 5.5.5
 
+  '@casl/ability@7.0.2':
+    dependencies:
+      '@ucast/mongo2js': 2.0.0
+
   '@clerk/backend@2.33.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@clerk/shared': 3.47.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -11790,6 +11812,22 @@ snapshots:
   '@types/yargs@17.0.35':
     dependencies:
       '@types/yargs-parser': 21.0.3
+
+  '@ucast/core@2.0.0': {}
+
+  '@ucast/js@4.0.1':
+    dependencies:
+      '@ucast/core': 2.0.0
+
+  '@ucast/mongo2js@2.0.0':
+    dependencies:
+      '@ucast/core': 2.0.0
+      '@ucast/js': 4.0.1
+      '@ucast/mongo': 3.0.0
+
+  '@ucast/mongo@3.0.0':
+    dependencies:
+      '@ucast/core': 2.0.0
 
   '@ungap/structured-clone@1.3.3': {}
 

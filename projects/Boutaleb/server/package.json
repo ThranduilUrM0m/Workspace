@@ -8,9 +8,11 @@
         "start": "node dist/main.js",
         "build": "nest build",
         "typecheck": "tsc --noEmit",
-        "test": "vitest run"
+        "test": "vitest run",
+        "seed:owner": "infisical run -- node dist/cli/seed-owner.js"
     },
     "dependencies": {
+        "@casl/ability": "7.0.2",
         "@clerk/backend": "3.23.1",
         "@nestjs/common": "12.1.2",
         "@nestjs/config": "12.0.1",

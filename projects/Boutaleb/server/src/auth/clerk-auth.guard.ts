@@ -13,7 +13,7 @@ export interface SessionAuth {
 
 export type AuthedRequest = Request & { auth: SessionAuth };
 
-// Clerk authenticates; who may do what is ours (CASL roles in Mongo, T6.4).
+// Clerk authenticates; who may do what is ours (access/access.guard.ts).
 // The client sends the session token as a Bearer header (`getToken()`).
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
