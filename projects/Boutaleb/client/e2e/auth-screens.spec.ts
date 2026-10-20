@@ -42,3 +42,17 @@ test('/reset-password reached directly shows the code-expired panel', async ({ p
     await expect(page.getByText('That code no longer works.')).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole('link', { name: 'Send a new code' })).toHaveAttribute('href', '/forgot-password');
 });
+
+test('a failed submit focuses the first bad field and keeps its badge', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByRole('button', { name: 'Log in' }).click();
+    await expect(page.getByLabel('Email')).toBeFocused();
+    await expect(page.getByText('Required')).toHaveCount(2);
+});
+
+test('/privacy-notice is reachable signed out and linked from /login', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByRole('link', { name: 'How your data is handled' }).click();
+    await expect(page).toHaveURL(/\/privacy-notice$/);
+    await expect(page.getByRole('heading', { name: 'How your data is handled.' })).toBeVisible();
+});

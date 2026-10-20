@@ -270,3 +270,6 @@
 
 /* A link-styled button: "Use another account" on the code step. */
 .au-linkbtn { padding: 0; background: none; border: 0; font: inherit; cursor: pointer; }
+
+/* /privacy-notice placeholder: what the notice will cover. */
+.au-notice-list { list-style: square; margin: 0 0 .75rem; padding-inline-start: 1.125rem; font-size: .875rem; line-height: 1.6; }

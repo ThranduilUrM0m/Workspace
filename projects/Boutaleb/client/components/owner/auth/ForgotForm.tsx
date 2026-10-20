@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { readAuthError, tryAgain } from '@/lib/auth-errors';
-import { AUTH_WORDS, STAY, BackToLogin, FormMsg, glyph, PanelIcon, Submit, type Msg } from './parts';
+import { AUTH_WORDS, BackToLogin, FormMsg, glyph, PanelIcon, Submit, type Msg } from './parts';
 import { Resend } from './Resend';
 
 // /forgot-password (wireframes/forgot-password.html). Clerk resets by an
@@ -40,8 +40,8 @@ export function ForgotForm() {
     const [addr, setAddr] = useState('');
     const [known, setKnown] = useState(false);
 
-    const form = useSchemaForm(resetRequest, { email: '' }, STAY);
-    const codeForm = useSchemaForm(resetCode, { code: '' }, STAY);
+    const form = useSchemaForm(resetRequest, { email: '' });
+    const codeForm = useSchemaForm(resetCode, { code: '' });
 
     /** True when a code went out; false for an address with no account. Throws only on rate limiting. */
     async function request(email: string): Promise<boolean> {

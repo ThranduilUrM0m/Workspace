@@ -39,6 +39,13 @@ export function Field({ name, label, icon, type = 'text', multiline, reveal, des
   const badgeId = `${id}-err`;
   const error = fieldState.error?.message;
   const pad = useBadgePadding(error);
+  // A failed submit moves focus to the first bad field. That focus must not
+  // clear the error it is pointing at, so a focus that lands within a
+  // moment of the error appearing is the form's, not the person's.
+  const shownAt = React.useRef(0);
+  React.useLayoutEffect(() => {
+    if (error) shownAt.current = performance.now();
+  }, [error]);
   const [shown, setShown] = React.useState(false);
   const describe = [error && badgeId, describedBy].filter(Boolean).join(' ') || undefined;
 
@@ -48,7 +55,7 @@ export function Field({ name, label, icon, type = 'text', multiline, reveal, des
     value: field.value ?? '',
     onChange: field.onChange,
     onBlur: field.onBlur,
-    onFocus: () => error && clearErrors(name),
+    onFocus: () => error && performance.now() - shownAt.current > 300 && clearErrors(name),
     placeholder: ' ',
     autoComplete,
     inputMode,

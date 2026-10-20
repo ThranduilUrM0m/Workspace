@@ -112,7 +112,3 @@ export const AUTH_WORDS = {
     noMatch: 'No match',
     code: 'Six digits',
 };
-
-/* Focus stays put on a failed submit: focusing a field clears its badge,
-   so moving focus there would hide the error (useSchemaForm). */
-export const STAY = { focusError: false };

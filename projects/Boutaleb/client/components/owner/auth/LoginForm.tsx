@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { readAuthError, returnPath, tryAgain, type AuthFailure } from '@/lib/auth-errors';
-import { AUTH_WORDS, STAY, FormMsg, glyph, Submit, type Msg } from './parts';
+import { AUTH_WORDS, FormMsg, glyph, Submit, type Msg } from './parts';
 import { Resend } from './Resend';
 
 // /login (wireframes/login.html). Email and password, or Google / GitHub,
@@ -53,8 +53,8 @@ export function LoginForm({ redirectUrl, notice }: { redirectUrl?: string; notic
     const [step, setStep] = useState<'password' | 'code'>('password');
     const [email, setEmail] = useState('');
 
-    const form = useSchemaForm(signInForm, { email: '', password: '' }, STAY);
-    const codeForm = useSchemaForm(resetCode, { code: '' }, STAY);
+    const form = useSchemaForm(signInForm, { email: '', password: '' });
+    const codeForm = useSchemaForm(resetCode, { code: '' });
 
     const target = () => returnPath(redirectUrl, window.location.origin);
 
@@ -189,9 +189,14 @@ export function LoginForm({ redirectUrl, notice }: { redirectUrl?: string; notic
             </Submit>
 
             {/* No Terms here: nothing is accepted at a login (HANDOFF §4). The
-                "How your data is handled" link joins this row when
-                /privacy-notice exists; its draft has had no legal read yet. */}
-            <div className="au-legal">© 2026 Boutaleb</div>
+                notice is reachable signed out; it is a placeholder until the
+                draft has had a specialist's review. */}
+            <div className="au-legal">
+                <Link className="au-link" href="/privacy-notice">
+                    How your data is handled
+                </Link>
+                <span className="sep">·</span>© 2026 Boutaleb
+            </div>
         </Form>
     );
 }

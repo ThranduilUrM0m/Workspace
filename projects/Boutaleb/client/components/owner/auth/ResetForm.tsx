@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useState, type ReactNode } from 'react';
 import { readAuthError } from '@/lib/auth-errors';
 import { CodeExpired } from './ForgotForm';
-import { AUTH_WORDS, STAY, BackToLogin, FormMsg, glyph, PanelIcon, Submit, type Msg } from './parts';
+import { AUTH_WORDS, BackToLogin, FormMsg, glyph, PanelIcon, Submit, type Msg } from './parts';
 
 // /reset-password (wireframes/reset-password.html). Reached from a right
 // code on /forgot-password; Clerk holds that sign-in attempt, so arriving
@@ -24,7 +24,7 @@ export function ResetForm() {
     const [busy, setBusy] = useState(false);
     const [done, setDone] = useState(false);
 
-    const form = useSchemaForm(newPassword, { password: '', confirm: '' }, STAY);
+    const form = useSchemaForm(newPassword, { password: '', confirm: '' });
     // Live checklist, every keystroke: the rule is useful while composing.
     const [pw, confirm] = form.watch(['password', 'confirm']);
     const met = { len: pw.length >= MIN_PASSWORD, match: !!pw && pw === confirm };

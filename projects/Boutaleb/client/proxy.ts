@@ -9,10 +9,11 @@ const intl = createMiddleware(routing);
 // (lib/owner-auth.ts): Clerk deprecated route protection in the proxy.
 const clerk = clerkMiddleware({ signInUrl: '/login' });
 
-// The owner side: the ERP (/app) and the auth screens. English only, never
+// The owner side: the ERP (/app), the auth screens and the notice for
+// workspace accounts (/privacy-notice). English only, never
 // localised, and the only place Clerk runs. The public site carries no
 // Clerk script and sets no Clerk cookie.
-const OWNER = /^\/(app|login|forgot-password|reset-password)(\/|$)/;
+const OWNER = /^\/(app|login|forgot-password|reset-password|privacy-notice)(\/|$)/;
 
 export default function proxy(request: NextRequest, event: NextFetchEvent) {
     const { pathname } = request.nextUrl;
