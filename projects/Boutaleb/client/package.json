@@ -22,6 +22,7 @@
     "sharp": "0.34.5"
   },
   "devDependencies": {
+    "@clerk/testing": "2.2.48",
     "@playwright/test": "1.64.0",
     "@repo/emails": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",

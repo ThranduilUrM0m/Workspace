@@ -31,6 +31,12 @@ export type ErrorWords = Record<string, string>;
 const Words = React.createContext<ErrorWords>({});
 export const useErrorWords = () => React.useContext(Words);
 
+/* True while a submit is being checked. A failed submit focuses the first
+   bad field, and a field clears its badge on focus; Field reads this to
+   tell that focus (the form's) from a person's own. */
+const Submitting = React.createContext<React.RefObject<boolean>>({ current: false });
+export const useSubmitting = () => React.useContext(Submitting);
+
 export interface FormProps<In extends FieldValues, Out extends FieldValues>
   extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'onInvalid'> {
   form: UseFormReturn<In, unknown, Out>;
@@ -49,13 +55,28 @@ export function Form<In extends FieldValues, Out extends FieldValues>({
   children,
   ...props
 }: FormProps<In, Out>) {
+  const submitting = React.useRef(false);
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
+    submitting.current = true;
+    try {
+      await form.handleSubmit(onSubmit, onInvalid)(e);
+    } finally {
+      // One frame more: a stepped form focuses its first error from a frame
+      // it schedules in onInvalid, which runs before this one.
+      requestAnimationFrame(() => {
+        submitting.current = false;
+      });
+    }
+  };
   return (
     <FormProvider {...form}>
       <Words.Provider value={errorWords}>
+        <Submitting.Provider value={submitting}>
         {/* noValidate: the browser's bubbles would race the schema's badges. */}
-        <form noValidate onSubmit={form.handleSubmit(onSubmit, onInvalid)} {...props}>
+        <form noValidate onSubmit={submit} {...props}>
           {children}
         </form>
+        </Submitting.Provider>
       </Words.Provider>
     </FormProvider>
   );

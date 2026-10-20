@@ -1,0 +1,367 @@
+/* The ERP shell (C24): rail + panel sidebar, topbar, phone menu, skip link.
+   Ported from Blueprinting/wireframes/shell/shell.css (chrome only; lists,
+   forms and records arrive with their screens). HANDOFF §2-3, §19, §22.
+
+   Phone is the base; ONE breakpoint, 48rem (the 76px rail plus a ~43rem
+   screen fit side by side), adds the desktop shell. Every rule that only
+   makes sense on the hover rail sits inside that query.
+
+   Page scroll is the default here (the wireframe's .b-page): most screens
+   are one tall document, and the sticky sidebar needs a scrolling page.
+   The board opts out with AppPage frozen (.b-shell[data-frozen]). */
+
+.b-shell {
+  --header-h: 3.5rem;
+  --sidebar-w: 15rem;
+  --sidebar-w-collapsed: 4.75rem;
+  --sidebar-h: 150dvh;
+  --hit: 44px;
+  display: flex;
+  align-items: flex-start;
+  min-height: 100dvh;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+@media (min-width: 48rem) { .b-shell { --header-h: 4.5rem; } }
+
+.b-shell h1, .b-shell h2, .b-shell h3 { font-family: var(--font-display); }
+.b-shell :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+
+/* Frozen (the board): the page never scrolls, an inner pane does. */
+html:has(.b-shell[data-frozen]), html:has(.b-shell[data-frozen]) body { height: 100%; overflow: hidden; }
+.b-shell[data-frozen] .main { height: 100dvh; overflow: hidden; }
+.b-shell[data-frozen] .content { overflow-y: auto; }
+
+/* Skip link: out of flow, off-screen until keyboard focus. */
+.b-skip {
+  position: absolute;
+  z-index: 100;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  padding: .75rem 1rem;
+  background: var(--color-dark-fill);
+  color: var(--color-bg);
+  font-size: .8125rem;
+  text-decoration: none;
+  translate: 0 -100%;
+}
+.b-skip:focus-visible { translate: none; outline-offset: -4px; }
+.b-skip-to:focus { outline: none; }
+
+/* ---------- Sidebar ----------
+   TWO ELEMENTS, ON PURPOSE. .sidebar is the RAIL: a fixed 76px of layout
+   that never changes width, so the board never reflows. .sidebar-inner is
+   the PANEL: it grows to 240px on hover, sliding OVER the content.
+   STICKY, NOT FIXED, so it can stand taller than the viewport and scroll
+   with the page until its bottom meets the viewport's. top = 100dvh -
+   --sidebar-h; Shell.tsx measures --sidebar-h.
+   PHONE: a full-screen panel over the topbar, opened by the menu button.
+   Closed = clipped AND visibility:hidden, so its links cannot be tabbed into. */
+.sidebar {
+  position: fixed;
+  inset: 0;
+  z-index: 42;
+  clip-path: inset(0 0 100% 0);
+  visibility: hidden;
+  transition: clip-path .45s cubic-bezier(.2, .8, .2, 1), visibility 0s linear .45s;
+}
+.b-shell[data-menu] .sidebar { clip-path: inset(0); visibility: visible; transition: clip-path .5s cubic-bezier(.2, .8, .2, 1), visibility 0s; }
+html:has(.b-shell[data-menu]) { overflow: hidden; }
+.sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--color-card);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+@media (min-width: 48rem) {
+  .sidebar {
+    position: sticky;
+    inset: auto;
+    top: calc(100dvh - var(--sidebar-h));
+    align-self: flex-start;
+    flex: 0 0 var(--sidebar-w-collapsed);
+    height: var(--sidebar-h);
+    z-index: 10;
+    clip-path: none;
+    visibility: visible;
+    transition: none;
+  }
+  .sidebar-inner {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--sidebar-w);
+    height: auto;
+    border-inline-end: 1px solid var(--color-line);
+    overflow: hidden;
+    overscroll-behavior: auto;
+    transition: width .35s cubic-bezier(.4, 0, .2, 1);
+  }
+  .sidebar:not(:hover, :focus-within) .sidebar-inner { width: var(--sidebar-w-collapsed); }
+}
+
+/* The shelf: the mark, the way back to the public site. Pinned at
+   --header-h so its divider and the topbar's land on one y. On a phone it
+   is the bar's twin: the mark lands on the bar's mark to the pixel, the
+   close control exactly where the menu button was. */
+.sidebar-top {
+  position: relative;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  height: var(--header-h);
+  padding-block: 0;
+  padding-inline: calc(1.25rem - .375rem + (var(--hit) - 1.75rem * 404.94 / 384) / 2) .625rem;
+  transition: padding .4s cubic-bezier(.4, 0, .2, 1);
+}
+.sidebar-top::after { content: ''; position: absolute; inset-inline: 1.5rem; bottom: 0; height: 1px; background: var(--color-line); }
+.sidebar-top .mark-icon { height: 1.75rem; }
+.side-close { display: block; }
+@media (min-width: 48rem) {
+  .sidebar-top { padding-inline: 2.125rem 1.25rem; }
+  .sidebar-top .mark-icon { height: 1.625rem; }
+  .side-close { display: none; }
+  .sidebar:not(:hover, :focus-within) .sidebar-top { justify-content: center; padding: 0; }
+}
+
+.brand { display: flex; align-items: center; gap: .6875rem; min-width: 0; text-decoration: none; color: var(--color-ink); }
+.brand:hover .mark-icon { fill: var(--color-accent); }
+.mark-icon { height: 1.625rem; width: auto; flex-shrink: 0; fill: var(--color-ink); transition: fill .2s; }
+/* The public site's wordmark, value for value, muted as it renders there.
+   A logotype is exempt from WCAG 1.4.3. */
+.brand-word {
+  font-family: var(--font-display);
+  font-size: .9375rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  color: rgb(27 27 31 / .45);
+}
+.brand-word .dot { color: var(--color-accent); }
+
+/* NO INTERNAL SCROLL on the rail: the list is sized to fit. An eleventh
+   entry goes inside a sub, not on the end. */
+.side-links { list-style: none; margin: 0; padding: 1rem .75rem 2rem; display: flex; flex-direction: column; gap: .125rem; }
+.side-links:not(.bottom-links) { flex: 0 0 auto; }
+.side-links a, .side-links button {
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  width: 100%;
+  min-height: var(--hit);
+  padding: .5rem 1.25rem;
+  background: none;
+  border: 0;
+  border-inline-start: 2px solid transparent;
+  font: 1rem var(--font-body);
+  color: var(--color-ink-muted);
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+  transition: padding .4s cubic-bezier(.4, 0, .2, 1), color .15s;
+}
+.side-links svg { flex-shrink: 0; width: 1.125rem; height: 1.125rem; }
+.side-links a:hover, .side-links button:hover { color: var(--color-ink); }
+.side-links a[aria-current='page'] {
+  color: var(--color-ink);
+  background: var(--color-accent-tint);
+  border-inline-start-color: var(--color-accent);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.label { opacity: 1; max-width: 10rem; transition: opacity .3s ease, max-width .4s cubic-bezier(.4, 0, .2, 1), margin-inline-start .4s cubic-bezier(.4, 0, .2, 1); }
+.chevron { margin-inline-start: auto; flex-shrink: 0; width: .875rem !important; height: .875rem !important; transition: rotate .3s cubic-bezier(.4, 0, .2, 1); }
+.has-sub[data-open] > button .chevron { rotate: 90deg; }
+.chevron:dir(rtl) { scale: -1 1; }
+
+.sub-links { list-style: none; margin: 0; padding: 0; max-height: 0; overflow: hidden; transition: max-height .4s cubic-bezier(.4, 0, .2, 1); }
+.has-sub[data-open] .sub-links { max-height: 14rem; }
+.sub-links a {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  min-height: var(--hit);
+  padding-block: .5rem;
+  padding-inline: 3rem 1.25rem;
+  font-size: 1rem;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.sub-links a:hover { color: var(--color-ink); }
+
+.nav-group {
+  list-style: none;
+  padding: 1.25rem .5rem .375rem 1.375rem;
+  font-family: var(--font-display);
+  font-size: .5625rem;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-label-float);
+}
+.side-links > .nav-group:first-child { padding-top: .125rem; }
+
+/* System sits apart: where you change the tool, not do the job. On the rail
+   it is pinned to the floor; on a phone the panel scrolls, so the room goes
+   above its rule instead. */
+.bottom-links { position: relative; flex: 0 0 auto; margin-top: auto; padding-top: 1rem; padding-bottom: 1.125rem; }
+.bottom-links::before { content: ''; position: absolute; inset-inline: 1.5rem; top: 0; height: 1px; background: var(--color-line); }
+
+/* Who is signed in: the panel's last row on a phone. */
+.side-me { position: relative; flex: 0 0 auto; display: flex; align-items: center; gap: .75rem; padding: 1rem 1.5rem 1.5rem; }
+.side-me::before { content: ''; position: absolute; inset-inline: 1.5rem; top: 0; height: 1px; background: var(--color-line); }
+.side-me .profile-text { min-width: 0; }
+.side-me .email { overflow: hidden; text-overflow: ellipsis; }
+
+@media (min-width: 48rem) {
+  .side-links { padding: 1rem .75rem .5rem; }
+  .bottom-links { padding-top: 1rem; padding-bottom: 1.125rem; }
+  .side-links a, .side-links button { min-height: 0; font-size: .875rem; }
+  .sub-links a { min-height: 0; font-size: .8125rem; }
+  .side-me { display: none; }
+  .sidebar:not(:hover, :focus-within) .side-links { padding-inline: 0; }
+  .sidebar:not(:hover, :focus-within) :is(.side-links a, .side-links button) { justify-content: center; padding: .5rem 0; }
+  .sidebar:not(:hover, :focus-within) .label { opacity: 0; max-width: 0; margin-inline-start: -.625rem; pointer-events: none; }
+  .sidebar:not(:hover, :focus-within) :is(.sub-links, .chevron) { display: none; }
+  /* Collapsed, a group label becomes a rule standing in for the word; the
+     first would double the shelf's own divider, so it has none. */
+  .sidebar:not(:hover, :focus-within) .nav-group { position: relative; font-size: 0; padding: .875rem 0 .625rem; }
+  .sidebar:not(:hover, :focus-within) .nav-group::after { content: ''; position: absolute; inset-inline: 1.625rem; top: 50%; height: 1px; background: var(--color-line); }
+  .sidebar:not(:hover, :focus-within) .side-links > .nav-group:first-child::after { content: none; }
+}
+
+/* ---------- Main + topbar ---------- */
+.main { flex: 1 1 auto; min-width: 0; min-height: 100dvh; display: flex; flex-direction: column; }
+
+/* Height locked to --header-h, the shelf's, so the two dividers share a y.
+   The rule is inset to the content edge, not full bleed. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 41;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  height: var(--header-h);
+  padding-inline: 1.25rem;
+  background: var(--color-bg);
+}
+.topbar::after { content: ''; position: absolute; inset-inline: 1.25rem; bottom: 0; height: 1px; background: var(--color-line); }
+
+/* The phone bar opens with the mark: it reads as the top of the app, and
+   it is the one way home that does not open the menu. */
+.tb-mark { display: flex; align-items: center; justify-content: center; flex: 0 0 auto; width: var(--hit); height: var(--hit); margin-inline: -.375rem -.125rem; }
+.tb-mark svg { height: 1.75rem; width: auto; fill: var(--color-ink); }
+
+.greeting { display: flex; flex-direction: column; gap: .25rem; flex: 1 1 auto; min-width: 0; }
+.greeting-sub, .greeting h1 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* A caption, not a second headline: it ends at the bar's first third. */
+.greeting-sub { max-inline-size: calc((100dvw - 2.5rem) / 3 - 2.25rem); font-size: .75rem; color: var(--color-ink-muted); }
+.greeting h1 { margin: 0; font-size: 1.125rem; font-weight: 700; }
+.topbar-right { display: flex; align-items: center; gap: 0; flex-shrink: 0; margin-inline-end: -.625rem; }
+
+/* Search is opt-in per page. Phone: one 44px icon whose transparent input
+   fills it; :focus-within opens the field over the whole bar. No JS. */
+.search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  width: var(--hit);
+  height: var(--hit);
+  padding: 0;
+  background: none;
+  border: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+.search-field svg { flex-shrink: 0; width: 1rem; height: 1rem; color: var(--color-ink-muted); }
+.search-field input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  outline: none;
+  opacity: 0;
+  cursor: pointer;
+  font: 1rem var(--font-body);
+  color: var(--color-ink);
+}
+.search-field input::placeholder { color: var(--color-ink-muted); }
+.search-field:focus-within { position: absolute; inset: .375rem 1.25rem; z-index: 2; width: auto; height: auto; padding: 0 .75rem; justify-content: flex-start; background: var(--color-bg); border-color: var(--color-accent); }
+.search-field:focus-within input { position: static; opacity: 1; cursor: text; }
+
+/* The menu button: public.css's two lines, the short one on top. */
+.menu-btn { position: relative; flex-shrink: 0; width: var(--hit); height: var(--hit); padding: 0; border: 0; background: none; color: var(--color-ink); cursor: pointer; }
+.menu-btn span { position: absolute; inset-inline-end: .75rem; height: 2px; margin-top: -1px; background: currentColor; transition: translate .35s cubic-bezier(.2, .8, .2, 1), rotate .35s cubic-bezier(.2, .8, .2, 1), width .35s cubic-bezier(.2, .8, .2, 1); }
+.menu-btn span:first-child { top: calc(50% - .25rem); width: .875rem; }
+.menu-btn span:last-child { top: calc(50% + .25rem); width: 1.375rem; }
+.side-close span { width: 1.25rem; }
+.side-close span:first-child { width: 1.25rem; translate: 0 .25rem; rotate: 45deg; }
+.side-close span:last-child { width: 1.25rem; translate: 0 -.25rem; rotate: -45deg; }
+.menu-btn:focus-visible { outline-offset: -4px; }
+
+/* Avatar: a circle, the profile-picture exemption to the square rule. */
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--color-dark-fill);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: .8125rem;
+  font-weight: 700;
+}
+.profile-block { display: none; align-items: center; gap: .625rem; padding-inline-start: .875rem; border-inline-start: 1px solid rgb(27 27 31 / .1); }
+.profile-text { display: flex; flex-direction: column; gap: .125rem; }
+.profile-text .hello { font-family: var(--font-display); font-size: .8125rem; font-weight: 600; }
+.profile-text .email { font-size: .6875rem; color: var(--color-ink-muted); }
+
+.content { flex: 1; padding: 1.5rem 1.25rem; }
+
+@media (min-width: 48rem) {
+  .topbar { position: relative; top: auto; z-index: auto; gap: 1.5rem; padding-inline: 2.5rem; background: none; }
+  .topbar::after { inset-inline: 2.5rem; }
+  .tb-mark, .menu-btn { display: none; }
+  .greeting { flex: 0 1 auto; }
+  .greeting-sub, .greeting h1 { white-space: normal; overflow: visible; }
+  .greeting-sub { max-inline-size: none; }
+  .greeting h1 { font-size: 1.25rem; }
+  .topbar-right { gap: .875rem; margin-inline-end: 0; }
+  .profile-block { display: flex; }
+  .search-field, .search-field:focus-within {
+    position: static;
+    inset: auto;
+    width: 15rem;
+    height: auto;
+    padding: .5625rem .75rem;
+    justify-content: flex-start;
+    background: var(--color-bg);
+    border-color: var(--color-field-line);
+  }
+  .search-field:focus-within { border-color: var(--color-accent); }
+  .search-field input, .search-field:focus-within input { position: static; opacity: 1; cursor: text; font-size: .8125rem; }
+  .content { padding: 2rem 2.5rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar, .sidebar-inner, .menu-btn span, .label, .sub-links { transition: none !important; }
+}

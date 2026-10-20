@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { useErrorWords } from './Form';
+import { useErrorWords, useSubmitting } from './Form';
 
 /* C3 Field and C4 SelectField (component map). Styles: field.css. Must sit
    inside <Form>; the schema names the rules, the form names the words.
@@ -39,13 +39,7 @@ export function Field({ name, label, icon, type = 'text', multiline, reveal, des
   const badgeId = `${id}-err`;
   const error = fieldState.error?.message;
   const pad = useBadgePadding(error);
-  // A failed submit moves focus to the first bad field. That focus must not
-  // clear the error it is pointing at, so a focus that lands within a
-  // moment of the error appearing is the form's, not the person's.
-  const shownAt = React.useRef(0);
-  React.useLayoutEffect(() => {
-    if (error) shownAt.current = performance.now();
-  }, [error]);
+  const submitting = useSubmitting();
   const [shown, setShown] = React.useState(false);
   const describe = [error && badgeId, describedBy].filter(Boolean).join(' ') || undefined;
 
@@ -55,7 +49,8 @@ export function Field({ name, label, icon, type = 'text', multiline, reveal, des
     value: field.value ?? '',
     onChange: field.onChange,
     onBlur: field.onBlur,
-    onFocus: () => error && performance.now() - shownAt.current > 300 && clearErrors(name),
+    // A failed submit's own focus keeps the badge it is pointing at.
+    onFocus: () => error && !submitting.current && clearErrors(name),
     placeholder: ' ',
     autoComplete,
     inputMode,

@@ -1,9 +1,23 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Signed-out specs run as before. Signed-in specs (*.signed-in.spec.ts)
+// reuse the session signed-in.setup.ts saves; they need the Clerk keys,
+// so run them through `infisical run -- pnpm exec playwright test`.
+const SIGNED_IN = /\.signed-in\.spec\.ts$/;
+
 export default defineConfig({
     testDir: './e2e',
     use: { baseURL: 'http://localhost:3002' },
-    projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+    projects: [
+        { name: 'chromium', use: { ...devices['Desktop Chrome'] }, testIgnore: [SIGNED_IN, /\.setup\.ts$/] },
+        { name: 'signed-in setup', testMatch: /signed-in\.setup\.ts$/ },
+        {
+            name: 'signed-in',
+            testMatch: SIGNED_IN,
+            use: { ...devices['Desktop Chrome'], storageState: 'e2e/.auth/user.json' },
+            dependencies: ['signed-in setup'],
+        },
+    ],
     webServer: {
         command: 'corepack pnpm dev',
         url: 'http://localhost:3002/en/privacy',

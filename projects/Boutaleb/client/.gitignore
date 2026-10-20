@@ -38,3 +38,6 @@ playwright-report/
 
 # SWC cache
 .swc/
+
+# Saved Clerk sessions for signed-in e2e (signed-in.setup.ts)
+e2e/.auth/
