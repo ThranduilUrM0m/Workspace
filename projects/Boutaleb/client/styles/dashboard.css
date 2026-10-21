@@ -1,0 +1,405 @@
+/* The Dashboard (T6.6). Ported from Blueprinting/wireframes/shell/dash-v4.css,
+   value for value; only the tokens are renamed to the theme's. Read the
+   wireframe file for why each rule is what it is.
+
+   Phone first. 48rem: the rail is back, KPIs 2x2, widgets pair up, Quick
+   actions is a card. 70rem: the locked desktop (2026-09-03).
+   Phone order is a reading order, placed with grid areas; the DOM is the
+   desktop's. Quick actions is a dock in the thumb zone on a phone. */
+
+/* Questrial has one weight: every heavy class here routes to Bricolage. */
+.d-strip-lbl, .d-strip-count, .d-kpi-lbl, .d-kpi-val, .d-delta,
+.d-w-title, .d-w-link, .d-p-name, .d-p-pct, .d-p-amt,
+.d-fin-num, .d-fin-note b, .d-dl-day, .d-cl-name, .d-qa-label {
+  font-family: var(--font-display);
+}
+
+/* The dashboard draws its own gutters. */
+.content:has(> .d-wrap) { padding: 0; }
+
+.d-wrap{padding:1rem 1.25rem .75rem;display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;
+  grid-template-areas:"needs" "kpis" "dl" "proj" "perf" "cl" "qa";}
+.d-row{display:contents;}
+.d-strip{grid-area:needs;} .d-kpis{grid-area:kpis;}
+.d-w-proj{grid-area:proj;} .d-w-perf{grid-area:perf;}
+.d-w-dl{grid-area:dl;} .d-w-cl{grid-area:cl;} .d-qa{grid-area:qa;}
+
+/* ---------- Priority strip ----------
+   The one row that says "these need you today". It is not a widget: no card
+   chrome competing with the four below it. */
+/* Amber wash, flat — not a gradient, and not red. The strip mixes genuinely
+   late work with things merely expiring soon; amber is "attention" without
+   spending red, which stays reserved for Critical so it keeps its force.
+   Nothing else on the screen uses this fill, so it cannot be confused with the
+   terracotta money card. */
+/* PHONE: the head row (mark, label, View all 3), then ONE item on one line,
+   ellipsised (developer, 2026-10-02): the strip is a nudge, not the list,
+   and "View all 3" already says how many there are. */
+.d-strip{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:.75rem;background:var(--color-warn-tint);border:1px solid rgba(184,134,47,.32);padding:.25rem .5rem .25rem 1rem;}
+.d-strip-mark{position:relative;width:.5rem;height:.5rem;flex-shrink:0;}
+/* square since 2026-10-01: round only icon strokes and profile pictures */
+.d-strip-dot{position:absolute;inset:0;background:var(--color-warn);}
+.d-strip-ring{position:absolute;inset:0;border:1px solid var(--color-warn);animation:d-pulse 2s ease-out infinite;}
+@keyframes d-pulse{0%{transform:scale(1);opacity:.8;}100%{transform:scale(3);opacity:0;}}
+.d-strip-lbl{font-size:.625rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;flex-shrink:0;}
+.d-strip-items{grid-column:1 / -1;grid-row:2;min-width:0;display:grid;padding:0 .5rem .5rem 0;}
+.d-strip-item{position:relative;font-size:.875rem;line-height:1.45;color:var(--color-ink-muted);padding:.625rem 0 .625rem 1.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-strip-item + .d-strip-item{display:none;}
+.d-strip-item::before{content:'';position:absolute;left:1.25rem;right:0;top:0;height:1px;background:rgba(184,134,47,.22);}
+.d-strip-item b{font-weight:400;color:var(--color-ink);}
+.d-strip-count{flex-shrink:0;background:var(--color-dark-fill);color:var(--color-bg);border:none;font-size:.6875rem;font-weight:600;padding:.375rem .625rem;cursor:pointer;min-height:var(--hit);background-clip:padding-box;border-block:.375rem solid transparent;}
+.d-strip-count:hover{background-color:var(--color-accent-ink);}
+
+/* ---------- KPI strip ----------
+   Deltas carry hue, restored 2026-09-03 after the colourless version was
+   rejected on sight: it read as dead. Green up / red down is a convention the
+   reader already owns, and the arrow plus the label still carry the fact if the
+   colour is not seen, so colour is never alone.
+   Note the sentiment is NOT the arithmetic sign — more money owed to you is a
+   red DOWN even though the number went up. The class says good-or-bad; the text
+   says how much. The one tinted card is money, and terracotta is the money
+   family, the same meaning it carries on the Work board. */
+/* PHONE: 2x2. The foot stacks (delta over context) so "2 invoices · oldest
+   41 days" wraps under its arrow instead of fighting it for one line. */
+.d-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;}
+.d-kpi{background:#fff;border:1px solid var(--color-line);padding:.875rem 1rem;display:flex;flex-direction:column;}
+.d-kpi.money{background:var(--color-accent-tint);border-color:rgba(196,105,74,.25);}
+.d-kpi-head{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+.d-kpi-lbl{font-size:.625rem;letter-spacing:.09em;text-transform:uppercase;color:var(--color-ink-muted);font-weight:700;}
+.d-kpi-head svg{width:1rem;height:1rem;color:var(--color-ink-muted);flex-shrink:0;}
+.d-kpi.money .d-kpi-head svg{color:var(--color-accent);}
+.d-kpi.money .d-kpi-lbl{color:var(--color-accent-ink);}
+/* A short value ("4") left a dead half-card. The value row carries an optional
+   aside on the right so the number has something to sit against — real content,
+   not a filler graphic: for Active projects it is WHICH four. */
+/* align-items:flex-end sits the stack on the number's baseline edge rather than
+   floating it in the middle of the row — it reads as attached to the figure. */
+.d-kpi-mid{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.5rem .75rem;margin:.75rem 0 .625rem;}
+.d-kpi-val{font-size:clamp(1.125rem,.75rem + 1.6vw,1.5rem);font-weight:700;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* Each circle is tinted with the FAMILY its project is currently working in,
+   the same hue the stage badge below uses. Faded on purpose: this is a glance
+   at which four, not a control. Round: the developer reads them as profile
+   pictures, and profile pictures are round (2026-10-02).
+   PHONE: two circles, then a "+N" circle in the same chip (.more, drawn by
+   dash-v4.js), so the stack stays three wide however many projects run. */
+.d-kpi-stack{display:flex;flex-shrink:0;}
+.d-kpi-stack span{width:1.75rem;height:1.75rem;border-radius:50%;
+  background:var(--fam-t,rgba(27,27,31,.08));color:var(--fam-tx,var(--fam-c,var(--color-ink)));
+  box-shadow:0 0 0 2px #fff;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-display);font-size:.5625rem;font-weight:700;}
+.d-kpi-stack span + span{margin-left:-.375rem;}
+.d-kpi-stack span:nth-child(n+3):not(.more){display:none;}
+.d-kpi-stack .more{background:var(--color-dark-fill);color:var(--color-bg);font-variant-numeric:tabular-nums;}
+.d-kpi.money .d-kpi-val{color:var(--color-accent-ink);}
+.d-kpi-foot{display:flex;flex-direction:column;align-items:flex-start;gap:.25rem;margin-top:auto;}
+.d-delta{display:inline-flex;align-items:center;gap:.25rem;font-size:.75rem;font-weight:700;font-variant-numeric:tabular-nums;}
+.d-delta svg{width:.6875rem;height:.6875rem;flex-shrink:0;}
+.d-delta.up{color:var(--color-good-ink);}
+.d-delta.down{color:var(--color-bad-ink);}
+.d-kpi-ctx{font-size:.6875rem;line-height:1.35;color:var(--color-ink-muted);}
+
+/* ---------- Widget shell ----------
+   Header links sit flush with the eyebrow row, never centred against a
+   two-line title block — align-items:flex-start does it, no margin hack. */
+.d-w{background:#fff;border:1px solid var(--color-line);padding:1rem;display:flex;flex-direction:column;}
+.d-w-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.5rem;}
+.d-w-headings{display:flex;align-items:flex-start;gap:.625rem;min-width:0;}
+.d-w-headings > svg{width:1rem;height:1rem;color:var(--color-ink-muted);flex-shrink:0;margin-top:.125rem;}
+.d-w-eyebrow{display:block;font-size:.5625rem;letter-spacing:.11em;text-transform:uppercase;color:var(--color-ink-muted);}
+.d-w-title{margin:.1875rem 0 0;font-size:1rem;font-weight:700;line-height:1.2;}
+/* phone: the header link is a 44px target, pulled into the card's corner */
+.d-w-link{font-size:.6875rem;font-weight:600;color:var(--color-ink-muted);text-decoration:none;white-space:nowrap;flex-shrink:0;
+  display:inline-flex;align-items:center;min-height:var(--hit);margin:-.75rem -.25rem 0 0;padding-inline:.25rem;}
+.d-w-link:hover{color:var(--color-accent-ink);}
+
+/* ---------- Row separators ----------
+   Table-like lists are borderless: no cell borders, no outlines. Separation is
+   one hairline, and it is INSET — a divider never reaches its container's
+   edges. Symmetric .5rem, applied between rows only, never above the first. */
+.d-sep{position:relative;}
+.d-sep + .d-sep::before{content:'';position:absolute;left:.5rem;right:.5rem;top:0;height:1px;background:var(--color-line);}
+
+/* ---------- Projects in progress ---------- */
+/* flex:1 + space-between is load-bearing, not spacing taste. The grid stretches
+   this card to its taller sibling, so without it the three rows bunch at the top
+   and leave a dead band under them. */
+.d-plist{flex:1;display:flex;flex-direction:column;justify-content:space-between;}
+/* PHONE: two lines per project. Line one is WHAT (icon, name, place, the
+   row's menu); line two is WHERE IT STANDS (stage, a full-width bar, the
+   value). The bar gets the room the desktop's fixed 6.5rem column denied it. */
+.d-p{display:grid;grid-template-columns:1rem auto minmax(0,1fr) auto;grid-template-areas:"ic info info more" ". stage prog amt";align-items:center;gap:.5rem .75rem;padding:.75rem 0;}
+.d-p > svg{grid-area:ic;align-self:start;margin-top:.125rem;width:1rem;height:1rem;color:var(--color-ink-muted);flex-shrink:0;}
+.d-p-info{grid-area:info;flex:1;min-width:0;}
+.d-p-name{display:block;font-size:.875rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-p-desc{display:block;font-size:.6875rem;color:var(--color-ink-muted);margin-top:.125rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Fixed widths on every column after the name are what makes the three rows
+   line up down the y axis. Only .d-p-info flexes; everything right of it holds
+   its track, so the tags, bars and amounts stack into real columns.
+   The badge itself is content-width — the CELL is what is fixed, and the badge
+   sits at its right edge, so the badges align on their right without being
+   stretched to a common width. (Desktop. On the phone the grid's tracks do
+   the aligning, so the cells are content-width.) */
+.d-p-stage{grid-area:stage;display:flex;flex-shrink:0;}
+.d-p-prog{grid-area:prog;display:flex;align-items:center;gap:.5rem;flex-shrink:0;min-width:0;}
+.d-p-track{flex:1;height:.375rem;background:rgba(27,27,31,.07);}
+/* display:block is load-bearing. .d-p-track is not a flex container, so a bare
+   span child stays INLINE — width and height silently do nothing and the bar
+   renders as an empty grey trough. That is why the fill had vanished. */
+.d-p-fill{display:block;height:100%;background:var(--color-accent);transform-origin:0 50%;}
+/* ---------- Families, borrowed from the Work board ----------
+   Verbatim from board-v4.js:58. A stage badge answers "what KIND of work is
+   this project in right now", which is exactly what the board's four families
+   already answer — so it inherits that meaning instead of starting a second
+   colour language on the same product. Design is craft, sourcing moves cash so
+   it is money, on-site execution is build.
+   No new hexes are introduced here and none is invented per screen. */
+.d-p-pct{font-size:.6875rem;font-weight:600;font-variant-numeric:tabular-nums;width:2.25rem;text-align:right;}
+.d-p-amt{grid-area:amt;font-size:.75rem;font-weight:600;font-variant-numeric:tabular-nums;color:var(--color-accent-ink);text-align:right;flex-shrink:0;white-space:nowrap;}
+/* The row menu was hover-only, and a touch screen has no hover: on the phone
+   it is always there, as a 44px target. */
+.d-p-more{grid-area:more;background:none;border:none;padding:0;color:var(--color-ink-muted);cursor:pointer;line-height:0;flex-shrink:0;
+  width:var(--hit);height:var(--hit);margin:-.75rem -.875rem -.75rem 0;display:flex;align-items:center;justify-content:center;}
+.d-p-more svg{width:.9375rem;height:.9375rem;}
+
+/* ---------- Performance ----------
+   .d-fin is a flex column so the calibration footer pins to the bottom with
+   margin-top:auto, matching the sibling card's height whatever the chart does. */
+.d-fin{flex:1;display:flex;flex-direction:column;}
+.d-fin-figures{display:flex;gap:2rem;}
+.d-fin-fig{display:flex;flex-direction:column;gap:.1875rem;}
+.d-fin-lbl{font-size:.625rem;letter-spacing:.08em;text-transform:uppercase;color:var(--color-ink-muted);}
+.d-fin-num{font-size:1.25rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+.d-fin-num.money{color:var(--color-accent);}   /* large figure: 3:1 holds */
+/* The divider is gone for good; the sentence came back as ONE line. It is the
+   only thing on this card that says what the numbers MEAN, so it earns a row —
+   but it does not earn a paragraph, and it must not wrap. (Desktop. On the
+   phone one line cannot hold it, and an ellipsis there cut the meaning, so
+   it wraps to two.) */
+.d-chart{flex:1;display:flex;flex-direction:column;margin:1.25rem 0 0;}
+.d-chart svg{display:block;flex:1;width:100%;min-height:7rem;}
+.d-chart-x{display:flex;justify-content:space-between;font-size:.5625rem;color:var(--color-ink-muted);letter-spacing:.04em;margin-top:.5rem;}
+.d-fin-note{margin:.75rem 0 0;font-size:.75rem;color:var(--color-ink-muted);line-height:1.45;}
+.d-fin-note b{color:var(--color-ink);font-weight:600;}
+
+/* ---------- Deadlines ----------
+   Urgency IS priority, so it reuses the board's priority scale rather than
+   paralleling it with a second set of hues: Critical #C0392B, High #B8862F,
+   Medium and Low deliberately grey. Rendered the board's way — a dot beside a
+   word, never a filled badge, and never colour carrying the fact alone. */
+.d-dllist{flex:1;display:flex;flex-direction:column;justify-content:space-between;}
+.d-dl{display:flex;align-items:center;gap:.875rem;padding:.75rem 0;}
+.d-dl-date{display:flex;flex-direction:column;align-items:center;width:2.5rem;flex-shrink:0;}
+.d-dl-day{font-size:1.0625rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums;}
+.d-dl-mon{font-size:.5625rem;letter-spacing:.09em;text-transform:uppercase;color:var(--color-ink-muted);margin-top:.1875rem;}
+.d-dl-body{flex:1;min-width:0;}
+/* phone: the title wraps; cutting "client handover" to "client h…" lost the fact */
+.d-dl-title{display:flex;align-items:baseline;gap:.4375rem;font-size:.875rem;line-height:1.35;}
+.d-dl-title span{white-space:normal;}
+/* square since 2026-10-02 (shape rule) */
+.d-prio{width:.4375rem;height:.4375rem;background:var(--prio,#6B6B72);flex-shrink:0;transform:translateY(-.0625rem);}
+.d-dl-sub{font-size:.6875rem;color:var(--color-ink-muted);margin-top:.125rem;}
+.d-dl-rel{font-size:.6875rem;color:var(--color-ink-muted);font-variant-numeric:tabular-nums;white-space:nowrap;flex-shrink:0;}
+
+/* ---------- Recent clients ----------
+   Identity is ink, never hue — the palette is fully spent on the four families,
+   and four projects in colour would collide with them. Two letters in a circle. */
+.d-cllist{flex:1;display:flex;flex-direction:column;justify-content:space-between;}
+.d-cl{display:flex;align-items:center;gap:.75rem;padding:.625rem 0;}
+/* .d-cl-av moved to shell.css as .b-av + .b-av--md on 2026-09-04, unchanged
+   to the pixel. It was the board's .b-av built a second time; both now read
+   one definition, and the font routing above no longer needs to name it. */
+.d-cl-body{flex:1;min-width:0;}
+.d-cl-name{display:block;font-size:.875rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.d-cl-sub{display:block;font-size:.6875rem;color:var(--color-ink-muted);margin-top:.125rem;}
+.d-cl-since{font-size:.625rem;color:var(--color-ink-muted);white-space:nowrap;flex-shrink:0;}
+
+/* ---------- Quick actions ----------
+   INK = ACT, PAPER = READ. This card is dark because it is the only block on
+   the screen you operate rather than read, and that is a rule that repeats
+   product-wide — not a one-off treatment to break up four white cards. Flat
+   fill, not a gradient: a gradient appearing exactly once IS decoration.
+   The tile grid separates on a 1px gap showing the card through, so there are
+   no borders and no border-looking buttons. */
+/* PHONE: the card becomes a DOCK in the thumb zone. Rethought 2026-10-02
+   (the ink slab read heavy and flat): a PAPER ISLAND floating .75rem off the
+   screen's edges, the same island shadow as the footer card and the receipt
+   email (public.css .ft-card), translucent with a blur so the page shows
+   faintly through it. Four actions split by SHORT inset rules. A pressed
+   action floods clay from its icon outward. It slides away while you scroll
+   down (reading) and comes back the moment you scroll up (dash-v4.js
+   toggles .dock-away on <html>). It is the last grid item, so at the very
+   bottom it lands in its own place and covers nothing.
+   From 48rem it is the ink card again, unchanged: INK = ACT still holds
+   there, where it has the room to be a block. */
+.d-qa{position:sticky;bottom:.75rem;z-index:5;padding:.25rem;
+  background:rgba(251,250,248,.86);-webkit-backdrop-filter:blur(.75rem) saturate(1.2);backdrop-filter:blur(.75rem) saturate(1.2);
+  border:0;color:var(--color-ink);
+  box-shadow:0 0 0 1px rgba(27,27,31,.04),0 0 1.5rem rgba(60,40,30,.08),0 .5rem 1.5rem rgba(60,40,30,.12);
+  transition:translate .45s cubic-bezier(.2,.8,.2,1),opacity .3s;}
+.d-wrap[data-dock-away] .d-qa{translate:0 calc(100% + 1.5rem);opacity:0;}
+.d-qa .d-w-head{display:none;}
+.d-qa .d-w-eyebrow,.d-qa .d-w-headings > svg{color:rgba(247,245,242,.55);}
+.d-qa .d-w-title{color:var(--color-bg);}
+.d-qa-grid{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;background:none;}
+.d-qa-tile{position:relative;isolation:isolate;overflow:hidden;background:none;border:none;padding:.5rem .25rem;min-height:3.5rem;display:flex;flex-direction:column;gap:.3125rem;align-items:center;justify-content:center;text-align:center;color:inherit;font-family:var(--font-body);cursor:pointer;transition:color .2s;}
+/* short inset rule between actions, never touching the island's edges */
+.d-qa-tile + .d-qa-tile::before{content:'';position:absolute;left:0;top:30%;bottom:30%;width:1px;background:var(--color-line);}
+/* the press: clay floods out from behind the icon */
+.d-qa-tile::after{content:'';position:absolute;z-index:-1;inset:0;background:var(--color-accent-ink);clip-path:circle(0 at 50% 38%);transition:clip-path .35s cubic-bezier(.2,.8,.2,1);}
+.d-qa-tile:active{color:var(--color-bg);}
+.d-qa-tile:active::after{clip-path:circle(75% at 50% 38%);transition-duration:.18s;}
+.d-qa-tile:active > svg{color:var(--color-bg);}
+.d-qa-tile > svg{width:1.125rem;height:1.125rem;color:var(--color-accent);transition:color .2s,translate .3s cubic-bezier(.2,.8,.2,1);}
+.d-qa-label{font-size:.6875rem;font-weight:600;}
+.d-qa-desc{display:none;font-size:.625rem;color:rgba(247,245,242,.55);line-height:1.4;}
+
+/* ============ 48rem: the rail is back ============
+   ~40rem of content. KPIs stay 2x2; the widgets pair up; Quick actions is a
+   card again (the rail now carries the way round, and a card has room). */
+@media (min-width:48rem){
+  .d-strip-item + .d-strip-item{display:block;}
+  .d-strip-item{white-space:normal;}
+  .d-wrap{padding:1.5rem 2rem 2.5rem;gap:1.25rem;grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-areas:"needs needs" "kpis kpis" "proj proj" "dl perf" "cl qa";}
+  .d-kpis{gap:1.25rem;}
+  .d-kpi{padding:1.125rem 1.25rem;}
+  .d-kpi-mid{margin:1rem 0 .875rem;}
+  .d-w{padding:1.125rem 1.25rem;}
+  .d-w-head{margin-bottom:.875rem;}
+  .d-qa{position:static;padding:1.125rem 1.25rem;background:var(--color-dark-fill);-webkit-backdrop-filter:none;backdrop-filter:none;
+    border:1px solid var(--color-dark-fill);color:var(--color-bg);box-shadow:none;transition:none;}
+  .d-wrap[data-dock-away] .d-qa{translate:none;opacity:1;}
+  .d-qa-grid{gap:1px;background:rgba(247,245,242,.14);}
+  .d-qa-tile{background:var(--color-dark-fill);overflow:visible;transition:background .15s;}
+  .d-qa-tile:hover{background:#2E2E33;}
+  .d-qa-tile::before,.d-qa-tile::after{content:none;}
+  .d-qa-tile > svg{color:rgba(247,245,242,.65);}
+  .d-qa .d-w-head{display:flex;}
+  .d-qa-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));}
+  .d-qa-tile{padding:.875rem .75rem;min-height:0;}
+  .d-qa-tile > svg{width:1rem;height:1rem;}
+  .d-qa-label{font-size:.75rem;}
+  .d-qa-desc{display:block;}
+}
+@media (min-width:48rem) and (pointer:fine){
+  .d-w-link{min-height:0;margin:0;padding:0;}
+  .d-strip-count{min-height:0;border-block:0;}
+  .d-p-more{width:auto;height:auto;margin:0;opacity:0;transition:opacity .15s;}
+  .d-p:hover .d-p-more,.d-p-more:focus-visible{opacity:1;}
+}
+
+/* ============ 70rem: the locked desktop (2026-09-03), value for value ============ */
+@media (min-width:70rem){
+  .d-wrap{display:flex;flex-direction:column;padding:1.75rem 2.5rem 3rem;}
+  .d-row{display:grid;gap:1.25rem;}
+  .d-row.two{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .d-row.three{grid-template-columns:1.3fr 1.3fr 1fr;}
+  /* a named grid-area inside a grid that defines no areas invents implicit
+     tracks: the rows would grow phantom columns */
+  .d-w-proj,.d-w-perf,.d-w-dl,.d-w-cl,.d-qa{grid-area:auto;}
+
+  .d-strip{display:flex;align-items:center;gap:.875rem;padding:.75rem 1.125rem;}
+  .d-strip-items{flex:1;display:flex;align-items:center;gap:1.5rem;overflow:hidden;padding:0;}
+  .d-strip-item{font-size:.8125rem;line-height:normal;white-space:nowrap;overflow:visible;padding:0;}
+  .d-strip-item + .d-strip-item{display:inline;}
+  .d-strip-item::before{content:none;}
+
+  .d-kpis{grid-template-columns:repeat(4,minmax(0,1fr));}
+  .d-kpi-head{align-items:center;}
+  .d-kpi-mid{flex-wrap:nowrap;gap:.75rem;}
+  .d-kpi-val{font-size:1.5rem;}
+  .d-kpi-stack span{width:2.125rem;height:2.125rem;font-size:.625rem;}
+  .d-kpi-stack span:nth-child(n+3):not(.more){display:flex;}
+  .d-kpi-stack .more{display:none;}
+  .d-kpi-stack span + span{margin-left:-.5625rem;}
+  .d-kpi-foot{flex-direction:row;align-items:baseline;justify-content:space-between;gap:.5rem;}
+  .d-kpi-ctx{line-height:normal;text-align:right;}
+
+  .d-w-title{font-size:.9375rem;}
+
+  .d-p{display:flex;align-items:center;gap:.75rem;padding:.6875rem 0;}
+  .d-p > svg{align-self:auto;margin-top:0;}
+  .d-p-name{font-size:.8125rem;}
+  .d-p-stage{width:5.75rem;justify-content:flex-end;}
+  .d-p-prog{width:6.5rem;}
+  .d-p-amt{width:5.5rem;}
+
+  .d-fin-note{font-size:.6875rem;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  .d-dl-title{align-items:center;font-size:.8125rem;line-height:normal;}
+  .d-dl-title span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .d-prio{transform:none;}
+
+  .d-cl-name{font-size:.8125rem;}
+}
+
+/* ============ SOUL, 2026-10-02 ============
+   Motion only: every value below ends where the static page already is, so
+   with motion off nothing is missing. The count-up is in dash-v4.js and
+   honours the same preference. */
+@keyframes d-rise{from{opacity:0;translate:0 .75rem;}}
+@keyframes d-fill{from{transform:scaleX(0);}}
+@keyframes d-draw{from{stroke-dashoffset:1;}}
+@keyframes d-fade{from{opacity:0;}}
+@keyframes d-beat{50%{opacity:.25;}}
+@media (prefers-reduced-motion:no-preference){
+  .d-strip,.d-kpi,.d-w{animation:d-rise .6s cubic-bezier(.2,.8,.2,1) both;}
+  .d-kpi:nth-child(2){animation-delay:.05s;} .d-kpi:nth-child(3){animation-delay:.1s;} .d-kpi:nth-child(4){animation-delay:.15s;}
+  .d-w{animation-delay:.2s;}
+  .d-p-fill{animation:d-fill 1.1s .5s cubic-bezier(.2,.8,.2,1) both;}
+  .d-p + .d-p .d-p-fill{animation-delay:.6s;} .d-p + .d-p + .d-p .d-p-fill{animation-delay:.7s;}
+  .d-chart polyline{stroke-dasharray:1;animation:d-draw 1.4s .45s cubic-bezier(.4,.1,.3,1) both;}
+  .d-chart polygon{animation:d-fade .8s 1.2s ease-out both;}
+  /* the one deadline that is critical keeps beating, quietly */
+  .d-dl.is-critical .d-prio{animation:d-beat 1.6s ease-in-out infinite;}
+}
+@media (prefers-reduced-motion:reduce){
+  .d-qa,.d-qa-tile::after{transition:none;}
+  .d-strip-ring{animation:none;opacity:0;}
+}
+
+/* ---------- States (Phase IV states audit, 2026-10-08) ----------
+   Bars are shell.css .b-skel; rows reuse the real row classes (.d-p, .d-dl,
+   .d-cl) so heights and inset dividers match and nothing jumps on arrival. */
+.d-skrow{pointer-events:none;}
+.d-skrow .d-p-info,.d-skrow .d-dl-body,.d-skrow .d-cl-body{display:flex;flex-direction:column;gap:.375rem;}
+.d-skav{background:rgba(27,27,31,.07);color:transparent;}
+.d-kpi-mid .b-skel{align-self:center;}
+.d-chart--sk{min-block-size:7rem;}
+.d-strip--sk{background:rgba(27,27,31,.03);border-color:var(--color-line);}
+.d-strip--sk .d-strip-lbl{color:var(--color-ink-muted);}
+
+/* Needs you, cleared: the band stays where it is (the eye looks there
+   first every morning) but drops the warning tint — an amber band saying
+   "nothing" would still read as a warning. */
+.d-strip--clear{background:var(--color-good-tint);border-color:rgba(47,122,77,.2);}
+.d-strip--clear .d-strip-lbl{color:var(--color-good-ink);}
+.d-strip--clear .d-strip-item{color:var(--color-ink);}
+
+/* An empty widget: a sentence where the rows go, the door under it. */
+.d-none{flex:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  gap:.375rem;padding:1.25rem 0;}
+.d-none-t{margin:0;font-size:.875rem;color:var(--color-ink);}
+.d-none-s{margin:0;font-size:.75rem;line-height:1.6;color:var(--color-ink-muted);max-inline-size:40ch;}
+.d-none-a{display:inline-flex;align-items:center;min-block-size:var(--hit);font-size:.75rem;
+  color:var(--color-ink);text-underline-offset:.2em;}
+@media (min-width:48rem){.d-none-a{min-block-size:0;margin-block-start:.25rem;}}
+.d-chart--none{flex:1;min-block-size:7rem;justify-content:flex-end;
+  box-shadow:inset 0 -1px 0 rgba(196,105,74,.4);}
+.d-chart--none span{padding-block-end:.75rem;font-size:.75rem;color:var(--color-ink-muted);}
+
+/* One source failed: the widget keeps its head, its body says what did not
+   arrive and that the rest of the page is current. Same terracotta start
+   rule as the shell's .b-fail, scaled to a widget. */
+.d-kpi-na{color:var(--color-ink-muted);}
+.d-fail{flex:1;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.75rem;align-content:center;
+  margin-block-start:.5rem;padding:1rem;box-shadow:inset .1875rem 0 0 var(--color-accent);background:var(--color-bg);}
+.d-fail svg{color:var(--color-ink);opacity:.7;}
+.d-fail p{margin:0;font-size:.8125rem;line-height:1.55;color:var(--color-ink-muted);}
+.d-fail p b{font-weight:400;color:var(--color-ink);}
+.d-fail-btn{grid-column:1 / -1;justify-self:stretch;min-block-size:var(--hit);border:0;cursor:pointer;
+  background:var(--color-dark-fill);color:var(--color-bg);font:inherit;font-size:.8125rem;}
+@media (min-width:48rem){.d-fail-btn{justify-self:start;min-block-size:0;padding:.5rem .875rem;grid-column:2;}}
+
+/* The tiles are links here (the wireframe drew buttons): no underline. */
+.d-qa-tile { text-decoration: none; }

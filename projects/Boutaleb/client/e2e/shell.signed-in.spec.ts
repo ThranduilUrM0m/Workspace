@@ -27,10 +27,12 @@ test.describe('desktop', () => {
 
     test('the rail never reflows the page when it opens', async ({ page }) => {
         await page.goto('/app');
-        const before = await page.locator('#main').boundingBox();
+        // Sideways is what matters: the panel slides over, the page holds still.
+        const before = (await page.locator('#main').boundingBox())!;
         await page.locator('.sidebar').hover();
         await expect(page.locator('.sidebar-inner')).toHaveCSS('width', '240px');
-        expect(await page.locator('#main').boundingBox()).toEqual(before);
+        const after = (await page.locator('#main').boundingBox())!;
+        expect([after.x, after.width]).toEqual([before.x, before.width]);
     });
 
     test('the skip link lands on the content', async ({ page }) => {

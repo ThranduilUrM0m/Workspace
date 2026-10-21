@@ -30,6 +30,6 @@ setup('sign in and keep the session', async ({ page }) => {
     await page.goto('/login');
     await clerk.signIn({ page, emailAddress: E2E_EMAIL });
     await page.goto('/app');
-    await expect(page.getByRole('heading', { level: 1, name: 'Dashboard' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: /^Good (morning|afternoon|evening)/ })).toBeVisible();
     await page.context().storageState({ path: AUTH_FILE });
 });

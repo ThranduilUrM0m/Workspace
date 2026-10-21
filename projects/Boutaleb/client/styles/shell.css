@@ -365,3 +365,72 @@ html:has(.b-shell[data-menu]) { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .sidebar, .sidebar-inner, .menu-btn span, .label, .sub-links { transition: none !important; }
 }
+
+/* ---------- Shared primitives the screens read ---------- */
+
+/* Tag: a word on a tint, never a pill. Heavy, so the display face. */
+.tag {
+  padding: .125rem .4375rem;
+  background: var(--tag-bg, rgb(27 27 31 / .06));
+  color: var(--tag-fg, var(--color-ink-muted));
+  font-family: var(--font-display);
+  font-size: .625rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+/* The board's four work families (board-v4.js:58): one colour language
+   for what KIND of work something is, wherever it shows. */
+.fam-build { --fam-c: var(--color-fam-build); --fam-t: var(--color-fam-build-tint); }
+.fam-craft { --fam-c: var(--color-fam-craft); --fam-t: var(--color-fam-craft-tint); }
+.fam-money { --fam-c: var(--color-fam-money); --fam-t: var(--color-fam-money-tint); --fam-tx: var(--color-fam-money-ink); }
+.fam-admin { --fam-c: var(--color-fam-admin); --fam-t: var(--color-fam-admin-tint); }
+.tag.fam { --tag-bg: var(--fam-t); --tag-fg: var(--fam-tx, var(--fam-c)); }
+
+/* Avatar: identity is ink, never hue. Round: a profile mark. */
+.b-av {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+.b-av--md { width: 2rem; height: 2rem; font-size: .625rem; font-weight: 700; color: var(--color-ink); background: rgb(27 27 31 / .06); }
+
+/* ---------- Data states (C19) ----------
+   A skeleton in the shape of the answer. Fades in only after .4s, so a fast
+   load never flashes; breathes, never shimmers; still under reduced motion. */
+.b-skel { display: block; inline-size: var(--w, 100%); block-size: var(--h, .625rem); background: rgb(27 27 31 / .07); animation: b-skel-in .3s ease .4s both; }
+@media (prefers-reduced-motion: no-preference) {
+  .b-skel { animation: b-skel-in .3s ease .4s both, b-skel-breathe 1.6s ease-in-out .7s infinite alternate; }
+}
+@keyframes b-skel-in { from { opacity: 0; } }
+@keyframes b-skel-breathe { from { background-color: rgb(27 27 31 / .05); } to { background-color: rgb(27 27 31 / .1); } }
+.b-sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* REVIEW ONLY: the sample screens' state switch (wireframe B.stateBar).
+   At the page foot on a phone, bottom-left beside the rail on a desktop. */
+.b-states {
+  position: relative;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  margin: 1.5rem 1.25rem 7rem;
+  padding: .375rem;
+  overflow-x: auto;
+  background: rgb(255 255 255 / .92);
+  box-shadow: 0 2px 4px rgb(27 27 31 / .07), 0 8px 20px rgb(27 27 31 / .08);
+}
+.b-states b { flex: 0 0 auto; padding-inline: .375rem; font-family: var(--font-display); font-size: .625rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-ink-muted); }
+.b-states a { flex: 0 0 auto; display: flex; align-items: center; min-block-size: var(--hit); padding: 0 .75rem; font-size: .75rem; color: var(--color-ink); text-decoration: none; }
+.b-states a:hover { background: rgb(27 27 31 / .05); }
+.b-states a[aria-pressed='true'] { background: var(--color-dark-fill); color: var(--color-bg); }
+@media (min-width: 48rem) {
+  .b-states { position: fixed; inset-inline-start: calc(var(--sidebar-w-collapsed) + 1rem); inset-block-end: 1rem; margin: 0; overflow: visible; }
+  .b-states a { min-block-size: 0; padding: .375rem .625rem; }
+}
