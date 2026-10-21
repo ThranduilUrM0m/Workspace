@@ -65,3 +65,22 @@ test.describe('phone', () => {
         await expect(page.locator('#main')).not.toHaveAttribute('inert', '');
     });
 });
+
+test.describe('short window', () => {
+    test.use({ viewport: { width: 1366, height: 600 } });
+
+    test('Logout stays reachable with every group open', async ({ page }) => {
+        await page.goto('/app');
+        await page.locator('.sidebar').hover();
+        for (const name of ['Deals', 'Finance', 'Settings']) await page.getByRole('button', { name }).click();
+        const logout = page.getByRole('button', { name: 'Logout' });
+        // The groups open over .4s; scroll again until the rail has grown.
+        await expect(async () => {
+            await page.mouse.wheel(0, 5000);
+            const box = (await logout.boundingBox())!;
+            const rail = (await page.locator('.sidebar-inner').boundingBox())!;
+            expect(box.y + box.height).toBeLessThanOrEqual(rail.y + rail.height);
+            expect(box.y + box.height).toBeLessThanOrEqual(600);
+        }).toPass();
+    });
+});

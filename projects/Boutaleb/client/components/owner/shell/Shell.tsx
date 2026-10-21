@@ -245,9 +245,11 @@ function useSidebarHeight(sidebar: React.RefObject<HTMLElement | null>, main: Re
             busy = false;
         };
         size();
+        // The rail's box never changes size on its own (it is pinned to
+        // --sidebar-h), so opening a group is seen through its lists.
         const ro = new ResizeObserver(size);
         ro.observe(page);
-        ro.observe(inner);
+        for (const part of inner.children) ro.observe(part);
         window.addEventListener('resize', size);
         return () => {
             ro.disconnect();
