@@ -14,11 +14,10 @@ test('ready: greets, and shows the four numbers and every widget', async ({ page
     await expect(page.getByText('Needs you')).toBeVisible();
 });
 
-test('the number rows switch between before and after', async ({ page }) => {
-    await page.goto('/app?kpis=current');
-    await expect(page.locator('.d-kpi-lbl')).toHaveText(['Active projects', 'Owed to you', 'Next deadline', 'Revenue, MTD']);
-    await page.goto('/app?kpis=proposed');
+test('the numbers read one chain, enquiry to revenue', async ({ page }) => {
+    await page.goto('/app');
     await expect(page.locator('.d-kpi-lbl')).toHaveText(['Enquiries waiting', 'Unbilled work', 'Owed to you', 'Revenue, MTD']);
+    await expect(page.locator('.b-states')).toHaveCount(0);
 });
 
 test('empty: nothing needs you, every widget names its door', async ({ page }) => {
@@ -30,10 +29,11 @@ test('empty: nothing needs you, every widget names its door', async ({ page }) =
 });
 
 test('money failing blanks only money, and says so in place', async ({ page }) => {
-    await page.goto('/app?state=error&kpis=current');
+    await page.goto('/app?state=error');
     await expect(page.locator('.d-fail')).toContainText('Money did not load. The rest of the page is current.');
     await expect(page.locator('.d-kpi', { hasText: 'Owed to you' })).toContainText('Did not load');
-    await expect(page.locator('.d-kpi', { hasText: 'Active projects' })).toContainText('4');
+    await expect(page.locator('.d-kpi', { hasText: 'Unbilled work' })).toContainText('Did not load');
+    await expect(page.locator('.d-kpi', { hasText: 'Enquiries waiting' })).toContainText('2');
     await expect(page.getByText('Villa Anfa — full interior')).toBeVisible();
 });
 

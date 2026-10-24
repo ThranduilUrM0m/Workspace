@@ -8,7 +8,7 @@ export type Prio = 'critical' | 'high' | 'medium' | 'low';
 
 export interface Kpi {
     label: string;
-    icon: 'folder' | 'ledger' | 'clock' | 'coins' | 'inbox' | 'hourglass';
+    icon: 'ledger' | 'coins' | 'inbox' | 'hourglass';
     /** Shown as is; a leading number counts up on load. */
     value: string;
     /** Good or bad, not the arithmetic sign: more owed to you is bad. */
@@ -72,33 +72,11 @@ export const MONEY: MoneyData = {
     avgMonths: 4.5,
 };
 
-/* The four numbers. CURRENT is the locked wireframe; PROPOSED replaces the
-   two the developer called "meh" (both repeat a panel further down) with
-   two that point at something to do today. Developer to choose, 2026-10-21. */
-export const KPIS_CURRENT: Kpi[] = [
-    {
-        label: 'Active projects',
-        icon: 'folder',
-        value: '4',
-        sentiment: 'up',
-        delta: '+1',
-        context: 'vs. 3 last month',
-        source: 'work',
-        stack: [
-            { name: 'Villa Anfa', fam: 'build' },
-            { name: 'Café Andalou', fam: 'money' },
-            { name: 'Atlas Spa', fam: 'craft' },
-            { name: 'Riad Zitoun', fam: 'craft' },
-        ],
-    },
-    { label: 'Owed to you', icon: 'ledger', value: MAD(48200), sentiment: 'down', delta: '+15%', context: '2 invoices · oldest 41 days', source: 'money' },
-    { label: 'Next deadline', icon: 'clock', value: 'Fri 4 Sep', sentiment: 'down', delta: 'in 2 days', context: 'Villa Anfa handover', source: 'work' },
-    { label: 'Revenue, MTD', icon: 'coins', value: MAD(62400), sentiment: 'up', delta: '+12%', context: 'vs. August', money: true, source: 'money' },
-];
-
-/* Left to right, one chain from first contact to money in the bank:
-   someone asked → work is done → it is billed → it is paid. */
-export const KPIS_PROPOSED: Kpi[] = [
+/* The four numbers, left to right one chain from first contact to money in
+   the bank: someone asked → work is done → it is billed → it is paid.
+   Chosen 2026-10-24 over Active projects / Next deadline, which repeated
+   the panels further down. */
+export const KPIS: Kpi[] = [
     {
         label: 'Enquiries waiting',
         icon: 'inbox',
@@ -117,8 +95,6 @@ export const KPIS_PROPOSED: Kpi[] = [
 /* The first day: zeros, and a line saying what will land there. Deltas hide
    when there is no history. */
 export const KPIS_EMPTY: Record<string, Pick<Kpi, 'value' | 'context'>> = {
-    'Active projects': { value: '0', context: 'No projects yet' },
-    'Next deadline': { value: '—', context: 'Nothing scheduled' },
     'Enquiries waiting': { value: '0', context: 'Site enquiries land here' },
     'Unbilled work': { value: MAD(0), context: 'Finished work not yet invoiced' },
     'Owed to you': { value: MAD(0), context: 'Nothing invoiced yet' },

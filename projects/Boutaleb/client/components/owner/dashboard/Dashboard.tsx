@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { dashboardKeys, fetchMoney, fetchWork, type Review } from '@/lib/dashboard/queries';
-import { KPIS_CURRENT, KPIS_EMPTY, KPIS_PROPOSED, MAD, type Kpi, type MoneyData, type Prio, type WorkData } from '@/lib/dashboard/sample';
+import { KPIS, KPIS_EMPTY, MAD, type Kpi, type MoneyData, type Prio, type WorkData } from '@/lib/dashboard/sample';
 import { initials } from '@/components/owner/shell/nav';
 import { atTime, Loading, OFFLINE, Skel } from '@/components/owner/data/states';
 
@@ -23,12 +23,6 @@ const ICON: Record<string, ReactNode> = {
         <>
             <path d="M5 2.5h10v15l-2-1.3-1.7 1.3-1.7-1.3L8 17.5l-1.7-1.3L5 17.5v-15Z" />
             <path d="M7.5 7h5M7.5 10h5M7.5 13h3" />
-        </>
-    ),
-    clock: (
-        <>
-            <circle cx="10" cy="10" r="7.5" />
-            <path d="M10 5.5V10l3 2" />
         </>
     ),
     coins: (
@@ -91,7 +85,7 @@ const ACTIONS = [
     { icon: 'people', label: 'Log a lead', desc: 'Someone who enquired', href: '/app/deals/leads/new' },
 ];
 
-export function Dashboard({ review, kpiSet }: { review: Review; kpiSet: 'current' | 'proposed' }) {
+export function Dashboard({ review }: { review: Review }) {
     const work = useQuery({ queryKey: dashboardKeys.work(review), queryFn: () => fetchWork(review) });
     const money = useQuery({
         queryKey: dashboardKeys.money(review),
@@ -106,7 +100,7 @@ export function Dashboard({ review, kpiSet }: { review: Review; kpiSet: 'current
         <div className="d-wrap" aria-busy={loading} data-dock-away={dockAway ? '' : undefined}>
             {loading && <Loading what="the dashboard" />}
             <Strip data={work.data} pending={work.isPending} />
-            <Kpis set={kpiSet} work={work.data} money={money} empty={!!work.data && !work.data.projects.length} />
+            <Kpis work={work.data} money={money} empty={!!work.data && !work.data.projects.length} />
             <div className="d-row two">
                 <Projects data={work.data} />
                 <Performance money={money} />
@@ -166,11 +160,10 @@ function Strip({ data, pending }: { data?: WorkData; pending: boolean }) {
 }
 
 /* ---------- The four numbers ---------- */
-function Kpis({ set, work, money, empty }: { set: 'current' | 'proposed'; work?: WorkData; money: { isPending: boolean; isError: boolean }; empty: boolean }) {
-    const list = set === 'proposed' ? KPIS_PROPOSED : KPIS_CURRENT;
+function Kpis({ work, money, empty }: { work?: WorkData; money: { isPending: boolean; isError: boolean }; empty: boolean }) {
     return (
         <div className="d-kpis">
-            {list.map((k) => {
+            {KPIS.map((k) => {
                 const pending = k.source === 'money' ? money.isPending : !work;
                 const failed = k.source === 'money' && money.isError;
                 const shown: Kpi = empty ? { ...k, ...KPIS_EMPTY[k.label], delta: undefined, sentiment: undefined, stack: undefined } : k;
