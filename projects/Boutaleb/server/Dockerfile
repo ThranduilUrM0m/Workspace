@@ -16,4 +16,4 @@ ENV PORT=4002
 RUN apk add --no-cache bash curl && curl -1sLf 'https://artifacts-cli.infisical.com/setup.alpine.sh' | bash && apk add --no-cache infisical
 COPY --from=builder /out ./
 EXPOSE 4002
-CMD ["sh", "-c", "exec infisical run --env=${INFISICAL_ENV:-prod} --token=$INFISICAL_TOKEN -- node dist/main.js"]
+CMD ["sh", "-c", "exec infisical run --env=${INFISICAL_ENV:-prod} --token=$INFISICAL_TOKEN -- node --conditions=boutaleb-node dist/main.js"]

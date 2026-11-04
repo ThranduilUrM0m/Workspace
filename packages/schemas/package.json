@@ -3,15 +3,26 @@
     "version": "1.0.0",
     "main": "src/index.ts",
     "exports": {
-        ".": "./src/index.ts"
+        ".": {
+            "boutaleb-node": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.mjs"
+            },
+            "default": "./src/index.ts"
+        }
     },
     "files": [
-        "src"
+        "src",
+        "dist"
     ],
     "dependencies": {
         "zod": "4.6.7"
     },
     "devDependencies": {
-        "typescript": "catalog:"
+        "typescript": "catalog:",
+        "esbuild": "0.28.2"
+    },
+    "scripts": {
+        "build": "esbuild src/index.ts --bundle --platform=node --format=esm --packages=external --outfile=dist/index.mjs --log-level=warning && tsc -p tsconfig.json --emitDeclarationOnly"
     }
 }
