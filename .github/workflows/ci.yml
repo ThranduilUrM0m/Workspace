@@ -1,34 +1,52 @@
 name: CI
 
+# Boutaleb and the shared packages only. Maxconfort, Qasidaty and Risala are
+# out of scope until their own rebuilds; Playwright stays local (it needs Clerk
+# keys from Infisical and is too heavy for the value it adds here).
+
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  boutaleb:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [Risala,Boutaleb,Maxconfort,Qasidaty]
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - name: Setup pnpm (version from packageManager)
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-      - name: Install dependencies (root)
-        run: pnpm install
-      - name: Build client
+          node-version: 22
+          cache: pnpm
+
+      - name: Install (Boutaleb and its workspace dependencies only)
+        run: pnpm install --frozen-lockfile --filter "boutaleb-client..." --filter "boutaleb-server..."
+
+      - name: Type check
         run: |
-          cd projects/${{ matrix.project }}/client
-          pnpm run build
-      - name: Build server
-        run: |
-          cd projects/${{ matrix.project }}/server
-          pnpm run build
+          pnpm --filter boutaleb-client typecheck
+          pnpm --filter boutaleb-server typecheck
+          for p in packages/*/; do (cd "$p" && pnpm exec tsc --noEmit -p .); done
+
+      - name: Server tests (Vitest)
+        run: pnpm --filter boutaleb-server test
+
+      - name: Client tests (Jest)
+        run: pnpm --filter boutaleb-client test
+
+      - name: Security audit (Boutaleb + packages, moderate and up)
+        run: node scripts/audit-scope.mjs --level moderate
