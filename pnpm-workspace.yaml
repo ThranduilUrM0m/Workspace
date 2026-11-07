@@ -23,14 +23,14 @@ overrides:
     # vulnerable range and stays inside its major. All sit under next
     # (sass, styled-jsx).
     # Drop a line once its parent ships the fix on its own.
-    'picomatch@>=4.0.0 <4.0.4': '^4.0.4'
-    'immutable@>=5.0.0 <5.1.8': '^5.1.8'
-    'browserslist@<4.28.7': '^4.28.7'
-    'source-map-js@>=1.0.0 <1.2.2': '^1.2.2'
-    '@babel/core@>=7.0.0 <7.29.6': '^7.29.6'
-    'baseline-browser-mapping@>=2.0.0 <2.11.0': '^2.11.0'
+    'picomatch@>=4.0.0 <4.0.4': '4.0.7'
+    'immutable@>=5.0.0 <5.1.8': '5.1.9'
+    'browserslist@<4.28.7': '4.29.5'
+    'source-map-js@>=1.0.0 <1.2.2': '1.2.2'
+    '@babel/core@>=7.0.0 <7.29.6': '7.29.13'
+    'baseline-browser-mapping@>=2.0.0 <2.11.0': '2.11.35'
     # fast-uri: under @hookform/resolvers > ajv (packages/ui).
-    'fast-uri@>=3.0.0 <3.1.9': '^3.1.9'
+    'fast-uri@>=3.0.0 <3.1.9': '3.1.9'
 
 # Allow React 19 for packages that are compatible at runtime and
 # add a package extension to relax the peer deps of @react-spring/zdog
