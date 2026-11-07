@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@clerk/testing": "2.2.48",
-    "@playwright/test": "1.64.0",
+    "@playwright/test": "1.65.0",
     "@repo/emails": "workspace:*",
     "@tailwindcss/postcss": "4.1.18",
     "@types/jest": "30.0.0",
