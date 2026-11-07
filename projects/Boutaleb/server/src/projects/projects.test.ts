@@ -148,6 +148,18 @@ describe('who may', () => {
     });
 });
 
+describe('the browser may call it', () => {
+    it('lets the client origin in, with the Bearer header, and no other origin', async () => {
+        const pre = await api().options('/projects').set('Origin', 'http://localhost:3002').set('Access-Control-Request-Method', 'GET').set('Access-Control-Request-Headers', 'authorization');
+        expect(pre.status).toBe(204);
+        expect(pre.headers['access-control-allow-origin']).toBe('http://localhost:3002');
+        expect(pre.headers['access-control-allow-headers']).toMatch(/Authorization/);
+        expect(pre.headers['access-control-allow-credentials']).toBeUndefined();
+        const other = await api().get('/projects').set('Origin', 'https://evil.example').set('Authorization', await owner());
+        expect(other.headers['access-control-allow-origin']).not.toBe('https://evil.example');
+    });
+});
+
 describe('the log', () => {
     it('every change is a notable entry with before and after', async () => {
         const auth = await owner();

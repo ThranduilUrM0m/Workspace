@@ -411,3 +411,106 @@ html:has(.b-shell[data-menu]) { overflow: hidden; }
 @keyframes b-skel-in { from { opacity: 0; } }
 @keyframes b-skel-breathe { from { background-color: rgb(27 27 31 / .05); } to { background-color: rgb(27 27 31 / .1); } }
 .b-sr { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ---------- Shared primitives: lists, records, forms (T7.3) ----------
+   Ported from wireframes/shell/shell.css "Shared primitives", "Section
+   heading" and "Data states". One class per concept; a state changes custom
+   properties, never a duplicated block. Anything >= 600 weight sets the
+   display face itself: Questrial has one weight and would fake the bold. */
+
+.divider { inline-size: 1px; block-size: 1.375rem; background: var(--color-line); }
+
+.btn-solid {
+  display: flex;
+  align-items: center;
+  gap: .4375rem;
+  flex-shrink: 0;
+  padding: .5625rem .9375rem;
+  border: 0;
+  background: var(--color-dark-fill);
+  color: var(--color-bg);
+  font-family: var(--font-display);
+  font-size: .8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.btn-solid:hover { background: var(--color-accent-ink); }
+.btn-solid:disabled { opacity: .4; cursor: not-allowed; }
+
+/* C10 Stat. A stat that is a way in reads as ink with a faint underline. */
+.stat { display: flex; flex-direction: column; gap: 1px; min-inline-size: 0; }
+.stat-lbl { font-size: .625rem; letter-spacing: .06em; text-transform: uppercase; color: var(--color-ink-muted); }
+.stat-val { font-family: var(--font-display); font-size: .8125rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.stat-val a { color: inherit; text-decoration: none; border-block-end: 1px solid var(--color-line); transition: border-color .18s; }
+.stat-val a:hover { border-block-end-color: var(--color-ink); }
+
+/* ONE heading vocabulary for sections and rails: a short 2px rule under the
+   label, never a full-width hairline (inset-divider rule). */
+.b-sec-h {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: .625rem;
+  margin: 0 0 .75rem;
+  padding-block-end: .5rem;
+  font-family: var(--font-display);
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+.b-sec-h::after { content: ''; position: absolute; inset-inline-start: 0; inset-block-end: 0; inline-size: 1.75rem; block-size: 2px; background: rgb(27 27 31 / .18); }
+
+/* A due date: neutral, soon (amber), late (red). Colour beside a word, never alone. */
+.due {
+  padding: 2px 7px;
+  background: var(--due-bg, transparent);
+  color: var(--due-fg, var(--color-ink-muted));
+  font-family: var(--font-display);
+  font-size: .6875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.due.soon { --due-bg: var(--color-warn-tint); --due-fg: var(--color-warn-ink); }
+.due.late { --due-bg: var(--color-bad-tint); --due-fg: var(--color-bad-ink); }
+
+/* C18 Kind mark: who acted. A reply or a call is the client. */
+.b-kind { color: var(--color-ink-muted); margin-inline-end: .3125rem; }
+.b-kind--reply { color: var(--color-good-ink); }
+.b-kind--call { color: var(--color-info); }
+.b-kind--token { color: var(--color-accent-ink); }
+
+/* Failed to load / not found (C19). One panel in the data's place, the
+   frame around it untouched. A terracotta start rule marks a notice, not an
+   alarm; not-found takes ink. Phone: stacked, button full width. */
+.b-fail {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .875rem 1rem;
+  margin-block: 1.5rem;
+  padding: 1.25rem;
+  background: var(--color-card);
+  box-shadow: inset .1875rem 0 0 var(--color-accent), 0 1px 2px rgb(27 27 31 / .05);
+}
+.b-fail:dir(rtl) { box-shadow: inset -.1875rem 0 0 var(--color-accent), 0 1px 2px rgb(27 27 31 / .05); }
+.b-fail--gone { box-shadow: inset .1875rem 0 0 var(--color-ink), 0 1px 2px rgb(27 27 31 / .05); }
+.b-fail-ic { display: flex; color: var(--color-ink); opacity: .7; padding-block-start: .125rem; }
+.b-fail-ic svg { inline-size: 1.375rem; block-size: 1.375rem; }
+.b-fail-t { margin: 0; font-family: var(--font-display); font-size: .9375rem; font-weight: 600; color: var(--color-ink); }
+.b-fail-s { margin: .375rem 0 0; max-inline-size: 52ch; font-size: .8125rem; line-height: 1.6; color: var(--color-ink-muted); }
+.b-fail-act { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: stretch; gap: .5rem; }
+.b-fail-act .btn-solid { justify-content: center; min-block-size: var(--hit); }
+.b-fail-when { font-size: .6875rem; color: var(--color-ink-muted); text-align: center; }
+@media (min-width: 48rem) {
+  .b-fail { grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; padding: 1.5rem 1.75rem; }
+  .b-fail-act { grid-column: auto; align-items: flex-end; }
+  .b-fail-act .btn-solid { min-block-size: 0; }
+  .b-fail-when { text-align: end; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .b-fail { animation: b-fail-in .35s cubic-bezier(.2, .7, .2, 1) both; }
+}
+@keyframes b-fail-in { from { opacity: 0; transform: translateY(.375rem); } }

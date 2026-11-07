@@ -101,6 +101,38 @@ export type ProjectListQuery = z.infer<typeof projectListQuery>;
 
 /** Clients, as far as Projects needs them: pick one, or create one inline (project-new.js). */
 export const CLIENT_STATUSES = ['lead', 'active', 'inactive'] as const;
+export type ClientStatus = (typeof CLIENT_STATUSES)[number];
+
+/** A client as a project carries it: enough to name it and link to it. */
+export interface ClientSummary {
+    id: string;
+    name: string;
+    company: string;
+    /** The studio itself: projects for it read "Internal". */
+    self: boolean;
+}
+
+/**
+ * A project as every screen reads it (GET /projects, /projects/:id). Dates
+ * are ISO strings; `renews` is a calendar day. `internal` is derived from
+ * the client, never stored.
+ */
+export interface ProjectView {
+    id: string;
+    name: string;
+    slug: string;
+    status: ProjectStatus;
+    client: ClientSummary | null;
+    internal: boolean;
+    governingLanguage: Language;
+    note: string | null;
+    currency: Currency;
+    modules: Module[];
+    assetOwnership: { asset: string; holder: (typeof ASSET_HOLDERS)[number]; renews: string | null; transfer: (typeof ASSET_TRANSFERS)[number] }[];
+    archivedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
 
 export const clientCreate = z.object({
     name: text(120).min(1, 'required'),

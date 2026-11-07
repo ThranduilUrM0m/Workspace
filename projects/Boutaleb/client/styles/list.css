@@ -1,0 +1,220 @@
+/* The list vocabulary (C9, C19 list skeleton, C21 entrance), shared by every
+   ERP list: Projects, Clients, Deals, Invoices, Expenses, Pages, Blog…
+   Ported from wireframes/shell/shell.css "The list vocabulary" (T7.3).
+   Markup: components/owner/list/List.tsx.
+
+   Phone is the base. Three breakpoints, each named by what breaks:
+     48rem  group headings and the rail's side rules inset with the shell
+     60rem  the five-cell row fits on one line; the strip fits as one row
+     80rem  the rail fits BESIDE the list instead of under it
+   Two knobs, custom properties rather than overrides:
+     --row-cols  the five-cell track list (from 60rem)
+     --ev-d-w    the dated feed's date column
+   Heavy text (>= 600) sets the display face itself: Questrial has one
+   weight and would fake the bold. */
+
+/* The page frame (.content) already gives the gutter: no padding here. */
+.b-list-wrap { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* ---- position strip ----
+   Phone: the stats as a grid of as many columns as fit, the primary action
+   a full-width row under them, dividers dropped (the grid gap separates). */
+.b-list-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); align-items: start; gap: 1rem 1.5rem; }
+.b-list-strip > .divider { display: none; }
+.b-list-strip > .btn-solid { grid-column: 1 / -1; justify-content: center; min-block-size: var(--hit); }
+@media (min-width: 60rem) {
+  .b-list-strip { display: flex; align-items: center; gap: 1.5rem; }
+  .b-list-strip > .divider { display: block; }
+  .b-list-strip > .btn-solid { grid-column: auto; justify-content: normal; min-block-size: 0; margin-inline-start: auto; }
+}
+.b-list-strip .stat-val { font-size: 1.0625rem; }
+
+/* The qualifier under a headline number carries the unit. */
+.b-list-sub { font-size: .6875rem; color: var(--color-ink-muted); white-space: nowrap; }
+.b-list-sub.is-late { color: var(--color-bad-ink); }
+.b-list-sub.is-soon { color: var(--color-warn-ink); }
+
+/* ---- two-column body ---- */
+.b-list-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+@media (min-width: 80rem) { .b-list-cols { grid-template-columns: minmax(0, 1fr) 20.5rem; gap: 1.5rem; } }
+
+/* ---- groups ---- */
+.b-list-group + .b-list-group { margin-block-start: 1.75rem; }
+
+/* The heading shares .b-sec-h's vocabulary: a short toned rule, never a
+   full-width hairline. The rule carries the hue, the word says the same
+   thing; alert red stays exclusive to a stalled clock. */
+.b-list-gh {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: .5rem;
+  margin: 0 0 .5rem;
+  padding: 0 0 .5rem;
+  font-family: var(--font-display);
+  font-size: .625rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+.b-list-gh::after { content: ''; position: absolute; inset-inline-start: 0; inset-block-end: 0; inline-size: 1.75rem; block-size: 2px; background: rgb(27 27 31 / .18); }
+@media (min-width: 48rem) {
+  .b-list-gh { padding-inline: 1.25rem; }
+  .b-list-gh::after { inset-inline-start: 1.25rem; }
+}
+.b-list-gh--mine::after { background: var(--color-accent); }
+.b-list-gh--theirs::after { background: var(--color-warn); }
+.b-list-gh--parked::after, .b-list-gh--none::after { background: rgb(27 27 31 / .2); }
+.b-list-gh--done::after, .b-list-gh--ok::after { background: var(--color-good); }
+
+/* A foldable heading is a button inside the h2. Button reset only: every
+   visual property is already on .b-list-gh. */
+.b-list-gh-wrap { margin: 0; }
+.b-list-gh--btn { inline-size: 100%; min-block-size: var(--hit); align-items: center; border: 0; background: none; text-align: start; cursor: pointer; }
+@media (min-width: 48rem) { .b-list-gh--btn { min-block-size: 0; align-items: baseline; } }
+.b-list-gh--btn:hover { color: var(--color-ink); }
+/* The only rotation on the screen: right when folded, down when open. */
+.b-list-gh-c { inline-size: 12px; block-size: 12px; align-self: center; margin-inline-start: -.125rem; transition: transform .18s; }
+.b-list-gh-c:dir(rtl) { transform: scaleX(-1); }
+.b-list-gh--btn[aria-expanded='true'] .b-list-gh-c { transform: rotate(90deg); }
+.b-list-gh-n { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* ---- rows ----
+   Phone: two lines by grid areas (reorder by area, never `order`). */
+.b-list-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: 'id id act' 'clock work money';
+  gap: .625rem 1rem;
+  align-items: center;
+  padding-block: .875rem;
+  transition: background .18s ease;
+}
+.b-list-row > .b-list-id { grid-area: id; }
+.b-list-row > .b-list-clock { grid-area: clock; }
+.b-list-row > .b-list-work { grid-area: work; }
+.b-list-row > .b-list-money { grid-area: money; }
+.b-list-row > :nth-child(5) { grid-area: act; }
+@media (min-width: 60rem) {
+  .b-list-row { grid-template-columns: var(--row-cols, minmax(0, 1fr) 11rem 4.5rem 9rem 7rem); grid-template-areas: none; gap: 1.25rem; padding-inline: 1.25rem; }
+  .b-list-row > :nth-child(n) { grid-area: auto; }
+}
+.b-list-row:hover { background: rgb(27 27 31 / .03); }
+/* Inset divider between rows: a short mark on a phone, cell-aligned from 60rem. */
+.b-list-row + .b-list-row::before { content: ''; position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 1.375rem; block-size: 1px; background: var(--color-line); }
+@media (min-width: 60rem) { .b-list-row + .b-list-row::before { inset-inline: 1.25rem; inline-size: auto; } }
+
+/* cell 1: identity. The name's stretched ::after makes the row the link. */
+.b-list-id { display: flex; flex-direction: column; gap: 2px; min-inline-size: 0; }
+.b-list-name { overflow: hidden; color: var(--color-ink); font-family: var(--font-display); font-size: .875rem; font-weight: 600; text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+.b-list-name::after { content: ''; position: absolute; inset: 0; }
+.b-list-row:hover .b-list-name { color: var(--color-accent-ink); }
+.b-list-meta { display: flex; align-items: center; gap: .375rem; min-inline-size: 0; font-size: .75rem; color: var(--color-ink-muted); }
+.b-list-dot { opacity: .4; }
+.b-list-status { white-space: nowrap; }
+
+/* cell 2: the clock. One question per row. */
+.b-list-clock { display: flex; flex-direction: column; gap: 2px; min-inline-size: 0; }
+.b-list-clock .due { align-self: flex-start; padding-inline: 0; }
+.b-list-clock .due.soon, .b-list-clock .due.late { padding-inline: 7px; }
+/* The two alerts: someone stopped answering; money should have arrived. */
+.b-list-silent, .b-list-late { align-self: flex-start; padding: 2px 7px; background: var(--color-bad-tint); color: var(--color-bad-ink); font-family: var(--font-display); font-size: .75rem; font-weight: 600; white-space: nowrap; }
+
+/* cell 3: work. Plain text, never a bar at 0%. */
+.b-list-work { font-family: var(--font-display); font-size: .75rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: end; white-space: nowrap; }
+
+/* cell 4: money. Value and outstanding, never merged, never a third. */
+.b-list-money { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: end; }
+.b-list-val { font-family: var(--font-display); font-size: .75rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.b-list-owed { font-size: .6875rem; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-bad-ink); }
+.b-list-owed.is-late { font-family: var(--font-display); font-weight: 600; }
+
+/* cell 5: the one verb, above the row overlay. */
+.b-list-act {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  min-block-size: var(--hit);
+  padding: 6px 14px;
+  border: 1px solid rgb(27 27 31 / .15);
+  background: none;
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-size: .75rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, border-color .18s ease;
+}
+@media (min-width: 60rem) { .b-list-act { min-block-size: 0; padding: 6px 10px; } }
+.b-list-act:hover, .b-list-act.is-chase { background: var(--color-dark-fill); border-color: var(--color-dark-fill); color: var(--color-bg); }
+.b-list-act.is-chase:hover { background: var(--color-accent-ink); border-color: var(--color-accent); }
+
+/* ---- empty states ---- */
+.b-list-empty { display: flex; flex-direction: column; align-items: flex-start; gap: .75rem; max-inline-size: 46ch; padding: 4rem 1.25rem; }
+.b-list-empty h2 { margin: 0; font-size: 1rem; font-weight: 600; color: var(--color-ink); }
+.b-list-empty p { margin: 0; font-size: .8125rem; line-height: 1.6; color: var(--color-ink-muted); }
+/* Phone: the strip's primary already sits right above; a second reads as a stutter. */
+.b-list-strip ~ .b-list-empty .btn-solid { display: none; }
+@media (min-width: 48rem) { .b-list-strip ~ .b-list-empty .btn-solid { display: flex; } }
+.b-list-nomatch { margin: 0; padding: 2.5rem 1.25rem; font-size: .8125rem; color: var(--color-ink-muted); }
+
+/* ---- right rail ----
+   Phone: under the list, a short rule above each section. 48rem: two
+   feeds side by side with side rules. 80rem: beside the list, sticky. */
+.b-rail { display: flex; flex-direction: column; gap: 1.75rem; }
+@media (min-width: 48rem) { .b-rail { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.75rem 2.5rem; } }
+@media (min-width: 80rem) { .b-rail { position: sticky; inset-block-start: 1.5rem; display: flex; flex-direction: column; gap: 1.75rem; } }
+.b-rail > section { position: relative; padding-block-start: 1.25rem; }
+.b-rail > section::before { content: ''; position: absolute; inset-block-start: 0; inset-inline-start: 0; inline-size: 1.375rem; block-size: 1px; background: var(--color-line); }
+@media (min-width: 48rem) {
+  .b-rail > section { padding-block-start: 0; padding-inline-start: 1.75rem; }
+  .b-rail > section::before { inset-block: .25rem; inline-size: 1px; block-size: auto; }
+}
+
+/* Two feeds, one skeleton: .b-ev dated, .b-ac activity. */
+.b-feed { display: flex; flex-direction: column; }
+.b-ev, .b-ac { position: relative; display: grid; gap: .75rem; align-items: baseline; padding-block: .625rem; }
+.b-ev { grid-template-columns: var(--ev-d-w, 4.25rem) minmax(0, 1fr); }
+.b-ac { grid-template-columns: 2rem minmax(0, 1fr); }
+.b-ev + .b-ev::before, .b-ac + .b-ac::before { content: ''; position: absolute; inset-block-start: 0; inset-inline: 0; block-size: 1px; background: var(--color-line); }
+.b-ev-d { font-family: var(--font-display); font-size: .6875rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-ink); }
+.b-ev-d.is-late { color: var(--color-bad-ink); }
+.b-ev-d.is-soon { color: var(--color-warn-ink); }
+.b-ev-t, .b-ac-t { min-inline-size: 0; font-size: .75rem; line-height: 1.35; color: var(--color-ink); }
+.b-ev-p, .b-ac-p { display: block; margin-block-start: 1px; font-size: .6875rem; color: var(--color-ink-muted); }
+.b-ac-age { font-size: .6875rem; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-ink-muted); }
+.b-feed-none { margin: 0; padding-block: .75rem; font-size: .75rem; color: var(--color-ink-muted); }
+
+/* ---- the list skeleton (C19): the real classes, bars stacked inside ---- */
+.b-skel-stats { display: contents; }
+.b-skel-strip .stat { gap: .5rem; }
+.b-skel-row { pointer-events: none; }
+.b-skel-row .b-list-id { gap: .4375rem; }
+.b-skel-gh { min-block-size: 2rem; align-items: center; }
+.b-skel-feed { display: flex; flex-direction: column; gap: 1rem; margin-block-start: 1rem; }
+.b-skel-feed span { display: flex; flex-direction: column; gap: .375rem; }
+
+/* ---- C21 entrance: first render only (ListEnter drops the class at 2s) ----
+   Rows rise per group (--n), group rules draw, the rail follows, feed lines
+   arrive in turn, the alert chips beat once when everything has landed.
+   Layout never moves. And always: a row darkens under the thumb and its
+   action sinks a hair, because a phone has no hover. */
+@media (prefers-reduced-motion: no-preference) {
+  .b-list-enter .b-list-gh::after { transform-origin: left; animation: b-list-draw .6s cubic-bezier(.2, .7, .2, 1) .1s both; }
+  .b-list-enter .b-list-row { animation: b-list-rise .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(150ms + var(--n, 0) * 50ms); }
+  .b-list-enter .b-rail > section { animation: b-list-rise .5s cubic-bezier(.2, .7, .2, 1) .35s both; }
+  .b-list-enter .b-feed > * { animation: b-list-rise .45s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(450ms + var(--n, 0) * 45ms); }
+  .b-list-enter .b-list-late, .b-list-enter .b-list-silent { animation: b-list-beat .6s ease-in-out 1s both; }
+  .b-list-row:active { background: rgb(27 27 31 / .05); transition: background .05s; }
+  .b-list-act:active { transform: translateY(1px) scale(.97); transition: transform .08s; }
+}
+@keyframes b-list-rise { from { opacity: 0; transform: translateY(.625rem); } }
+@keyframes b-list-beat { 40% { transform: scale(1.06); } }
+@keyframes b-list-draw { from { transform: scaleX(0); } }

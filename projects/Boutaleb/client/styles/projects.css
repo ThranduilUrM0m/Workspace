@@ -1,0 +1,42 @@
+/* The Projects list's own pieces (wireframes/shell/projects.css): the
+   pipeline bar and its legend, the client in the meta line, the milestone
+   line and the quiet words. Everything else is list.css. */
+
+/* ---- pipeline ----
+   The one place on the screen where hue is free: every segment is labelled
+   underneath, so colour is redundant encoding, never the fact. Cool to
+   warm to resolved: blue is yours to shape, amber waits on them. A readout,
+   not a filter. */
+.pr-pipe { display: flex; flex-direction: column; gap: .625rem; }
+.pr-pipe-bar { display: flex; gap: 2px; block-size: 6px; }
+.pr-pipe-seg { min-inline-size: 8px; }
+.pr-seg--idea { background: rgb(27 27 31 / .1); }
+.pr-seg--intake { background: rgb(58 95 160 / .45); }
+.pr-seg--planning { background: var(--color-info); }
+.pr-seg--building { background: var(--color-accent); }
+.pr-seg--review { background: var(--color-warn); }
+.pr-seg--parked { background: rgb(27 27 31 / .18); }
+.pr-seg--done { background: var(--color-good); }
+
+.pr-legend { display: flex; flex-wrap: wrap; gap: 1.125rem; margin: 0; font-size: .6875rem; color: var(--color-ink-muted); }
+.pr-legend span { display: inline-flex; align-items: center; gap: .4375rem; }
+.pr-legend i { flex: 0 0 auto; inline-size: 7px; block-size: 7px; }
+.pr-legend b { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-ink); }
+
+/* ---- cell 1: the client, its own destination above the row overlay ----
+   Padding grows the tap target over the row; the equal negative margin
+   keeps the text where it was drawn. */
+.pr-client { position: relative; z-index: 1; overflow: hidden; margin-block: -.375rem; padding-block: .375rem; color: var(--color-ink-muted); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
+a.pr-client:hover { color: var(--color-ink); text-decoration: underline; text-underline-offset: 2px; }
+/* "Yours" and "Internal" go nowhere: a span, not a dead link. */
+.pr-internal, .pr-noclient { font-style: italic; }
+
+/* ---- cell 2: the milestone under its date, and the quiet words ---- */
+.pr-ms { overflow: hidden; font-size: .75rem; color: var(--color-ink); text-overflow: ellipsis; white-space: nowrap; }
+.pr-quiet { font-size: .6875rem; color: var(--color-ink-muted); }
+
+/* ---- entrance: the pipeline grows from its start edge, stage by stage ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .b-list-enter .pr-pipe-seg { transform-origin: left; animation: pr-grow .6s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 70ms); }
+}
+@keyframes pr-grow { from { transform: scaleX(0); } }

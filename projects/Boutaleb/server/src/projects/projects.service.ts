@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { slugify, type ProjectCreate, type ProjectListQuery, type ProjectUpdate } from '@repo/schemas';
+import { slugify, type ProjectCreate, type ProjectListQuery, type ProjectUpdate, type ProjectView } from '@repo/schemas';
 import { isValidObjectId, type QueryFilter, type Model } from 'mongoose';
 import type { AccessRequest } from '../access/access.guard.js';
 import { ActivityService } from '../activity/activity.service.js';
@@ -10,7 +10,7 @@ import { PROJECT, type Project } from './project.schema.js';
 type Populated = Omit<Project, 'client'> & { client: Client | null };
 
 /** The project as every screen reads it. */
-export function view(p: Populated) {
+export function view(p: Populated): ProjectView {
     return {
         id: String(p._id),
         name: p.name,
@@ -33,7 +33,6 @@ export function view(p: Populated) {
         updatedAt: (p as unknown as { updatedAt: Date }).updatedAt.toISOString(),
     };
 }
-export type ProjectView = ReturnType<typeof view>;
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
