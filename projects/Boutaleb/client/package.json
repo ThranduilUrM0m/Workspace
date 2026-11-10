@@ -26,13 +26,13 @@
     "@clerk/testing": "2.2.55",
     "@playwright/test": "1.65.0",
     "@repo/emails": "workspace:*",
-    "@tailwindcss/postcss": "4.1.18",
+    "@tailwindcss/postcss": "4.3.5",
     "@types/jest": "30.0.0",
     "@types/node": "25.9.9",
     "@types/react": "19.2.8",
     "@types/react-dom": "19.2.3",
     "jest": "30.4.2",
-    "tailwindcss": "4.1.18",
+    "tailwindcss": "4.3.5",
     "typescript": "catalog:"
   }
 }
