@@ -12,7 +12,8 @@ export function configureApp(app: INestApplication): INestApplication {
     // cookies cross: credentials stay off.
     app.enableCors({
         origin: app.get<ConfigService<Env, true>>(ConfigService).get('CLIENT_ORIGIN', { infer: true }),
-        methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+        // PUT: local-folder uploads (src/storage); S3 uploads go to the bucket, not here.
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
         allowedHeaders: ['Authorization', 'Content-Type', 'Idempotency-Key'],
         maxAge: 600,
     });

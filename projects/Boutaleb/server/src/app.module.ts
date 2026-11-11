@@ -6,6 +6,8 @@ import { ActivityModule } from './activity/activity.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { HealthModule } from './health/health.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
+import { StorageModule } from './storage/storage.module.js';
+import { WireframesModule } from './wireframes/wireframes.module.js';
 
 @Module({
     imports: [
@@ -20,6 +22,8 @@ import { ProjectsModule } from './projects/projects.module.js';
         AuthModule,
         HealthModule,
         ProjectsModule,
+        StorageModule,
+        WireframesModule,
     ],
 })
 export class AppModule {}

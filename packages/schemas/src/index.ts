@@ -3,3 +3,4 @@ export * from './auth';
 export * from './projects';
 export * from './briefs';
 export * from './milestones';
+export * from './wireframes';
