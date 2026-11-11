@@ -2,6 +2,10 @@
   command = "pnpm build"
   publish = ".next"
   functions = ".netlify/functions"
+  # Build only when something the site is made of changed: this folder or
+  # the shared packages. Server-only and docs commits are skipped, so they
+  # spend no Netlify credits. Exit 0 = skip. Runs from the base directory.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ../../../packages"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
