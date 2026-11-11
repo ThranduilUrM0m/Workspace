@@ -21,7 +21,7 @@ import { atTime, Loading, OFFLINE, Skel } from './states';
 
 export interface QueryGateProps<T> {
     query: UseQueryResult<T>;
-    kind: 'list';
+    kind: 'list' | 'rec';
     /** The data, named in the copy: "projects". */
     what: string;
     /** One of them, for Not found: "project". */
@@ -32,18 +32,20 @@ export interface QueryGateProps<T> {
     empty?: ReactNode;
     /** The screen's primary action, drawn live inside the skeleton too. */
     action?: ReactNode;
+    /** A record's tab labels: words, not data, so the skeleton prints them. */
+    tabs?: string[];
     className?: string;
     children: (data: T) => ReactNode;
 }
 
-export function QueryGate<T>({ query, kind, what, one = 'record', back, isEmpty, empty, action, className, children }: QueryGateProps<T>) {
+export function QueryGate<T>({ query, kind, what, one = 'record', back, isEmpty, empty, action, tabs, className, children }: QueryGateProps<T>) {
     const loading = query.isPending || (query.isError && query.isFetching);
     let body: ReactNode;
     if (loading) {
         body = (
             <>
                 <Loading what={what} />
-                {SKELETONS[kind]({ action })}
+                {SKELETONS[kind]({ action, tabs })}
             </>
         );
     } else if (query.isError && isNotFound(query.error)) {
@@ -225,6 +227,56 @@ function ListSkeleton({ action }: { action?: ReactNode }) {
     );
 }
 
-const SKELETONS: Record<QueryGateProps<unknown>['kind'], (o: { action?: ReactNode }) => ReactNode> = {
+/** The record: header (avatar, name, four stats), the real tab words, sections and a rail. */
+function RecSkeleton({ tabs = [] }: { tabs?: string[] }) {
+    const stat = (i: number) => (
+        <div className="stat" key={i}>
+            <Skel w="4rem" h=".5rem" />
+            <Skel w={['5.5rem', '4.5rem', '6rem', '5rem'][i]!} h="1rem" />
+        </div>
+    );
+    const sec = (n: number, w: number[], key: string) => (
+        <section className="b-skel-sec" key={key}>
+            <Skel w="7rem" h=".5625rem" />
+            {Array.from({ length: n }, (_, i) => (
+                <span className="b-skel-line" key={i}>
+                    <Skel w={`${w[i % w.length]}%`} h=".75rem" />
+                    <Skel w="3.5rem" h=".625rem" />
+                </span>
+            ))}
+        </section>
+    );
+    return (
+        <>
+            <header className="b-rec-head" aria-hidden="true">
+                <div className="b-rec-id">
+                    <span className="b-av b-av--lg b-skel-av" />
+                    <div className="b-skel-id">
+                        <Skel w="12rem" h="1.125rem" />
+                        <Skel w="8rem" h=".625rem" />
+                    </div>
+                </div>
+                <div className="b-rec-stats">{[0, 1, 2, 3].map(stat)}</div>
+            </header>
+            <nav className="b-tabs" aria-hidden="true">
+                {tabs.map((t) => (
+                    <a key={t} tabIndex={-1}>
+                        {t}
+                    </a>
+                ))}
+            </nav>
+            <div className="b-rec-cols" aria-hidden="true">
+                <div className="b-rec-main">
+                    {sec(3, [64, 48, 56], 'a')}
+                    {sec(4, [52, 70, 40, 60], 'b')}
+                </div>
+                <aside className="b-rail">{sec(3, [80, 60, 70], 'c')}</aside>
+            </div>
+        </>
+    );
+}
+
+const SKELETONS: Record<QueryGateProps<unknown>['kind'], (o: { action?: ReactNode; tabs?: string[] }) => ReactNode> = {
     list: ListSkeleton,
+    rec: RecSkeleton,
 };

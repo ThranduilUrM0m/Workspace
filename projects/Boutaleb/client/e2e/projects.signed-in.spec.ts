@@ -7,8 +7,8 @@ import { expect, test, type Page, type Route } from '@playwright/test';
 test.use({ viewport: { width: 1440, height: 900 } });
 
 const API = 'http://localhost:4002/projects';
-const client = { id: 'c'.repeat(24), name: 'Omar Fassi', company: 'Villa Zerhoun', self: false };
-const studio = { id: 'd'.repeat(24), name: 'Boutaleb', company: 'Boutaleb', self: true };
+const client = { id: 'c'.repeat(24), name: 'Omar Fassi', company: 'Villa Zerhoun', email: 'omar@example.ma', language: 'fr', self: false };
+const studio = { id: 'd'.repeat(24), name: 'Boutaleb', company: 'Boutaleb', email: 'studio@boutaleb.ma', language: 'en', self: true };
 let seq = 0;
 const project = (name: string, status: string, over: Record<string, unknown> = {}) => ({
     id: String(++seq).padStart(24, '0'),

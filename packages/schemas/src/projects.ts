@@ -103,11 +103,14 @@ export type ProjectListQuery = z.infer<typeof projectListQuery>;
 export const CLIENT_STATUSES = ['lead', 'active', 'inactive'] as const;
 export type ClientStatus = (typeof CLIENT_STATUSES)[number];
 
-/** A client as a project carries it: enough to name it and link to it. */
+/** A client as a project carries it: enough to name it, link to it, and write to it. */
 export interface ClientSummary {
     id: string;
     name: string;
     company: string;
+    email: string;
+    /** The language every touchpoint goes out in: needed before writing, not looked up after. */
+    language: Language;
     /** The studio itself: projects for it read "Internal". */
     self: boolean;
 }

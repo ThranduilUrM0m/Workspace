@@ -1,0 +1,107 @@
+/* The project record's own pieces (wireframes/shell/project.css): the
+   spine, the lower 2x2, the asset register, the module chips, the client
+   card and the magic-link block. The header, tabs, rail and feed are
+   record.css and list.css. */
+
+/* ---- the spine ----
+   Define it, build it, what is due next: one story, left to right. Hue is
+   per track in --tk, so the rule and the bar cannot drift apart; the word
+   is right above the colour, so the colour never carries the fact alone.
+   Phone: the tracks stack under a short rule. From 48rem, three ~13rem
+   tracks fit and the three-across spine returns. */
+.po-spine { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.75rem; align-items: stretch; }
+@media (min-width: 48rem) { .po-spine { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; } }
+
+.po-track { --tk: var(--color-dark-fill); position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: .25rem; min-inline-size: 0; padding-block-end: .25rem; }
+.po-track + .po-track { padding-block-start: 1.75rem; }
+.po-track + .po-track::before { content: ''; position: absolute; inset-inline-start: 0; inset-block-start: 0; inline-size: 1.375rem; block-size: 1px; background: var(--color-line); }
+@media (min-width: 48rem) {
+  .po-track { padding-inline-end: 1.5rem; }
+  .po-track + .po-track { padding-block-start: 0; padding-inline-start: 1.5rem; }
+  /* Inset top and bottom: a divider never runs to the container edge. */
+  .po-track + .po-track::before { inset-block: .1875rem; inline-size: 1px; block-size: auto; }
+}
+.po-track--brief { --tk: var(--color-info); }
+.po-track--build { --tk: var(--color-accent); }
+/* The date takes the colour its own due state already has; neutral when far. */
+.po-track--next { --tk: rgb(27 27 31 / .25); }
+.po-track--next.is-soon { --tk: var(--color-warn); }
+.po-track--next.is-late { --tk: var(--color-bad); }
+.po-track .b-sec-h::after { background: var(--tk); }
+.po-track .po-bar { align-self: stretch; margin-block-start: .5rem; }
+.po-track .po-bar i { background: var(--tk); }
+/* Bottom-aligned: the three ways out sit on one line whatever is above them. */
+.po-track .b-rec-more { margin-block-start: auto; padding-block-start: .75rem; }
+
+/* ---- readouts ---- */
+.po-big { font-family: var(--font-display); font-size: 1.625rem; font-weight: 700; line-height: 1; letter-spacing: -.01em; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+/* The denominator is context, not a second number. */
+.po-of { font-family: var(--font-body); font-size: .9375rem; font-weight: 400; color: var(--color-ink-muted); }
+.po-sub { font-size: .75rem; color: var(--color-ink-muted); }
+.po-empty { margin: 0; padding-block-start: .25rem; max-inline-size: 46ch; font-size: .8125rem; color: var(--color-ink-muted); }
+
+.po-bar { block-size: 3px; margin-block-start: .75rem; background: rgb(27 27 31 / .07); }
+.po-bar i { display: block; block-size: 100%; background: var(--color-dark-fill); }
+.po-bar--paid i { background: var(--color-good); }
+
+/* ---- the lower half ----
+   Phone: one column in reading order (money, blocked, assets, modules).
+   From 60rem the 2x2: left is the wider column and takes the two that carry
+   rows; one short divider per right-hand cell, never one tall rule. */
+.po-lower { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.25rem 2.5rem; align-items: start; }
+.po-lower > section { position: relative; }
+.po-lower > section:nth-child(even)::before { content: none; position: absolute; inset-inline-start: 0; inset-block: .1875rem; inline-size: 1px; background: var(--color-line); }
+@media (min-width: 60rem) {
+  .po-lower { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  .po-lower > section:nth-child(even) { padding-inline-start: 2.5rem; }
+  .po-lower > section:nth-child(even)::before { content: ''; }
+}
+.po-ways { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-block-start: .875rem; }
+
+/* ---- money: the subtraction, left to right ---- */
+.po-nums { display: flex; flex-wrap: wrap; gap: .75rem 1.75rem; padding-block-start: .25rem; }
+.po-nums span { display: flex; flex-direction: column; gap: 1px; font-size: .6875rem; color: var(--color-ink-muted); }
+.po-nums b { font-family: var(--font-display); font-size: 1.0625rem; font-weight: 700; letter-spacing: -.01em; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+/* Red on the number, never on the track. */
+.po-nums .b-rec-owed b { color: var(--color-bad-ink); }
+
+/* ---- asset register: who holds what at handover ---- */
+.po-asset { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem 4.75rem; gap: .75rem; align-items: center; padding-block: .6875rem; }
+.po-asset + .po-asset::before { content: ''; position: absolute; inset-block-start: 0; inset-inline: .75rem; block-size: 1px; background: var(--color-line); }
+.po-name { overflow: hidden; font-family: var(--font-display); font-size: .8125rem; font-weight: 600; color: var(--color-ink); text-overflow: ellipsis; white-space: nowrap; }
+/* A word, not a tag: who holds it, and when it next costs somebody money. */
+.po-holder { display: flex; flex-direction: column; gap: 1px; font-size: .75rem; color: var(--color-ink-muted); }
+.po-renew { font-size: .625rem; color: var(--color-ink-muted); white-space: nowrap; }
+/* Only the studio's own renewals warn: under the client's name it is their bill. */
+.po-renew.is-soon { color: var(--color-warn-ink); }
+.po-tr--done { --tag-bg: var(--color-good-tint); --tag-fg: var(--color-good-ink); }
+.po-tr--pending { --tag-bg: var(--color-warn-tint); --tag-fg: var(--color-warn-ink); }
+.po-tr--none { --tag-bg: rgb(27 27 31 / .06); --tag-fg: var(--color-ink-muted); }
+.po-asset .tag { justify-self: start; }
+
+/* ---- modules ---- */
+.po-mods { display: flex; flex-wrap: wrap; gap: .5rem; padding-block-start: .25rem; }
+.po-modnote { margin: .75rem 0 0; max-inline-size: 34ch; font-size: .75rem; color: var(--color-ink-muted); }
+
+/* ---- client card: the language line is the fact needed before writing ---- */
+.po-client { display: flex; flex-direction: column; gap: 2px; padding-block: .25rem .75rem; }
+.po-cname { font-family: var(--font-display); font-size: .8125rem; font-weight: 600; color: var(--color-ink); }
+.po-csub, .po-clang { font-size: .75rem; color: var(--color-ink-muted); }
+.po-cmail { align-self: flex-start; font-size: .75rem; color: var(--color-ink-muted); text-decoration: none; border-block-end: 1px solid var(--color-line); transition: color .18s; }
+.po-cmail:hover { color: var(--color-ink); }
+.po-clang { margin-block-start: .375rem; }
+
+/* ---- the other tabs, until each lands ---- */
+.po-tab-empty { display: flex; flex-direction: column; gap: .5rem; max-inline-size: 52ch; padding-block: 1rem 2rem; }
+.po-tab-empty h2 { margin: 0; font-size: 1rem; font-weight: 700; color: var(--color-ink); }
+
+/* ---- entrance, first load only: tracks and sections rise in reading order,
+   the bars fill from the start edge. Never on a re-render. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .po-enter .po-track, .po-enter .po-lower > section { animation: po-rise .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 80ms); }
+  .po-enter .po-bar i { transform-origin: left; animation: po-fill .9s cubic-bezier(.2, .7, .2, 1) .35s both; }
+  .po-enter .b-rec-stats .due.late { animation: po-beat .6s ease-in-out 1s both; }
+}
+@keyframes po-rise { from { opacity: 0; transform: translateY(.625rem); } }
+@keyframes po-fill { from { transform: scaleX(0); } }
+@keyframes po-beat { 40% { box-shadow: 0 0 0 .3125rem var(--color-bad-tint); } }

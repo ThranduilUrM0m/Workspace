@@ -28,9 +28,10 @@ export interface Milestone {
     done: boolean;
 }
 
-/** Value = accepted quotes. Outstanding = issued invoices minus payments. dueOn = oldest unpaid invoice. */
+/** Value = accepted quotes. Invoiced = issued invoices. Outstanding = invoiced minus payments. dueOn = oldest unpaid invoice. */
 export interface Money {
     value: number;
+    invoiced: number;
     outstanding: number;
     dueOn: string | null;
 }
@@ -257,4 +258,44 @@ export function position(rows: Row[], today: string) {
         .flatMap((r) => r.f.milestones.filter((m) => !m.done && m.due))
         .sort((a, b) => a.due!.localeCompare(b.due!))[0];
     return { owed, owedCount, late, active, soonest: soonest ? { name: soonest.name, due: relDue(soonest.due!, today) } : null };
+}
+
+/* ---------- the record ---------- */
+
+/**
+ * The record header's clock: the SAME urgency the list ranked the row by
+ * (late money, then silence), so clicking a row never changes what the
+ * project's problem is. Otherwise the next milestone, or why there is none.
+ */
+export type RecordClock =
+    | { label: 'Attention'; kind: 'late'; days: number }
+    | { label: 'Attention'; kind: 'silent'; days: number }
+    | { label: 'Next milestone'; kind: 'none' | 'undated' }
+    | { label: 'Next milestone'; kind: 'due'; due: { txt: string; state: DueState } };
+
+export function recordClock(p: ProjectView, f: ProjectFacts, today: string): RecordClock {
+    const late = lateMoney(f, today);
+    if (late) return { label: 'Attention', kind: 'late', days: late.days };
+    if (isStalled(p, f, today)) return { label: 'Attention', kind: 'silent', days: silence(f, today)! };
+    const m = nextMilestone(f);
+    if (!m) return { label: 'Next milestone', kind: 'none' };
+    if (!m.due) return { label: 'Next milestone', kind: 'undated' };
+    return { label: 'Next milestone', kind: 'due', due: relDue(m.due, today) };
+}
+
+/**
+ * Two letters for an avatar. A "Client — Deliverable" name takes the part
+ * after the dash, because the client is already named beside it.
+ */
+export function initials(name: string): string {
+    const words = (name.split(/\s*[—–-]\s*/).pop() ?? '')
+        .replace(/[^\p{L}\s]/gu, '')
+        .trim()
+        .split(/\s+/)
+        .filter(Boolean);
+    return words
+        .slice(0, 2)
+        .map((w) => w[0]!)
+        .join('')
+        .toUpperCase();
 }

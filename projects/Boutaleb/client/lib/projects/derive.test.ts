@@ -1,5 +1,5 @@
 import type { ProjectStatus, ProjectView } from '@repo/schemas';
-import { action, cash, clock, daysFrom, dueFrom, EMPTY_FACTS, group, isStalled, matches, nextMilestone, pipeline, position, silence, todayIso, turn, type ProjectFacts } from './derive';
+import { action, cash, clock, daysFrom, dueFrom, EMPTY_FACTS, group, initials, isStalled, matches, nextMilestone, pipeline, position, recordClock, silence, todayIso, turn, type ProjectFacts } from './derive';
 
 const TODAY = '2026-11-07';
 
@@ -11,7 +11,7 @@ function project(status: ProjectStatus, over: Partial<ProjectView> = {}): Projec
         name: `Project ${seq}`,
         slug: `project-${seq}`,
         status,
-        client: { id: 'c'.repeat(24), name: 'Omar Fassi', company: 'Villa Zerhoun', self: false },
+        client: { id: 'c'.repeat(24), name: 'Omar Fassi', company: 'Villa Zerhoun', email: 'omar@example.ma', language: 'fr', self: false },
         internal: false,
         governingLanguage: 'fr',
         note: null,
@@ -78,7 +78,7 @@ describe('whose turn', () => {
     });
 
     it('late money pulls even a completed project into Your move', () => {
-        const owing = facts({ money: { value: 40000, outstanding: 18000, dueOn: '2026-10-20' } });
+        const owing = facts({ money: { value: 40000, invoiced: 30000, outstanding: 18000, dueOn: '2026-10-20' } });
         const p = project('completed');
         expect(turn(p, owing, TODAY)).toBe('mine');
         expect(clock(p, owing, TODAY)).toEqual({ kind: 'late', days: 18 });
@@ -165,11 +165,32 @@ describe('the list', () => {
         expect(position([{ p: project('planning'), f: EMPTY_FACTS }], TODAY)).toEqual({ owed: 0, owedCount: 0, late: 0, active: 0, soonest: null });
         const pos = position(
             [
-                { p: project('in_progress'), f: facts({ money: { value: 50000, outstanding: 10000, dueOn: '2026-11-01' }, milestones: [{ name: 'Launch', due: '2026-11-11', done: false }] }) },
-                { p: project('on_hold'), f: facts({ money: { value: 9000, outstanding: 0, dueOn: null } }) },
+                { p: project('in_progress'), f: facts({ money: { value: 50000, invoiced: 25000, outstanding: 10000, dueOn: '2026-11-01' }, milestones: [{ name: 'Launch', due: '2026-11-11', done: false }] }) },
+                { p: project('on_hold'), f: facts({ money: { value: 9000, invoiced: 9000, outstanding: 0, dueOn: null } }) },
             ],
             TODAY,
         );
         expect(pos).toEqual({ owed: 10000, owedCount: 1, late: 10000, active: 50000, soonest: { name: 'Launch', due: { txt: 'in 4 days', state: 'soon' } } });
+    });
+});
+
+describe('the record', () => {
+    it('ranks its clock exactly as the list does: late money, then silence, then the milestone', () => {
+        const p = project('intake_pending');
+        const late = facts({ money: { value: 9000, invoiced: 9000, outstanding: 4000, dueOn: '2026-10-29' }, log: [{ at: '2026-10-01', kind: 'mail', text: 'Intake sent' }] });
+        expect(recordClock(p, late, TODAY)).toEqual({ label: 'Attention', kind: 'late', days: 9 });
+        const silent = facts({ log: [{ at: '2026-11-01', kind: 'mail', text: 'Intake sent' }] });
+        expect(recordClock(p, silent, TODAY)).toEqual({ label: 'Attention', kind: 'silent', days: 6 });
+        const b = project('in_progress');
+        expect(recordClock(b, EMPTY_FACTS, TODAY)).toEqual({ label: 'Next milestone', kind: 'none' });
+        expect(recordClock(b, facts({ milestones: [{ name: 'Mockups', due: null, done: false }] }), TODAY).kind).toBe('undated');
+        expect(recordClock(b, facts({ milestones: [{ name: 'Mockups', due: '2026-11-09', done: false }] }), TODAY)).toEqual({ label: 'Next milestone', kind: 'due', due: { txt: 'in 2 days', state: 'soon' } });
+    });
+
+    it('initials: the deliverable after the dash, letters only, two at most', () => {
+        expect(initials('Villa Zerhoun — Site vitrine')).toBe('SV');
+        expect(initials('Café Andalou')).toBe('CA');
+        expect(initials('Studio')).toBe('S');
+        expect(initials('2026 — ')).toBe('');
     });
 });

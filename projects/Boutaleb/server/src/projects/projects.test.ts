@@ -47,7 +47,8 @@ describe('create', () => {
         expect(res.body).toMatchObject({
             status: 'intake_pending',
             slug: 'villa-zerhoun-site',
-            client: { id: c.id, company: 'Villa Zerhoun', self: false },
+            // The record's client card writes to them: address and language travel with the project.
+            client: { id: c.id, company: 'Villa Zerhoun', email: 'omar@example.ma', language: 'fr', self: false },
             internal: false,
             modules: ['quotes', 'invoices', 'payments'],
             currency: 'MAD',

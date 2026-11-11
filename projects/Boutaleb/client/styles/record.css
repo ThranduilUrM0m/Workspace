@@ -1,0 +1,78 @@
+/* The record vocabulary (wireframes/shell/shell.css "Record header", "Tab
+   row", "Record skeleton"), shared by every record screen: Projects now,
+   Clients, Deals and Finance later. Each screen's own pieces live in its own
+   file (project.css). Weights >= 600 set the display face: Questrial has one
+   weight and would fake the bold. */
+
+/* The page frame (.content) already gives the gutter. */
+.b-rec-wrap { display: flex; flex-direction: column; }
+/* .due carries margin-inline-start:auto for the board's meta row; inside a
+   header stat that shoves it off the end of nothing. */
+.b-rec-wrap .due { margin-inline-start: 0; }
+
+/* ---- avatar, the record's size ---- */
+.b-av--lg { inline-size: 3rem; block-size: 3rem; font-size: .875rem; font-weight: 700; color: var(--color-ink); background: rgb(27 27 31 / .06); }
+
+/* ---- header ----
+   Phone: identity on top, the stats as a two-column grid under it. From
+   60rem, where a list row fits on one line, the one-row header returns. */
+.b-rec-head { display: flex; flex-direction: column; align-items: stretch; gap: 1.25rem; padding-block-end: 1.375rem; }
+@media (min-width: 60rem) { .b-rec-head { flex-direction: row; align-items: flex-start; gap: 1.5rem; } }
+.b-rec-id { display: flex; align-items: center; gap: .875rem; min-inline-size: 0; }
+.b-rec-name { margin: 0; font-family: var(--font-display); font-size: 1.375rem; font-weight: 700; line-height: 1.15; letter-spacing: -.01em; color: var(--color-ink); }
+.b-rec-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4375rem; margin-block-start: .1875rem; font-size: .75rem; color: var(--color-ink-muted); }
+.b-rec-meta a { color: inherit; text-decoration: none; border-block-end: 1px solid var(--color-line); transition: color .18s, border-color .18s; }
+.b-rec-meta a:hover { color: var(--color-ink); border-block-end-color: var(--color-ink); }
+.b-rec-meta .sep { opacity: .45; }
+.b-rec-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 1rem 1.5rem; }
+@media (min-width: 60rem) { .b-rec-stats { display: flex; flex: 0 0 auto; align-items: flex-start; gap: 2.25rem; margin-inline-start: auto; } }
+
+/* Alert red is rationed to genuine liabilities: money owed, a dead link. */
+.b-rec-owed { color: var(--color-bad-ink); }
+/* The word for a fact that does not exist yet. */
+.b-rec-none { font-family: inherit; font-size: .75rem; font-weight: 400; color: var(--color-ink-muted); }
+
+/* ---- tab row ----
+   Always visible, never disabled; the active mark is a 2px rule, no pills,
+   no counts. The row's hairline is the header's one rule. Phone: the row
+   scrolls sideways if it ever overflows, and every tab is a 44px target. */
+.b-tabs { position: relative; display: flex; align-items: stretch; gap: 1.5rem; margin-block-end: 1.5rem; overflow-x: auto; scrollbar-width: none; }
+.b-tabs::after { content: ''; position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 1px; background: var(--color-line); }
+.b-tabs a { position: relative; z-index: 1; display: flex; flex: 0 0 auto; align-items: flex-end; min-block-size: var(--hit); padding-block-end: .6875rem; font-size: .8125rem; color: var(--color-ink-muted); text-decoration: none; transition: color .18s; }
+.b-tabs a:hover { color: var(--color-ink); }
+.b-tabs a.is-active { font-family: var(--font-display); font-weight: 600; color: var(--color-ink); }
+.b-tabs a.is-active::after { content: ''; position: absolute; inset-inline: 0; inset-block-end: 0; block-size: 2px; background: var(--color-dark-fill); }
+@media (min-width: 48rem) {
+  .b-tabs { gap: 1.75rem; overflow-x: visible; }
+  .b-tabs a { flex: 0 1 auto; min-block-size: 0; }
+}
+
+/* ---- columns: the list's track sizes, so a row click lands on the same product ---- */
+.b-rec-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.75rem; align-items: start; margin-block-start: .25rem; }
+@media (min-width: 80rem) { .b-rec-cols { grid-template-columns: minmax(0, 1fr) 20.5rem; gap: 1.5rem; } }
+.b-rec-main { display: flex; flex-direction: column; gap: 2.75rem; min-inline-size: 0; }
+
+/* The note beside a section heading: what it is for, or whose facts it borrows. */
+.b-rec-secn { margin-inline-start: auto; font-family: var(--font-body); font-size: .6875rem; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--color-ink-muted); }
+
+/* The way out of a borrowed block. Where it sits is the section's business.
+   Phone: the short word's hit area grows to 44px under an invisible overlay. */
+.b-rec-more { position: relative; font-family: var(--font-display); font-size: .75rem; font-weight: 600; color: var(--color-ink-muted); text-decoration: none; border-block-end: 1px solid var(--color-line); transition: color .18s, border-color .18s; }
+.b-rec-more:hover { color: var(--color-ink); border-block-end-color: var(--color-ink); }
+.b-rec-more::before { content: ''; position: absolute; inset: -.75rem -.375rem; }
+@media (min-width: 48rem) { .b-rec-more::before { content: none; } }
+
+/* ---- chip: a state readout, or a toggle when it is a button ---- */
+.chip { display: inline-flex; align-items: center; gap: .375rem; padding: .375rem .6875rem; border: 1px solid rgb(27 27 31 / .15); background: none; color: var(--color-ink-muted); font: inherit; font-size: .75rem; white-space: nowrap; }
+button.chip { cursor: pointer; }
+button.chip:hover { color: var(--color-ink); border-color: rgb(27 27 31 / .3); }
+.chip.on { border-color: var(--color-dark-fill); background: var(--color-dark-fill); color: var(--color-bg); font-family: var(--font-display); font-weight: 600; }
+.chip .n { font-variant-numeric: tabular-nums; }
+
+/* ---- skeleton: the real header, tabs and columns with bars inside ---- */
+.b-skel-av { background: rgb(27 27 31 / .07); }
+.b-skel-id { display: flex; flex-direction: column; gap: .5rem; }
+.b-rec-stats .stat:has(> .b-skel) { gap: .5rem; }
+.b-skel-sec { display: flex; flex-direction: column; gap: .875rem; margin-block-end: 2rem; }
+.b-skel-line { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-block-size: 2.25rem; box-shadow: inset 0 -1px 0 var(--color-line); }
+.b-tabs a .b-skel { display: inline-block; vertical-align: middle; }

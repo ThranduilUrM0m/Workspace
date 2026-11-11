@@ -1,4 +1,4 @@
-import { CLIENT_STATUSES, LANGUAGES } from '@repo/schemas';
+import { CLIENT_STATUSES, LANGUAGES, type ClientSummary } from '@repo/schemas';
 import { Schema, type InferSchemaType, type Types } from 'mongoose';
 
 // A client: a person, and the organisation they speak for (never merged into
@@ -33,9 +33,11 @@ ClientSchema.index({ self: 1 }, { unique: true, partialFilterExpression: { self:
 export type Client = InferSchemaType<typeof ClientSchema> & { _id: Types.ObjectId };
 
 /** What a project list or record shows of its client. */
-export const clientSummary = (c: Pick<Client, '_id' | 'name' | 'company' | 'self'>) => ({
+export const clientSummary = (c: Pick<Client, '_id' | 'name' | 'company' | 'email' | 'language' | 'self'>): ClientSummary => ({
     id: String(c._id),
     name: c.name,
     company: c.company,
+    email: c.email,
+    language: c.language,
     self: c.self ?? false,
 });
