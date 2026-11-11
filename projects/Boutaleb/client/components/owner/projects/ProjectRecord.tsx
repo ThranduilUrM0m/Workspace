@@ -14,6 +14,7 @@ import { useMilestones } from '@/lib/projects/milestones';
 import { useProject } from '@/lib/projects/queries';
 import { IntakeTab } from './IntakeTab';
 import { PlanTab } from './PlanTab';
+import { WireframesTab } from './WireframesTab';
 import { TABS, type TabKey } from '@/lib/projects/tabs';
 
 // One project, held whole (wireframes/project.html, shell/project.js, spec
@@ -54,9 +55,7 @@ function Ready({ p, tab }: { p: ProjectView; tab: TabKey }) {
             {tab === 'overview' && <Overview p={p} f={f} today={today} />}
             {tab === 'intake' && <IntakeTab p={p} />}
             {tab === 'plan' && <PlanTab p={p} />}
-            {tab === 'wireframes' && (
-                <TabEmpty title="No rounds sent yet">Each round sent to the client is kept here as it was sent, with what came back. Rounds start once the plan is drawn.</TabEmpty>
-            )}
+            {tab === 'wireframes' && <WireframesTab p={p} />}
         </div>
     );
 }
@@ -391,16 +390,6 @@ function Activity({ f, today }: { f: ProjectFacts; today: string }) {
                 <FeedNone>Nothing logged yet.</FeedNone>
             )}
         </RailSection>
-    );
-}
-
-/** A tab whose subject has no record yet: says which state, and why. */
-function TabEmpty({ title, children }: { title: string; children: ReactNode }) {
-    return (
-        <div className="po-tab-empty" role="status">
-            <h2>{title}</h2>
-            <p className="po-empty">{children}</p>
-        </div>
     );
 }
 

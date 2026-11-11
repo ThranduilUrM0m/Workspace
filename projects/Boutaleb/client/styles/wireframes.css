@@ -1,0 +1,102 @@
+/* The Wireframes tab (wireframes/shell/project-wireframes.css). Reuses the
+   intake tab's .pi-empty / .pi-ghost / .pi-ta and the plan's .pp-more on
+   purpose: three tabs with three ghost buttons would be three dialects of
+   one screen. Weights >= 600 set the display face: Questrial has one weight.
+   Mobile-first; the one breakpoint (48rem) is where a frame grid of two
+   tiles has room for wider tiles and the history row fits on one line. */
+
+.wf-wrap { max-inline-size: 74rem; padding-block: .5rem 3rem; }
+.wf-none { margin: 0; font-size: .875rem; color: var(--color-ink-muted); }
+.wf-fail { display: block; margin: .5rem 0 0; font-size: .75rem; color: var(--color-bad-ink); }
+
+/* ---- the live round ---- */
+.wf-round-h { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem .75rem; }
+.wf-round-t { margin: 0; font-family: var(--font-display); font-size: 1.125rem; font-weight: 600; white-space: nowrap; }
+.wf-round-d { font-size: .75rem; color: var(--color-ink-muted); }
+.wf-round-n { margin: .625rem 0 0; max-inline-size: 68ch; font-size: .875rem; line-height: 1.55; color: var(--color-ink-muted); }
+
+/* One word for where the round stands; the word is the fact, the tint the echo. */
+.wf-tag { padding: 2px .5rem; background: rgb(27 27 31 / .06); font-family: var(--font-display); font-size: .6875rem; font-weight: 600; letter-spacing: .02em; color: var(--color-ink-muted); }
+.wf-tag--sent { background: var(--color-warn-tint); color: var(--color-warn-ink); }
+.wf-tag--changes { background: var(--color-accent-tint); color: var(--color-accent-ink); }
+.wf-tag--ok { background: var(--color-good-tint); color: var(--color-good-ink); }
+
+/* ---- the frames ----
+   Placeholders that look like placeholders until screenshots land. 9rem on
+   a phone so two sit side by side. A frame is a button: it opens the page. */
+.wf-frames { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 1rem; margin: 1.25rem 0 0; padding: 0; list-style: none; }
+.wf-frame { display: block; inline-size: 100%; padding: 0; border: 0; background: none; color: var(--color-ink); font: inherit; text-align: start; cursor: pointer; }
+.wf-frame-b { display: flex; flex-direction: column; gap: .5rem; block-size: 8rem; padding: .75rem; border: 1px solid var(--color-line); background: #fff; transition: border-color .18s; }
+.wf-frame-b i { display: block; block-size: .5rem; background: rgb(27 27 31 / .07); }
+.wf-frame-b i:first-child { block-size: 1.25rem; inline-size: 70%; }
+.wf-frame-b i:last-child { flex: 1; }
+/* Dashed while the folder can still change: nothing has been frozen yet. */
+.wf-frame-b.is-live { border-style: dashed; }
+/* A page somebody wrote about is the one thing worth finding fast. */
+.wf-frame.has-note .wf-frame-b { border-color: var(--color-accent); }
+.wf-frame:hover .wf-frame-b, .wf-frame:focus-visible .wf-frame-b { border-color: var(--color-dark-fill); }
+.wf-frame:focus-visible { outline: 2px solid var(--color-dark-fill); outline-offset: 3px; }
+.wf-frame-n { display: block; margin-block-start: .5rem; font-family: var(--font-display); font-size: .8125rem; font-weight: 600; }
+.wf-frame-f { display: block; margin-block-start: .0625rem; font-size: .6875rem; color: var(--color-ink-muted); overflow-wrap: anywhere; }
+.wf-frame-c { display: block; margin-block-start: .125rem; font-family: var(--font-display); font-size: .6875rem; font-weight: 600; color: var(--color-accent-ink); }
+
+/* ---- uploading ----
+   Wide, not tile-sized: it is the whole deliverable arriving, not one more page. */
+.wf-file { position: absolute; inline-size: 1px; block-size: 1px; opacity: 0; overflow: hidden; }
+.wf-drop { position: relative; display: block; max-inline-size: 42rem; margin-block-start: 1.25rem; padding: 1.75rem; border: 1px dashed var(--color-line); cursor: pointer; transition: border-color .18s, background-color .18s; }
+.wf-drop:hover, .wf-drop:focus-within { border-color: var(--color-dark-fill); background: var(--color-accent-tint); }
+.wf-drop-h { display: block; font-family: var(--font-display); font-size: .9375rem; font-weight: 600; color: var(--color-ink); }
+.wf-drop-s { display: block; margin-block-start: .375rem; font-size: .8125rem; line-height: 1.5; color: var(--color-ink-muted); }
+.wf-drop-p { display: block; margin-block-start: .625rem; font-family: ui-monospace, 'Cascadia Mono', Menlo, monospace; font-size: .6875rem; color: var(--color-ink-muted); overflow-wrap: anywhere; }
+/* The replace control is a <label> around the file input, dressed as the ghost button. */
+.wf-relabel { position: relative; display: inline-flex; align-items: center; min-block-size: var(--hit); cursor: pointer; }
+.wf-relabel:focus-within { color: var(--color-ink); border-block-end-color: var(--color-ink); }
+.wf-up-s { flex-basis: 100%; }
+.wf-up-s .wf-drop-p { margin-block-start: 0; }
+
+/* ---- what came back ---- */
+.wf-sec-h { display: block; margin: 0 0 .75rem; font-family: var(--font-display); font-size: .6875rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-ink-muted); }
+.wf-notes { margin-block-start: 1.75rem; }
+/* Phone: page and date on one line, the note under them. */
+.wf-note { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'p d' 't t'; gap: .25rem 1rem; align-items: baseline; padding-block: .75rem; }
+.wf-note::after { content: ''; position: absolute; inset-inline: 0 3rem; inset-block-end: 0; block-size: 1px; background: var(--color-line); }
+.wf-note:last-child::after { content: none; }
+.wf-note-p { grid-area: p; font-family: var(--font-display); font-size: .75rem; font-weight: 600; color: var(--color-ink-muted); }
+.wf-note-t { grid-area: t; margin: 0; font-size: .875rem; line-height: 1.5; overflow-wrap: anywhere; }
+.wf-note-d { grid-area: d; font-size: .6875rem; color: var(--color-ink-muted); white-space: nowrap; }
+
+/* ---- deciding ---- */
+.wf-acts { display: flex; flex-wrap: wrap; align-items: center; gap: .625rem 1.25rem; margin-block-start: 1.5rem; }
+.wf-note-l { margin: .625rem 0 0; max-inline-size: 68ch; font-size: .75rem; line-height: 1.5; color: var(--color-ink-muted); }
+.wf-note-l a { color: var(--color-ink); }
+.wf-vbox { max-inline-size: 46rem; margin-block-start: 1.5rem; padding: 1rem; background: var(--color-accent-tint); }
+.wf-vbox .wf-acts { margin-block-start: .875rem; }
+.wf-vrow { margin-block-end: .625rem; }
+.wf-sel { min-inline-size: min(14rem, 100%); min-block-size: var(--hit); padding: .5rem .625rem; border: 1px solid var(--color-field-line); background: #fff; color: var(--color-ink); font: .8125rem var(--font-body); }
+.wf-sel:focus-visible { outline: none; border-color: var(--color-dark-fill); }
+
+/* ---- superseded rounds ----
+   Closed by default: history answers a question you already have.
+   Phone: round, tag and toggle first, dates and note count under them. */
+.wf-hist { position: relative; margin-block-start: 2.5rem; padding-block-start: 1.25rem; }
+.wf-hist::before { content: ''; position: absolute; inset-inline: 0 3rem; inset-block-start: 0; block-size: 1px; background: var(--color-line); }
+.wf-old { position: relative; }
+.wf-old::after { content: ''; position: absolute; inset-inline: 0 3rem; inset-block-end: 0; block-size: 1px; background: var(--color-line); }
+.wf-old:last-child::after { content: none; }
+.wf-old-h { display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto; grid-template-areas: 'v tag . x' 'd d d c'; align-items: center; justify-items: start; gap: .25rem 1rem; inline-size: 100%; min-block-size: var(--hit); padding-block: .875rem; border: 0; background: none; color: var(--color-ink); font: .8125rem var(--font-body); text-align: start; cursor: pointer; }
+.wf-old-h:hover .wf-old-v { color: var(--color-accent-ink); }
+.wf-old-v { grid-area: v; font-family: var(--font-display); font-weight: 600; white-space: nowrap; }
+.wf-old-h > .wf-tag { grid-area: tag; }
+.wf-old-d { grid-area: d; }
+.wf-old-c { grid-area: c; }
+.wf-old-d, .wf-old-c { font-size: .75rem; color: var(--color-ink-muted); white-space: nowrap; }
+.wf-old-x { grid-area: x; justify-self: end; font-family: var(--font-display); font-size: .875rem; font-weight: 600; color: var(--color-ink-muted); }
+.wf-old-b { padding-block-end: 1.5rem; }
+.wf-old-b .wf-frames { margin-block-start: .75rem; }
+
+@media (min-width: 48rem) {
+    .wf-frames { grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); }
+    .wf-note { grid-template-columns: 9rem minmax(0, 1fr) auto; grid-template-areas: 'p t d'; gap: 0 1rem; }
+    .wf-old-h { display: flex; gap: 1rem; }
+    .wf-old-x { margin-inline-start: auto; }
+}
