@@ -30,8 +30,9 @@ const PROJECT = {
 };
 
 const NO_BRIEF = { projectId: ID, state: 'none', mine: false, seed: null, sentAt: null, submittedAt: null, decidedAt: null, reason: null, revision: 0, reading: null, areas: [] };
-const serve = async (page: Page, body: unknown, status = 200, brief: unknown = NO_BRIEF) => {
+const serve = async (page: Page, body: unknown, status = 200, brief: unknown = NO_BRIEF, milestones: unknown[] = []) => {
     await page.route(`${API}/brief`, (r) => r.fulfill({ json: brief }));
+    await page.route(`${API}/milestones`, (r) => r.fulfill({ json: milestones }));
     await page.route(API, (r) => r.fulfill({ status, json: body }));
 };
 
@@ -64,7 +65,7 @@ test('overview: the header names it, the record holds it whole', async ({ page }
     await expect(mods.locator('.chip:not(.on)')).toHaveText('payments');
 
     // A real client: the money way out, the card with address and language, the link block.
-    await expect(page.getByRole('link', { name: 'Issue the first invoice' })).toHaveAttribute('href', `/app/invoices/new?project=${ID}`);
+    await expect(page.getByRole('link', { name: 'Issue the first invoice' })).toHaveAttribute('href', `/app/finance/invoices/new?project=${ID}`);
     const card = page.getByRole('region', { name: 'Client' });
     await expect(card.getByRole('link', { name: 'omar@example.ma' })).toHaveAttribute('href', 'mailto:omar@example.ma');
     await expect(card).toContainText('Writes in French');
@@ -78,6 +79,18 @@ test("the spine's Brief track reads the brief's own state", async ({ page }) => 
     const track = page.locator('.po-track--brief');
     await expect(track).toContainText('Submitted');
     await expect(track).toContainText('waiting on your review');
+});
+
+test('the header and the spine name the next milestone from the plan', async ({ page }) => {
+    const ms = [
+        { id: 'm1', projectId: ID, name: 'Mockups', due: '2026-10-01', done: true, order: 0 },
+        { id: 'm2', projectId: ID, name: 'Build', due: null, done: false, order: 1 },
+    ];
+    await serve(page, PROJECT, 200, NO_BRIEF, ms);
+    await page.goto(`/app/projects/${ID}`);
+    await expect(page.locator('.po-track--next')).toContainText('Build');
+    await expect(page.locator('.po-track--next')).toContainText('not dated');
+    await expect(page.locator('.b-rec-head .stat', { hasText: 'Next milestone' })).toContainText('Not dated');
 });
 
 test('a tab is an address: it can be opened, reloaded and walked', async ({ page }) => {

@@ -49,6 +49,7 @@ async function api(page: Page, p: Record<string, unknown>, start: Record<string,
         const req = r.request();
         const path = new URL(req.url()).pathname.replace(`/projects/${ID}`, '');
         if (path === '') return r.fulfill({ json: p });
+        if (path === '/milestones') return r.fulfill({ json: [] });
         if (req.method() === 'GET') return r.fulfill({ json: brief });
         const body = req.postDataJSON();
         seen.push({ method: req.method(), path, body });

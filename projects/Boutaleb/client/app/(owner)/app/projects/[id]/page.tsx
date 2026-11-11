@@ -6,6 +6,7 @@ import '@/styles/list.css';
 import '@/styles/record.css';
 import '@/styles/project.css';
 import '@/styles/intake.css';
+import '@/styles/plan.css';
 
 export const metadata: Metadata = { title: 'Project' };
 

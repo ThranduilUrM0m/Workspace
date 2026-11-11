@@ -10,8 +10,10 @@ import { Chip, RecMore, RecNone, RecordCols, RecordHead, RecSection, RecStat, Se
 import { AppPage } from '@/components/owner/shell/AppPage';
 import { ago, cash, daysFrom, EMPTY_FACTS, lateMoney, nextMilestone, recordClock, relDue, STATUS, todayIso, type ProjectFacts } from '@/lib/projects/derive';
 import { useBrief } from '@/lib/projects/brief';
+import { useMilestones } from '@/lib/projects/milestones';
 import { useProject } from '@/lib/projects/queries';
 import { IntakeTab } from './IntakeTab';
+import { PlanTab } from './PlanTab';
 import { TABS, type TabKey } from '@/lib/projects/tabs';
 
 // One project, held whole (wireframes/project.html, shell/project.js, spec
@@ -26,7 +28,6 @@ import { TABS, type TabKey } from '@/lib/projects/tabs';
 // Facts owned by modules not built yet (log, milestones, money, tickets)
 // arrive as EMPTY_FACTS, and every block says what is honestly known.
 
-const factsFor = (_p: ProjectView): ProjectFacts => EMPTY_FACTS;
 const LANG: Record<Language, string> = { fr: 'French', ar: 'Arabic', en: 'English' };
 
 export function ProjectRecord({ id, tab }: { id: string; tab: TabKey }) {
@@ -42,7 +43,9 @@ export function ProjectRecord({ id, tab }: { id: string; tab: TabKey }) {
 
 function Ready({ p, tab }: { p: ProjectView; tab: TabKey }) {
     const today = todayIso();
-    const f = factsFor(p);
+    // Milestones are real now (T7.5c); the log, money and tickets arrive with their modules.
+    const milestones = useMilestones(p.id).data;
+    const f: ProjectFacts = { ...EMPTY_FACTS, milestones: milestones ?? [] };
     const entering = useEntrance();
     return (
         <div className={entering ? 'po-enter' : undefined}>
@@ -50,9 +53,7 @@ function Ready({ p, tab }: { p: ProjectView; tab: TabKey }) {
             <TabNav tabs={TABS} active={tab} href={(k) => (k === 'overview' ? `/app/projects/${p.id}` : `/app/projects/${p.id}?tab=${k}`)} label="Project sections" />
             {tab === 'overview' && <Overview p={p} f={f} today={today} />}
             {tab === 'intake' && <IntakeTab p={p} />}
-            {tab === 'plan' && (
-                <TabEmpty title="No plan yet">Milestones get set once the brief is approved. Each one becomes a phase of work, in order.</TabEmpty>
-            )}
+            {tab === 'plan' && <PlanTab p={p} />}
             {tab === 'wireframes' && (
                 <TabEmpty title="No rounds sent yet">Each round sent to the client is kept here as it was sent, with what came back. Rounds start once the plan is drawn.</TabEmpty>
             )}
@@ -215,7 +216,7 @@ function MoneyBlock({ p, f, today }: { p: ProjectView; f: ProjectFacts; today: s
     const note = 'How the outstanding number is made';
     // No counterparty, no invoice form: an action that cannot complete is worse than none.
     const billable = !!p.client && !p.internal;
-    const issue = `/app/invoices/new?project=${p.id}`;
+    const issue = `/app/finance/invoices/new?project=${p.id}`;
     const m = f.money;
     if (!m || !m.invoiced) {
         return (
@@ -256,7 +257,7 @@ function MoneyBlock({ p, f, today }: { p: ProjectView; f: ProjectFacts; today: s
             )}
             <div className="po-ways">
                 {billable && <RecMore href={issue}>Issue an invoice</RecMore>}
-                <RecMore href="/app/invoices">Open in Finance</RecMore>
+                <RecMore href="/app/finance/invoices">Open in Finance</RecMore>
             </div>
         </RecSection>
     );

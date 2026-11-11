@@ -1,0 +1,75 @@
+/* The Plan tab (wireframes/shell/project-plan.css). An ordered list of
+   phases with their controls on the row, the edit row in place of the
+   phase, and the two borrowed money numbers under it. Weights >= 600 set
+   the display face: Questrial has one weight. */
+
+.pp-wrap { display: flex; flex-direction: column; max-inline-size: 74rem; padding-block: .5rem 3rem; }
+
+.pp-empty { max-inline-size: 58ch; padding-block-start: 1rem; }
+.pp-empty h2 { margin: 0 0 .625rem; font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; }
+.pp-empty p { margin: 0 0 1rem; font-size: .9375rem; line-height: 1.55; color: var(--color-ink-muted); }
+.pp-none { font-size: .75rem; color: var(--color-ink-muted); }
+.pp-more { align-self: flex-start; padding-block-end: 2px; border-block-end: 1px solid var(--color-line); font-family: var(--font-display); font-size: .75rem; font-weight: 600; color: var(--color-ink); text-decoration: none; }
+.pp-more:hover { color: var(--color-accent-ink); border-block-end-color: var(--color-accent); }
+.pp-fail { margin: .5rem 0 0; font-size: .75rem; color: var(--color-bad-ink); }
+
+/* ---- head: how many, how many open ---- */
+.pp-head { position: relative; display: flex; flex-wrap: wrap; gap: .375rem 1.5rem; padding-block-end: 1rem; }
+.pp-head::after { content: ''; position: absolute; inset-inline: 0 3rem; inset-block-end: 0; block-size: 1px; background: var(--color-line); }
+.pp-head-l { font-family: var(--font-display); font-size: .75rem; font-weight: 600; letter-spacing: .02em; color: var(--color-ink-muted); }
+.pp-warn { color: var(--color-warn-ink); }
+
+/* ---- the phases ----
+   Phone: order and body on one line, the controls under them. From 48rem
+   the controls move to the end of the row. Inset dividers between rows. */
+.pp-list { margin: .25rem 0 0; padding: 0; list-style: none; }
+.pp-ph { position: relative; display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); grid-template-areas: 'ord body' '. acts'; gap: .5rem .75rem; align-items: start; padding-block: 1rem; }
+.pp-ph + .pp-ph::before { content: ''; position: absolute; inset-block-start: 0; inset-inline: 2.25rem 1rem; block-size: 1px; background: var(--color-line); }
+.pp-ord { grid-area: ord; padding-block-start: .125rem; font-family: var(--font-display); font-size: .8125rem; font-weight: 600; color: var(--color-ink-muted); font-variant-numeric: tabular-nums; }
+.pp-ph-b { grid-area: body; min-inline-size: 0; }
+.pp-ph-a { grid-area: acts; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem; }
+@media (min-width: 48rem) {
+  .pp-ph { grid-template-columns: 1.5rem minmax(0, 1fr) auto; grid-template-areas: 'ord body acts'; }
+}
+.pp-ph.is-done .pp-ph-name, .pp-ph.is-done .pp-ord { color: var(--color-ink-muted); }
+.pp-ph-top { display: flex; flex-wrap: wrap; align-items: baseline; gap: .375rem .75rem; }
+.pp-ph-name { font-family: var(--font-display); font-size: .9375rem; font-weight: 600; }
+.pp-ph-top .due { margin-inline-start: 0; }
+.pp-done-tag { padding: .0625rem .4375rem; background: var(--color-good-tint); color: var(--color-good-ink); font-family: var(--font-display); font-size: .625rem; font-weight: 600; }
+.pp-ph-t { display: block; margin-block-start: .375rem; }
+
+/* Small square controls; 44px on the phone, compact once a pointer is likely. */
+.pp-mini { min-inline-size: var(--hit); min-block-size: var(--hit); padding: .25rem .4375rem; border: 1px solid var(--color-line); background: none; color: var(--color-ink-muted); font: 600 .6875rem var(--font-display); cursor: pointer; transition: color .18s, border-color .18s; }
+.pp-mini--w { padding-inline: .625rem; }
+.pp-mini:hover:not(:disabled) { border-color: var(--color-dark-fill); color: var(--color-ink); }
+.pp-mini:disabled { opacity: .35; cursor: default; }
+@media (min-width: 48rem) { .pp-mini { min-inline-size: 0; min-block-size: 1.75rem; } }
+
+/* ---- the edit row, in place of the phase ---- */
+.pp-ph--edit { padding: 1.125rem 1rem; background: var(--color-accent-tint); }
+.pp-ph--edit::before { content: none !important; }
+.pp-edit { display: flex; flex-wrap: wrap; gap: 1rem; }
+.pp-lbl { display: block; font-family: var(--font-display); font-size: .6875rem; font-weight: 600; letter-spacing: .02em; color: var(--color-ink-muted); }
+.pp-edit .pp-lbl { flex: 1 1 14rem; min-inline-size: 0; max-inline-size: 22rem; }
+.pp-edit .pp-lbl:has(.pp-in--date) { flex: 0 1 11rem; }
+.pp-in { display: block; inline-size: 100%; min-block-size: var(--hit); margin-block-start: .25rem; padding: .5rem .625rem; border: 1px solid var(--color-field-line); background: #fff; color: var(--color-ink); font: .875rem var(--font-body); }
+.pp-in:focus-visible { outline: none; border-color: var(--color-dark-fill); }
+.pp-hint { margin: .75rem 0 0; max-inline-size: 62ch; font-size: .75rem; line-height: 1.5; color: var(--color-ink-muted); }
+.pp-ph-a--edit { align-items: center; gap: .875rem; }
+.pp-ph-a--edit .btn-solid { min-block-size: var(--hit); }
+@media (min-width: 48rem) { .pp-ph-a--edit .btn-solid { min-block-size: 0; } }
+.pp-ghost { position: relative; padding: 0; border: 0; border-block-end: 1px solid var(--color-line); background: none; color: var(--color-ink-muted); font: .8125rem var(--font-body); cursor: pointer; }
+.pp-ghost::before { content: ''; position: absolute; inset: -.75rem -.375rem; }
+@media (min-width: 48rem) { .pp-ghost::before { content: none; } }
+.pp-ghost:hover { color: var(--color-ink); border-block-end-color: var(--color-dark-fill); }
+.pp-ghost--bad:hover { color: var(--color-bad-ink); border-block-end-color: var(--color-bad); }
+
+/* ---- add ---- */
+.pp-adds { margin-block-start: 1rem; }
+.pp-add { min-block-size: var(--hit); padding: .5rem .875rem; border: 1px dashed var(--color-line); background: none; color: var(--color-ink-muted); font: 600 .8125rem var(--font-display); cursor: pointer; }
+.pp-add:hover { border-color: var(--color-dark-fill); color: var(--color-ink); }
+
+/* ---- commercials: two borrowed numbers, the schedule one click away ---- */
+.pp-money { position: relative; display: flex; flex-direction: column; gap: .5rem; margin-block-start: 2.5rem; padding-block-start: 1.5rem; }
+.pp-money::before { content: ''; position: absolute; inset-block-start: 0; inset-inline: 0 3rem; block-size: 1px; background: var(--color-line); }
+.pp-sec-h { margin: 0; font-family: var(--font-display); font-size: .625rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-ink-muted); }
