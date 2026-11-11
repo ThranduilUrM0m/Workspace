@@ -1,16 +1,15 @@
 import type { Metadata } from 'next';
-import { AppPage } from '@/components/owner/shell/AppPage';
+import '@repo/ui/form.css';
+import '@/styles/record.css';
+import '@/styles/project-new.css';
+import { ProjectNew } from '@/components/owner/projects/ProjectNew';
 import { requireOwnerSession } from '@/lib/owner-auth';
 
 export const metadata: Metadata = { title: 'New project' };
 
-// Holds the address until T7.6 builds the form. Without it, "new" would be
-// read as a project id and answer "This project does not exist".
+// The one place a project is created (T7.6). A static segment, so "new" is
+// never read as a project id.
 export default async function NewProjectPage() {
     await requireOwnerSession();
-    return (
-        <AppPage title="New project" kicker="Not built yet">
-            <p>This screen comes with a later build ticket.</p>
-        </AppPage>
-    );
+    return <ProjectNew />;
 }

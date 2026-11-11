@@ -1,0 +1,22 @@
+/* Create a project (wireframes/shell/project-new.css). The form vocabulary
+   is @repo/ui/form.css; what is left here is what only a project has: the
+   slug line and the name counter. Weights >= 600 set the display face:
+   Questrial has one weight. */
+
+.pn-count { margin: .375rem 0 0; font-size: .75rem; color: var(--color-ink-muted); text-align: end; }
+
+/* The slug: unique, in the URL of every project screen, the board's
+   deep-link key. Visible and editable, never hidden. */
+.pn-slug { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; margin-block-start: .625rem; font-size: .75rem; color: var(--color-ink-muted); }
+.pn-slug-val { font-family: var(--font-display); font-weight: 600; color: var(--color-ink); word-break: break-all; }
+.pn-slug-val[data-empty] { font-family: var(--font-body); font-weight: 400; color: var(--color-ink-muted); }
+.pn-slug-warn { color: var(--color-bad-ink); }
+.pn-slug .fm-link { font-size: .75rem; }
+
+/* 1rem on a touch screen so iOS does not zoom into it. */
+.pn-slug-in { inline-size: min(14rem, 100%); padding: .1875rem .375rem; border: 1px solid var(--color-field-line); background: #fff; font: 1rem var(--font-body); color: var(--color-ink); outline: none; }
+.pn-slug-in:focus { border-color: var(--color-dark-fill); }
+@media (pointer: fine) { .pn-slug-in { font-size: .75rem; } }
+
+.pn-note-f { margin-block-start: 1.125rem; }
+.pn-new { color: var(--color-ink-muted); }

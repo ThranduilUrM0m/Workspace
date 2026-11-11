@@ -145,5 +145,5 @@ test('an address that leads nowhere names the way back', async ({ page }) => {
 
 test('New project is its own address, not a project id', async ({ page }) => {
     await page.goto('/app/projects/new');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('New project');
+    await expect(page.getByRole('heading', { level: 2, name: 'New project' })).toBeVisible();
 });

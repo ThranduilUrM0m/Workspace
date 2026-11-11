@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { clientCreate, type ClientCreate } from '@repo/schemas';
 import type { Model } from 'mongoose';
@@ -44,6 +44,10 @@ export class ClientsController {
     @Post()
     @Requires('edit', 'clients')
     async create(@Body(new ZodPipe(clientCreate)) body: ClientCreate, @Req() req: AccessRequest) {
+        // One client per address: a second record for the same person splits
+        // their history in two. The form offers the existing one instead.
+        const clash = await this.clients.findOne({ email: body.email }).lean<Client>();
+        if (clash) throw new ConflictException({ error: 'invalid', fields: { email: 'taken' }, client: pick(clash) });
         const c = await this.clients.create({ ...body, company: body.company || body.name, status: 'lead' });
         const out = pick(c.toObject() as Client);
         await this.activity.record({

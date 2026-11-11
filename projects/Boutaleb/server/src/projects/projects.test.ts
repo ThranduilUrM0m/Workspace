@@ -33,6 +33,14 @@ describe('clients, as far as Projects needs them', () => {
         expect(found.body.map((x: { id: string }) => x.id)).toContain(c.id);
     });
 
+    it('refuses a second client with the same email, and names the one that has it', async () => {
+        const first = await newClient('Leila Bennani', 'Atelier Leila');
+        const res = await api().post('/clients').set('Authorization', await owner()).send({ name: 'Leila B', email: 'LEILA@example.ma', language: 'fr' });
+        expect(res.status).toBe(409);
+        expect(res.body.fields).toEqual({ email: 'taken' });
+        expect(res.body.client.id).toBe(first.id);
+    });
+
     it('company defaults to the name', async () => {
         const res = await api().post('/clients').set('Authorization', await owner()).send({ name: 'Atlas Spa', email: 'contact@atlas.ma', language: 'en' });
         expect(res.body.company).toBe('Atlas Spa');

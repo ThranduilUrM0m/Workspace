@@ -147,3 +147,29 @@ export const clientCreate = z.object({
     website: text(200).optional(),
 });
 export type ClientCreate = z.infer<typeof clientCreate>;
+
+/** A client as the pickers see it (GET /clients). */
+export interface ClientPick {
+    id: string;
+    name: string;
+    company: string;
+    email: string;
+    status: string;
+    language: Language;
+    self: boolean;
+}
+
+/**
+ * The New project form's typed fields. Whose project it is (a picked
+ * client, a new one, or nobody) and the language chips live beside it, so
+ * this only carries text; the requirement line and the server's
+ * projectCreate / clientCreate are what judge it.
+ */
+export const projectNewForm = z.object({
+    name: z.string(),
+    note: z.string(),
+    clientName: z.string(),
+    clientEmail: z.string(),
+    clientCompany: z.string(),
+});
+export type ProjectNewForm = z.infer<typeof projectNewForm>;
