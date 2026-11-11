@@ -18,8 +18,11 @@ export default defineConfig({
             dependencies: ['signed-in setup'],
         },
     ],
+    // The production server, never `next dev`: dev compiles every route on
+    // first hit and does not fit in 8 GB next to Chromium. Run `next build`
+    // first; the tests then hit what ships.
     webServer: {
-        command: 'corepack pnpm dev',
+        command: 'corepack pnpm start',
         url: 'http://localhost:3002/en/privacy',
         reuseExistingServer: true,
         timeout: 180_000,
