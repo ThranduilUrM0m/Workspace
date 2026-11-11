@@ -29,7 +29,11 @@ const PROJECT = {
     updatedAt: '2026-10-01T09:00:00.000Z',
 };
 
-const serve = (page: Page, body: unknown, status = 200) => page.route(API, (r) => r.fulfill({ status, json: body }));
+const NO_BRIEF = { projectId: ID, state: 'none', mine: false, seed: null, sentAt: null, submittedAt: null, decidedAt: null, reason: null, revision: 0, reading: null, areas: [] };
+const serve = async (page: Page, body: unknown, status = 200, brief: unknown = NO_BRIEF) => {
+    await page.route(`${API}/brief`, (r) => r.fulfill({ json: brief }));
+    await page.route(API, (r) => r.fulfill({ status, json: body }));
+};
 
 test('overview: the header names it, the record holds it whole', async ({ page }) => {
     await serve(page, PROJECT);
@@ -68,6 +72,14 @@ test('overview: the header names it, the record holds it whole', async ({ page }
     await expect(page.getByRole('region', { name: 'Activity' })).toContainText('Nothing logged yet.');
 });
 
+test("the spine's Brief track reads the brief's own state", async ({ page }) => {
+    await serve(page, PROJECT, 200, { ...NO_BRIEF, state: 'submitted', revision: 1 });
+    await page.goto(`/app/projects/${ID}`);
+    const track = page.locator('.po-track--brief');
+    await expect(track).toContainText('Submitted');
+    await expect(track).toContainText('waiting on your review');
+});
+
 test('a tab is an address: it can be opened, reloaded and walked', async ({ page }) => {
     await serve(page, PROJECT);
     await page.goto(`/app/projects/${ID}?tab=plan`);
@@ -77,7 +89,7 @@ test('a tab is an address: it can be opened, reloaded and walked', async ({ page
 
     await tabs.getByRole('link', { name: 'Intake' }).click();
     await expect(page).toHaveURL(new RegExp(`/app/projects/${ID}\\?tab=intake$`));
-    await expect(page.getByRole('heading', { name: 'Nothing collected yet' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Nothing sent yet.' })).toBeVisible();
 
     await tabs.getByRole('link', { name: 'Overview' }).click();
     await expect(page).toHaveURL(new RegExp(`/app/projects/${ID}$`));

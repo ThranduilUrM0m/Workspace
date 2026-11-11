@@ -21,7 +21,7 @@ import { atTime, Loading, OFFLINE, Skel } from './states';
 
 export interface QueryGateProps<T> {
     query: UseQueryResult<T>;
-    kind: 'list' | 'rec';
+    kind: 'list' | 'rec' | 'tab';
     /** The data, named in the copy: "projects". */
     what: string;
     /** One of them, for Not found: "project". */
@@ -276,7 +276,22 @@ function RecSkeleton({ tabs = [] }: { tabs?: string[] }) {
     );
 }
 
+/** A tab's body inside a record that already loaded: a heading bar and a few lines. */
+function TabSkeleton() {
+    return (
+        <section className="b-skel-sec" aria-hidden="true">
+            <Skel w="14rem" h="1rem" />
+            {[72, 58, 66, 44].map((w) => (
+                <span className="b-skel-line" key={w}>
+                    <Skel w={`${w}%`} h=".75rem" />
+                </span>
+            ))}
+        </section>
+    );
+}
+
 const SKELETONS: Record<QueryGateProps<unknown>['kind'], (o: { action?: ReactNode; tabs?: string[] }) => ReactNode> = {
     list: ListSkeleton,
     rec: RecSkeleton,
+    tab: TabSkeleton,
 };

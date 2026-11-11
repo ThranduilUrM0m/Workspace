@@ -5,6 +5,7 @@ import { requireOwnerSession } from '@/lib/owner-auth';
 import '@/styles/list.css';
 import '@/styles/record.css';
 import '@/styles/project.css';
+import '@/styles/intake.css';
 
 export const metadata: Metadata = { title: 'Project' };
 

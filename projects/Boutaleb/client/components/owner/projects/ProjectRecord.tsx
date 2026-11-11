@@ -1,6 +1,6 @@
 'use client';
 
-import type { AssetOwnership, Language, ProjectView } from '@repo/schemas';
+import type { AssetOwnership, BriefState, Language, ProjectView } from '@repo/schemas';
 import { MODULES } from '@repo/schemas';
 import Link from 'next/link';
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
@@ -9,7 +9,9 @@ import { Feed, FeedActivity, FeedNone, RailSection } from '@/components/owner/li
 import { Chip, RecMore, RecNone, RecordCols, RecordHead, RecSection, RecStat, Sep, TabNav, Tag } from '@/components/owner/record/Record';
 import { AppPage } from '@/components/owner/shell/AppPage';
 import { ago, cash, daysFrom, EMPTY_FACTS, lateMoney, nextMilestone, recordClock, relDue, STATUS, todayIso, type ProjectFacts } from '@/lib/projects/derive';
+import { useBrief } from '@/lib/projects/brief';
 import { useProject } from '@/lib/projects/queries';
+import { IntakeTab } from './IntakeTab';
 import { TABS, type TabKey } from '@/lib/projects/tabs';
 
 // One project, held whole (wireframes/project.html, shell/project.js, spec
@@ -47,11 +49,7 @@ function Ready({ p, tab }: { p: ProjectView; tab: TabKey }) {
             <Head p={p} f={f} today={today} />
             <TabNav tabs={TABS} active={tab} href={(k) => (k === 'overview' ? `/app/projects/${p.id}` : `/app/projects/${p.id}?tab=${k}`)} label="Project sections" />
             {tab === 'overview' && <Overview p={p} f={f} today={today} />}
-            {tab === 'intake' && (
-                <TabEmpty title="Nothing collected yet">
-                    No intake has been sent for this project, and no brief written. Once the client answers, their answers and the brief built from them are reviewed here.
-                </TabEmpty>
-            )}
+            {tab === 'intake' && <IntakeTab p={p} />}
             {tab === 'plan' && (
                 <TabEmpty title="No plan yet">Milestones get set once the brief is approved. Each one becomes a phase of work, in order.</TabEmpty>
             )}
@@ -153,15 +151,26 @@ function Track({ mod, label, value, sub, pct, more, i }: { mod: string; label: s
     );
 }
 
+const BRIEF_WORDS: Record<BriefState, [ReactNode, string]> = {
+    none: [<RecNone key="n">Not started</RecNone>, 'no questions sent yet'],
+    awaiting: ['Sent', 'waiting on the client'],
+    submitted: ['Submitted', 'waiting on your review'],
+    approved: ['Approved', 'the plan can be drawn'],
+    sent_back: ['Sent back', 'you asked for a change'],
+};
+
 /** Define it, build it, what is due next. Each borrowed: Intake, the board, the Plan own them. */
 function Spine({ p, f, today }: { p: ProjectView; f: ProjectFacts; today: string }) {
     const rec = `/app/projects/${p.id}`;
     const t = f.tickets;
     const m = nextMilestone(f);
     const due = m?.due ? relDue(m.due, today) : null;
+    // Borrowed from the Intake tab, which owns it: one word and a way in. No bar,
+    // because one submission has no denominator. Until it loads, it reads as not started.
+    const brief = BRIEF_WORDS[useBrief(p.id).data?.state ?? 'none'];
     return (
         <div className="po-spine">
-            <Track mod="brief" label="Brief" value={<RecNone>Not started</RecNone>} sub="no questions sent yet" more={{ href: `${rec}?tab=intake`, label: 'Open intake' }} i={0} />
+            <Track mod="brief" label="Brief" value={brief[0]} sub={brief[1]} more={{ href: `${rec}?tab=intake`, label: 'Open intake' }} i={0} />
             {t?.total ? (
                 <Track
                     mod="build"
