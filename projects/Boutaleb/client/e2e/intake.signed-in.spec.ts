@@ -87,13 +87,13 @@ test('an idea: nobody to ask, so you write it, then approve it', async ({ page }
     await expect(page.getByText('2 of 11 written')).toBeVisible();
     await save.click();
 
-    expect(seen[0]).toMatchObject({ method: 'PUT', path: '/brief', body: { answers: { 'discovery.what': 'Rooms in a riad, sold to travellers.', 'requirements.day1': 'Take a booking.' } } });
+    await expect.poll(() => seen[0]).toMatchObject({ method: 'PUT', path: '/brief', body: { answers: { 'discovery.what': 'Rooms in a riad, sold to travellers.', 'requirements.day1': 'Take a booking.' } } });
     await expect(page.getByText('Written by you')).toBeVisible();
     // Your own writing has nobody to go back to: no Send it back at all.
     await expect(page.getByRole('button', { name: 'Send it back' })).toHaveCount(0);
     await page.getByRole('button', { name: 'Approve the brief' }).click();
     await expect(page.getByText(/Approved .*The plan can be drawn\./)).toBeVisible();
-    expect(seen[1]).toMatchObject({ method: 'POST', path: '/brief/approve' });
+    await expect.poll(() => seen[1]).toMatchObject({ method: 'POST', path: '/brief/approve' });
 });
 
 test("a client's project: no writing it for them, the questionnaire goes with the link", async ({ page }) => {
@@ -122,7 +122,7 @@ test('a client submission: read, approve over thin areas, or send back with a re
     await expect(send).toBeDisabled();
     await page.getByLabel('Why is this going back?').fill('The budget and the feature list cannot both be true.');
     await send.click();
-    expect(seen.at(-1)).toMatchObject({ path: '/brief/send-back', body: { reason: 'The budget and the feature list cannot both be true.' } });
+    await expect.poll(() => seen.at(-1)).toMatchObject({ path: '/brief/send-back', body: { reason: 'The budget and the feature list cannot both be true.' } });
     await expect(page.getByText('The budget and the feature list cannot both be true.')).toBeVisible();
     await page.getByRole('button', { name: 'Reopen' }).click();
     await expect(page.getByRole('button', { name: 'Approve the brief · 1 area still thin' })).toBeVisible();
@@ -138,7 +138,7 @@ test('a thin area gets your note, never a second question to them', async ({ pag
     await strategy.getByRole('button', { name: 'Fill this gap yourself' }).click();
     await strategy.getByLabel('What you know that they did not say').fill('From the call: twenty bookings a month.');
     await strategy.getByRole('button', { name: 'Save note' }).click();
-    expect(seen.at(-1)).toMatchObject({ method: 'PUT', path: '/brief/areas/strategy/note', body: { note: 'From the call: twenty bookings a month.' } });
+    await expect.poll(() => seen.at(-1)).toMatchObject({ method: 'PUT', path: '/brief/areas/strategy/note', body: { note: 'From the call: twenty bookings a month.' } });
     await expect(strategy.getByText('Your note')).toBeVisible();
     // A note closes the gap: the area is no longer thin, and the approve button stops warning.
     await expect(page.getByRole('button', { name: 'Approve the brief', exact: true })).toBeVisible();

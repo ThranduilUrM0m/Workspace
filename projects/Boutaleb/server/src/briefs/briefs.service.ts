@@ -73,7 +73,7 @@ export class BriefsService {
                     $set: { mine: true, state: 'submitted', submittedAt: new Date(), decidedAt: null, reason: null, reading: null, areas },
                     $inc: { revision: before?.state === 'submitted' ? 0 : 1 },
                 },
-                { upsert: true, new: true },
+                { upsert: true, returnDocument: 'after' },
             )
             .lean<Brief>();
         return this.done(req, 'brief.write', p, before, after);
@@ -108,14 +108,14 @@ export class BriefsService {
         const before = await this.briefs.findOne({ project: projectId }).lean<Brief>();
         if (!before || !before.areas.some((a) => a.key === area)) throw new NotFoundException({ error: 'not_found' });
         const onArea: Record<string, unknown> = { project: projectId, 'areas.key': area };
-        const after = await this.briefs.findOneAndUpdate(onArea, { $set: { 'areas.$.note': body.note || null } }, { new: true }).lean<Brief>();
+        const after = await this.briefs.findOneAndUpdate(onArea, { $set: { 'areas.$.note': body.note || null } }, { returnDocument: 'after' }).lean<Brief>();
         return this.done(req, 'brief.note', p, before, after);
     }
 
     private async move(projectId: string, from: BriefState[], set: Record<string, unknown>) {
         const before = await this.briefs.findOne({ project: projectId }).lean<Brief>();
         // Conditional on the state it was read in: a second click, or a second tab, gets a 409.
-        const after = await this.briefs.findOneAndUpdate({ project: projectId, state: { $in: from } }, { $set: set }, { new: true }).lean<Brief>();
+        const after = await this.briefs.findOneAndUpdate({ project: projectId, state: { $in: from } }, { $set: set }, { returnDocument: 'after' }).lean<Brief>();
         if (!after) throw new ConflictException({ error: 'conflict', reason: 'state', state: before?.state ?? 'none' });
         return { before, after };
     }
