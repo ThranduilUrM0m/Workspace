@@ -6,7 +6,9 @@
 // is written beside the wireframe's NAV.
 //
 // `section` is the role section that gates it (server access/abilities.ts);
-// the shell hides what the caller cannot view once T6.6 reads /me.
+// the shell hides what the caller cannot view, read from /me (visibleNav).
+// An entry without a section is open to every member: the Dashboard, and
+// Settings › Preferences, which is the member's own.
 
 export type Icon = 'grid' | 'bars' | 'folder' | 'people' | 'funnel' | 'ledger' | 'pulse' | 'pencil' | 'globe' | 'gear' | 'exit';
 
@@ -60,18 +62,38 @@ export const NAV: NavItem[] = [
 export const FOOT: NavItem[] = [
     { group: 'System' },
     {
+        // Gated per sub, not as a whole: Preferences belongs to every member.
         label: 'Settings',
         icon: 'gear',
-        section: 'settings',
         sub: [
-            { label: 'Business', href: '/app/settings/business' },
-            { label: 'People', href: '/app/settings/people' },
-            { label: 'Automations', href: '/app/settings/automations' },
+            { label: 'Business', href: '/app/settings/business', section: 'settings' },
+            { label: 'People', href: '/app/settings/people', section: 'settings' },
+            { label: 'Automations', href: '/app/settings/automations', section: 'settings' },
             { label: 'Preferences', href: '/app/settings/preferences' },
-            { label: 'Activity', href: '/app/settings/activity' },
+            { label: 'Activity', href: '/app/settings/activity', section: 'settings' },
         ],
     },
 ];
+
+/**
+ * The nav as this caller may see it. `canView` answers for a section; an
+ * entry without one always shows. A parent goes when it, or every one of
+ * its subs, is out of reach; a group heading goes when nothing is left
+ * under it, because a heading over nothing reads as a broken page.
+ */
+export function visibleNav(items: NavItem[], canView: (section: string) => boolean): NavItem[] {
+    const ok = (section?: string) => !section || canView(section);
+    const kept: NavItem[] = [];
+    for (const item of items) {
+        if ('group' in item) kept.push(item);
+        else if ('sub' in item) {
+            if (!ok(item.section)) continue;
+            const sub = item.sub.filter((s) => ok(s.section));
+            if (sub.length) kept.push({ ...item, sub });
+        } else if (ok(item.section)) kept.push(item);
+    }
+    return kept.filter((item, i) => !('group' in item) || (kept[i + 1] !== undefined && !('group' in kept[i + 1]!)));
+}
 
 /** The link a path belongs to: the longest href that is the path or its parent. */
 export function activeHref(pathname: string, items: NavItem[] = [...NAV, ...FOOT]): string | undefined {

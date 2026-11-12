@@ -15,6 +15,33 @@ test.describe('desktop', () => {
         await expect(page.locator('.profile-block')).toContainText('Hello, Test');
     });
 
+    test('the rail shows only what the role can view, read from /me', async ({ page }) => {
+        // A helper with View on Projects and nothing else: the server's own CASL rules.
+        await page.route('http://localhost:4002/me', (r) =>
+            r.fulfill({
+                json: {
+                    userId: 'user_helper',
+                    sessionId: 'sess_helper',
+                    member: { id: 'm', name: 'Helper', email: 'helper@example.ma' },
+                    role: { id: 'r', name: 'Helper', owner: false },
+                    rules: [{ action: 'view', subject: 'projects' }],
+                },
+            }),
+        );
+        await page.goto('/app');
+        const nav = page.getByRole('navigation', { name: 'App' });
+        await expect(nav.getByRole('link', { name: 'Clients' })).toHaveCount(0);
+        for (const label of ['Dashboard', 'Work', 'Projects']) await expect(nav.getByRole('link', { name: label })).toBeAttached();
+        for (const gone of ['Deals', 'Finance']) await expect(nav.getByRole('button', { name: gone })).toHaveCount(0);
+        for (const gone of ['Analytics', 'Blog', 'Pages']) await expect(nav.getByRole('link', { name: gone })).toHaveCount(0);
+        await expect(nav.getByText('Business', { exact: true })).toHaveCount(0);
+        // Settings stays, holding only the member's own Preferences.
+        await page.locator('.sidebar').hover();
+        await nav.getByRole('button', { name: 'Settings' }).click();
+        await expect(nav.getByRole('link', { name: 'Preferences' })).toBeAttached();
+        await expect(nav.getByRole('link', { name: 'People' })).toHaveCount(0);
+    });
+
     test('a record page keeps its section marked and opens its group', async ({ page }) => {
         await page.goto('/app/finance/invoices/FAC-2026-0001');
         const nav = page.getByRole('navigation', { name: 'App' });

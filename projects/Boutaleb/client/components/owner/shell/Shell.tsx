@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Mark, NavIcon } from './icons';
-import { activeHref, FOOT, initials, NAV, type NavItem } from './nav';
+import { useAbility } from '@/lib/me';
+import { activeHref, FOOT, initials, NAV, visibleNav, type NavItem } from './nav';
 
 // C24, the ERP shell (wireframes/shell/shell.js). The sidebar and the phone
 // menu live here, once, in /app's layout; each page draws its own topbar
@@ -111,6 +112,13 @@ function Sidebar({ ref, pathname }: { ref: React.Ref<HTMLElement>; pathname: str
     const { user, setMenu } = useShell();
     const { signOut } = useClerk();
     const active = activeHref(pathname);
+    // Until /me answers (or if it fails) the whole nav shows: the owner, the
+    // usual caller, sees no entries pop in, and a refused section still says
+    // "No access" when opened, because the API checks every request.
+    const ability = useAbility();
+    const canView = (section: string) => !ability || ability.can('view', section);
+    const nav = visibleNav(NAV, canView);
+    const foot = visibleNav(FOOT, canView);
 
     return (
         <nav className="sidebar" id="sidebar" aria-label="App" ref={ref}>
@@ -128,13 +136,13 @@ function Sidebar({ ref, pathname }: { ref: React.Ref<HTMLElement>; pathname: str
                     </button>
                 </div>
                 <ul className="side-links">
-                    {NAV.map((item, i) => (
-                        <NavEntry key={i} item={item} active={active} />
+                    {nav.map((item) => (
+                        <NavEntry key={'group' in item ? `g:${item.group}` : item.label} item={item} active={active} />
                     ))}
                 </ul>
                 <ul className="side-links bottom-links">
-                    {FOOT.map((item, i) => (
-                        <NavEntry key={i} item={item} active={active} />
+                    {foot.map((item) => (
+                        <NavEntry key={'group' in item ? `g:${item.group}` : item.label} item={item} active={active} />
                     ))}
                     <li>
                         <button type="button" onClick={() => signOut({ redirectUrl: '/login' })}>
