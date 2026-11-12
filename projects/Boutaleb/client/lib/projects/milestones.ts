@@ -6,6 +6,13 @@ import { useApi } from '@/lib/api';
 import { projectKeys } from './queries';
 
 export const milestonesKey = (projectId: string) => [...projectKeys.one(projectId), 'milestones'] as const;
+export const openMilestonesKey = [...projectKeys.all, 'milestones', 'open'] as const;
+
+/** Every open phase of every live project, in one call: the Projects list's rows and rail. */
+export function useOpenMilestones() {
+    const api = useApi();
+    return useQuery({ queryKey: openMilestonesKey, queryFn: () => api<MilestoneView[]>('/milestones/open') });
+}
 
 /** The plan's phases, in the owner's order. */
 export function useMilestones(projectId: string) {
@@ -40,6 +47,9 @@ export function useMilestoneAct(projectId: string) {
                     return api<MilestoneView[]>(`${base}/${a.id}`, { method: 'DELETE' });
             }
         },
-        onSuccess: (rows) => qc.setQueryData(milestonesKey(projectId), rows),
+        onSuccess: (rows) => {
+            qc.setQueryData(milestonesKey(projectId), rows);
+            void qc.invalidateQueries({ queryKey: openMilestonesKey });
+        },
     });
 }

@@ -38,6 +38,18 @@ export class MilestonesService {
         return (await this.rows(projectId)).map(view);
     }
 
+    /**
+     * Every open phase of every live project, in one round trip, for the
+     * Projects list: its rows name each project's next milestone and its
+     * rail lists the next 14 days, so it needs all open phases, not one
+     * per project. Archived projects are left out; done phases never count.
+     */
+    async open(): Promise<MilestoneView[]> {
+        const live = await this.projects.distinct('_id', { archivedAt: null });
+        const rows = await this.milestones.find({ project: { $in: live }, done: false }).sort({ project: 1, order: 1 }).lean<Milestone[]>();
+        return rows.map(view);
+    }
+
     async create(projectId: string, body: MilestoneCreate, req: AccessRequest): Promise<MilestoneView[]> {
         const p = await this.project(projectId);
         const rows = await this.rows(projectId);
@@ -53,7 +65,7 @@ export class MilestonesService {
     async update(projectId: string, id: string, patch: MilestoneUpdate, req: AccessRequest): Promise<MilestoneView[]> {
         const p = await this.project(projectId);
         const before = await this.one(projectId, id);
-        const after = await this.milestones.findByIdAndUpdate(id, { $set: patch }, { new: true }).lean<Milestone>();
+        const after = await this.milestones.findByIdAndUpdate(id, { $set: patch }, { returnDocument: 'after' }).lean<Milestone>();
         await this.log(req, patch.done === undefined ? 'milestone.update' : patch.done ? 'milestone.done' : 'milestone.reopen', p, view(before), after && view(after));
         return this.list(projectId);
     }

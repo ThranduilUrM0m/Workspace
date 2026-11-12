@@ -5,7 +5,7 @@ import { BriefsController } from '../briefs/briefs.controller.js';
 import { BriefsService } from '../briefs/briefs.service.js';
 import { CLIENT, ClientSchema } from '../clients/client.schema.js';
 import { MILESTONE, MilestoneSchema } from '../milestones/milestone.schema.js';
-import { MilestonesController } from '../milestones/milestones.controller.js';
+import { MilestonesController, OpenMilestonesController } from '../milestones/milestones.controller.js';
 import { MilestonesService } from '../milestones/milestones.service.js';
 import { ClientsController } from '../clients/clients.controller.js';
 import { PROJECT, ProjectSchema } from './project.schema.js';
@@ -23,7 +23,7 @@ import { ProjectsService } from './projects.service.js';
             { name: MILESTONE, schema: MilestoneSchema },
         ]),
     ],
-    controllers: [ProjectsController, BriefsController, MilestonesController, ClientsController],
+    controllers: [ProjectsController, BriefsController, MilestonesController, OpenMilestonesController, ClientsController],
     providers: [ProjectsService, BriefsService, MilestonesService],
 })
 export class ProjectsModule {}

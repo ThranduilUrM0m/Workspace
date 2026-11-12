@@ -113,3 +113,26 @@ describe('the plan', () => {
         expect(res.status).toBe(403);
     });
 });
+
+describe('GET /milestones/open', () => {
+    it('answers every open phase of live projects in one call: done phases and archived projects left out', async () => {
+        const auth = await owner();
+        const a = await project();
+        const b = await project();
+        const [first] = (await api().post(`/projects/${a}/milestones`).set('Authorization', auth).send({ name: 'A done' })).body;
+        await api().post(`/projects/${a}/milestones`).set('Authorization', auth).send({ name: 'A open', due: '2026-12-01' });
+        await api().patch(`/projects/${a}/milestones/${first.id}`).set('Authorization', auth).send({ done: true });
+        await api().post(`/projects/${b}/milestones`).set('Authorization', auth).send({ name: 'B archived' });
+        await api().post(`/projects/${b}/archive`).set('Authorization', auth);
+
+        const res = await api().get('/milestones/open').set('Authorization', await as('user_viewer'));
+        expect(res.status).toBe(200);
+        const mine = res.body.filter((m: { projectId: string }) => m.projectId === a || m.projectId === b);
+        expect(mine).toMatchObject([{ projectId: a, name: 'A open', due: '2026-12-01', done: false }]);
+    });
+
+    it('needs View on Projects', async () => {
+        await addMember(t, 'user_nobody', { name: 'Nobody', levels: {} as never });
+        expect((await api().get('/milestones/open').set('Authorization', await as('user_nobody'))).status).toBe(403);
+    });
+});

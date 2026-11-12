@@ -1,12 +1,13 @@
 'use client';
 
-import type { ProjectView } from '@repo/schemas';
+import type { MilestoneView, ProjectView } from '@repo/schemas';
 import Link from 'next/link';
 import { useMemo, useState, type CSSProperties } from 'react';
 import { QueryGate } from '@/components/owner/data/QueryGate';
 import { Feed, FeedEvent, FeedNone, ListCols, ListEmpty, ListEnter, ListGroup, ListNoMatch, ListRow, ListStrip, Rail, RailSection, RowAction, Stat } from '@/components/owner/list/List';
 import { AppPage } from '@/components/owner/shell/AppPage';
 import { action, cash, clock, daysFrom, EMPTY_FACTS, group, matches, pipeline, position, STATUS, todayIso, type Clock, type Row } from '@/lib/projects/derive';
+import { useOpenMilestones } from '@/lib/projects/milestones';
 import { useProjects } from '@/lib/projects/queries';
 
 // Projects, the command centre (wireframes/projects.html, shell/projects.js,
@@ -15,17 +16,29 @@ import { useProjects } from '@/lib/projects/queries';
 // meaningful, so there is no sort control. Completed is a folded fourth
 // group, not an archive page.
 //
-// The project's own record arrives from the API. The facts that make a row
-// urgent (contact log, milestones, money, tickets) belong to modules not
-// built yet, so every row carries EMPTY_FACTS and the cells say what is
-// honestly known. When those land, only `factsFor` changes.
+// The project's own record arrives from the API, and every open milestone
+// of every live project arrives in ONE second call (/milestones/open), not
+// one plan request per row. The other facts that make a row urgent
+// (contact log, money, tickets) belong to modules not built yet, so they
+// stay EMPTY_FACTS and the cells say what is honestly known. When those
+// land, only `factsFor` changes.
 
 const NEW = '/app/projects/new';
-const factsFor = (_p: ProjectView) => EMPTY_FACTS;
+
+function factsFor(open: MilestoneView[] | undefined) {
+    const by = new Map<string, MilestoneView[]>();
+    for (const m of open ?? []) by.set(m.projectId, [...(by.get(m.projectId) ?? []), m]);
+    return (p: ProjectView) => ({ ...EMPTY_FACTS, milestones: by.get(p.id) ?? [] });
+}
 
 export function ProjectsList() {
     const [q, setQ] = useState('');
-    const query = useProjects();
+    const projects = useProjects();
+    const open = useOpenMilestones();
+    // Both requests fly together; the rows wait for both so no row first says
+    // "No milestone set" and then changes its mind. A failed milestone call
+    // does not blank the list: the rows say the dates are unavailable.
+    const query = { ...projects, isPending: projects.isPending || open.isPending } as typeof projects;
     const newProject = (
         <Link className="btn-solid" href={NEW}>
             New project
@@ -49,16 +62,21 @@ export function ProjectsList() {
                     </>
                 }
             >
-                {(projects) => <Ready projects={projects} q={q.trim()} action={newProject} />}
+                {(ps) => <Ready projects={ps} milestones={open.isError ? null : open.data} q={q.trim()} action={newProject} />}
             </QueryGate>
         </AppPage>
     );
 }
 
-function Ready({ projects, q, action: primary }: { projects: ProjectView[]; q: string; action: React.ReactNode }) {
+/** `milestones` null = the call failed: the dates are unknown, not absent. */
+function Ready({ projects, milestones, q, action: primary }: { projects: ProjectView[]; milestones: MilestoneView[] | null | undefined; q: string; action: React.ReactNode }) {
     const today = todayIso();
     const [doneOpen, setDoneOpen] = useState(false);
-    const rows = useMemo(() => projects.map((p) => ({ p, f: factsFor(p) })), [projects]);
+    const known = milestones !== null;
+    const rows = useMemo(() => {
+        const f = factsFor(milestones ?? undefined);
+        return projects.map((p) => ({ p, f: f(p) }));
+    }, [projects, milestones]);
     const shown = rows.filter((r) => matches(r.p, q));
     const g = group(shown, today);
 
@@ -66,31 +84,31 @@ function Ready({ projects, q, action: primary }: { projects: ProjectView[]; q: s
         <ListEnter>
             <Strip rows={rows} today={today} action={primary} />
             <Pipeline projects={projects} />
-            <ListCols rail={<ProjectsRail rows={rows} today={today} />}>
+            <ListCols rail={<ProjectsRail rows={rows} today={today} known={known} />}>
                 {shown.length === 0 ? (
                     <ListNoMatch q={q} />
                 ) : (
                     <>
                         <ListGroup tone="mine" label="Your move" count={g.mine.length}>
                             {g.mine.map((r, i) => (
-                                <ProjectRow key={r.p.id} row={r} today={today} n={i} />
+                                <ProjectRow key={r.p.id} row={r} today={today} n={i} known={known} />
                             ))}
                         </ListGroup>
                         <ListGroup tone="theirs" label="Waiting on them" count={g.theirs.length}>
                             {g.theirs.map((r, i) => (
-                                <ProjectRow key={r.p.id} row={r} today={today} n={i} />
+                                <ProjectRow key={r.p.id} row={r} today={today} n={i} known={known} />
                             ))}
                         </ListGroup>
                         <ListGroup tone="parked" label="Parked" count={g.parked.length}>
                             {g.parked.map((r, i) => (
-                                <ProjectRow key={r.p.id} row={r} today={today} n={i} />
+                                <ProjectRow key={r.p.id} row={r} today={today} n={i} known={known} />
                             ))}
                         </ListGroup>
                         {/* Gone entirely when there is no completed work: a heading that can only say zero is noise. */}
                         {g.done.length > 0 && (
                             <ListGroup tone="done" label="Completed" count={g.done.length} fold={{ open: doneOpen, onToggle: () => setDoneOpen(!doneOpen) }}>
                                 {g.done.map((r, i) => (
-                                    <ProjectRow key={r.p.id} row={r} today={today} n={i} />
+                                    <ProjectRow key={r.p.id} row={r} today={today} n={i} known={known} />
                                 ))}
                             </ListGroup>
                         )}
@@ -158,7 +176,7 @@ function Pipeline({ projects }: { projects: ProjectView[] }) {
     );
 }
 
-function ProjectRow({ row: { p, f }, today, n }: { row: Row; today: string; n: number }) {
+function ProjectRow({ row: { p, f }, today, n, known }: { row: Row; today: string; n: number; known: boolean }) {
     const c = clock(p, f, today);
     const act = action(p, f, today);
     const parked = c.kind === 'none' && !act;
@@ -178,7 +196,7 @@ function ProjectRow({ row: { p, f }, today, n }: { row: Row; today: string; n: n
                     <span className="b-list-status">{STATUS[p.status].label}</span>
                 </>
             }
-            clock={<ClockCell c={c} />}
+            clock={<ClockCell c={!known && c.kind === 'quiet' && c.text === 'No milestone set' ? { kind: 'quiet', text: 'Dates unavailable' } : c} />}
             // No source of truth, no display: zero tickets is an empty cell, not 0/0.
             work={!parked && f.tickets?.total ? `${f.tickets.done}/${f.tickets.total}` : null}
             money={
@@ -236,8 +254,8 @@ function ClockCell({ c }: { c: Clock }) {
 
 const railDate = (iso: string) => new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(`${iso}T00:00:00Z`));
 
-/** Next 14 days of milestones, then the contact log. Both empty until the plan (T7.5) and the log (M8) exist. */
-function ProjectsRail({ rows, today }: { rows: Row[]; today: string }) {
+/** Next 14 days of milestones, then the contact log (M8). */
+function ProjectsRail({ rows, today, known }: { rows: Row[]; today: string; known: boolean }) {
     const due = rows
         .flatMap((r) => r.f.milestones.filter((m) => !m.done && m.due && daysFrom(m.due, today) <= 14).map((m) => ({ m, p: r.p })))
         .sort((a, b) => a.m.due!.localeCompare(b.m.due!));
@@ -252,7 +270,7 @@ function ProjectsRail({ rows, today }: { rows: Row[]; today: string }) {
                         })}
                     </Feed>
                 ) : (
-                    <FeedNone>Nothing due in the next two weeks.</FeedNone>
+                    <FeedNone>{known ? 'Nothing due in the next two weeks.' : 'Milestones could not be loaded. Reload to try again.'}</FeedNone>
                 )}
             </RailSection>
             <RailSection title="Recent activity">

@@ -38,6 +38,48 @@ const PROJECTS = [
 
 const serve = (page: Page, body: unknown, status = 200) => page.route(`${API}*`, (r: Route) => r.fulfill({ status, json: body }));
 
+// The list's second call: every open milestone in one request. Empty by
+// default; the milestone tests below serve their own.
+const MILESTONES = 'http://localhost:4002/milestones/open';
+test.beforeEach(async ({ page }) => {
+    await page.route(MILESTONES, (r) => r.fulfill({ json: [] }));
+});
+
+const inDays = (n: number) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Casablanca' }).format(new Date(Date.now() + n * 86_400_000));
+
+test("milestones: one call names each row's next phase and fills the rail", async ({ page }) => {
+    let calls = 0;
+    const studioId = PROJECTS[1]!.id;
+    await page.route(MILESTONES, (r) => {
+        calls += 1;
+        return r.fulfill({
+            json: [
+                { id: 'm1', projectId: studioId, name: 'Undated later', due: null, done: false, order: 0 },
+                { id: 'm2', projectId: studioId, name: 'Mockups', due: inDays(3), done: false, order: 1 },
+                { id: 'm3', projectId: studioId, name: 'Launch', due: inDays(10), done: false, order: 2 },
+            ],
+        });
+    });
+    await serve(page, PROJECTS);
+    await page.goto('/app/projects');
+    const row = page.locator('.b-list-row', { hasText: 'Studio site' });
+    await expect(row).toContainText('Mockups');
+    await expect(row).toContainText('Due in 3 days');
+    // Both dated phases inside 14 days reach the rail, not just the next one.
+    await expect(page.locator('.b-rail')).toContainText('Mockups');
+    await expect(page.locator('.b-rail')).toContainText('Launch');
+    await expect(page.locator('.b-list-strip')).toContainText('Mockups');
+    expect(calls).toBe(1);
+});
+
+test('milestones failing does not blank the list: the dates say they are unknown', async ({ page }) => {
+    await page.route(MILESTONES, (r) => r.fulfill({ status: 403, json: { message: 'Forbidden', statusCode: 403 } }));
+    await serve(page, PROJECTS);
+    await page.goto('/app/projects');
+    await expect(page.locator('.b-list-row', { hasText: 'Studio site' })).toContainText('Dates unavailable');
+    await expect(page.locator('.b-rail')).toContainText('Milestones could not be loaded');
+});
+
 test('ready: grouped by whose turn it is, Completed folded', async ({ page }) => {
     let auth = '';
     await page.route(`${API}*`, (r) => {

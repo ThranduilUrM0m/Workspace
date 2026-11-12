@@ -43,3 +43,16 @@ export class MilestonesController {
         return this.milestones.move(id, mid, body, req);
     }
 }
+
+// /milestones/open: the Projects list's one aggregate read, instead of
+// one plan request per row.
+@Controller('milestones')
+export class OpenMilestonesController {
+    constructor(private readonly milestones: MilestonesService) {}
+
+    @Get('open')
+    @Requires('view', 'projects')
+    open() {
+        return this.milestones.open();
+    }
+}
