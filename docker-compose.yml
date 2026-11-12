@@ -35,7 +35,7 @@ services:
     # Local dev only: `docker compose up -d boutaleb-mongo`. Production Mongo is
     # Coolify's (ADR-007). The server's default MONGODB_URI points here.
     boutaleb-mongo:
-        image: mongo:8.0.32
+        image: mongo:8.3.17
         ports:
             - '127.0.0.1:27017:27017'
         volumes:
