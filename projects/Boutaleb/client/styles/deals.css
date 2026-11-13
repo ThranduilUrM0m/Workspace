@@ -1,0 +1,272 @@
+/* Deals list (wireframes/shell/deals.css, copied 2026-11-13 and kept in step). The
+   source badge (.b-badge) is shell.css's shared state chip; it lands here first
+   because Deals is its first built consumer. Move it to list.css when Invoices
+   needs it. */
+
+.b-badge { display: inline-flex; align-items: center; gap: .375rem; padding: 2px 7px; font-size: .6875rem; font-weight: 600; letter-spacing: .02em; line-height: 1.4; white-space: nowrap; background: rgba(27,27,31,.06); color: var(--color-ink-muted); font-family: var(--font-display); }
+/* The second channel: hollow square for weather, filled for earned work. */
+.b-badge::before { content: ''; inline-size: .4375rem; block-size: .4375rem; flex-shrink: 0; border: 1px solid currentColor; }
+.b-badge--on { background: rgba(27,27,31,.1); color: var(--color-ink); }
+.b-badge--on::before { background: currentColor; }
+
+/* deals.css — the Deals list.
+   Canonical copy: Blueprinting/wireframes/shell/deals.css
+   Served flat by the companion server as /files/deals.css
+   Structure: Blueprinting/wireframes/specs/2026-09-04-projects-structure.md
+
+   Loads AFTER shell.css and speaks its .b-list-* vocabulary — the strip, the
+   two-column body, the groups, the five-cell row, the rail and its feeds are
+   all defined there and are NOT restated here. This file is 130 lines instead
+   of 600 because Deals was the third list, which is what paid for the
+   promotion. Everything below is genuinely the funnel's own.
+
+   A base rule is overridden by restating it here: this stylesheet loads only
+   on this screen and always after shell.css, so no scoping selector is needed
+   and none should be added. */
+
+/* READ THIS BEFORE ADDING A HEAVY CLASS.
+   Questrial ships ONE weight (400). Any font-weight >= 600 on it renders as
+   fake bold. Every class in THIS file that sets weight >= 600 must be listed
+   in this selector so it routes to Bricolage Grotesque. The .b-list- classes
+   have their own routing selector in shell.css — add to that one, not this
+   one, when you add a shared class. */
+.dl-scope b {
+  font-family: var(--font-display);
+}
+
+/* ---- where this list differs from the shared skeleton ----
+   One delta. The third track holds a word rather than a ratio, so it needs
+   half a rem more than the Projects row gives it. The other four tracks match
+   Projects and Clients exactly, so the three lists line up when they are
+   opened side by side — which is the whole reason the skeleton is shared. */
+.b-list-wrap {
+  --row-cols: minmax(0, 1fr) 11rem 5.5rem 9rem 7rem;
+}
+
+/* Phone (mobile pass 2026-10-06). The shared two-line row sizes its last two
+   tracks by content, and every row is its own grid, so the source badge
+   landed at a different x on each row — "Chase signature" is a wider button
+   than "Chase reply". A fixed action track gives every badge the same right
+   edge: 7.25rem is the longest verb ("Chase signature") at the desktop's own
+   10px button padding. The badge track stays auto and the gap drops to .75rem
+   because a fixed 5.5rem badge track left the clock 102px, and "Unanswered
+   53 days" is 136. The badge cell lands in the shared
+   row's "work" area by auto-placement; it is named here so that never
+   depends on which cells happen to be free. From 60rem the shared --row-cols
+   takes over, restated because this file loads after shell.css. */
+.b-list-row {
+  grid-template-columns: minmax(0, 1fr) auto 7.25rem;
+  column-gap: 0.75rem;
+}
+
+.b-list-act {
+  padding-inline: 10px;
+}
+
+.b-list-row > .dl-src {
+  grid-area: work;
+}
+
+@media (min-width: 60rem) {
+  .b-list-row {
+    grid-template-columns: var(--row-cols);
+    column-gap: 1.25rem;
+  }
+
+  .b-list-row > .dl-src {
+    grid-area: auto;
+  }
+}
+
+/* ---- the stage scope line ----
+   Only rendered when ?stage= narrowed the list. Deals is ONE list with three
+   doors into it, so the screen has to say which door you came through and how
+   to get back out — a filter you cannot see is a bug report waiting to
+   happen. Not a tab strip: tabs are places, and these are three slices of one
+   pile (locked rule, §4). */
+.dl-scope {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.dl-scope b {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.dl-scope a {
+  color: var(--color-ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dl-scope a:hover {
+  color: var(--color-ink);
+}
+
+/* ---- cell 1: identity ----
+   The client link in the meta line. Its own destination, so it must sit above
+   the row overlay. Same treatment as the Projects list — a deal is identified
+   by what it is FOR, and the person is the second fact, not the first. No
+   avatar: the Clients list earns one because a client is a person; a deal is a
+   piece of work, and two ink letters would be a weaker handle on a name that
+   is already spelled out beside them. */
+.dl-client {
+  position: relative;
+  z-index: 1;
+  /* 24px tap height (item 15): padding grows the target over the row,
+     the equal negative margin keeps the text where it was drawn. */
+  padding-block: 0.375rem;
+  margin-block: -0.375rem;
+  color: var(--color-ink-muted);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a.dl-client:hover {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* The studio's own record cannot be a counterparty. A span, not a dead link. */
+.dl-internal {
+  font-style: italic;
+}
+
+/* ---- cell 2: the clock ----
+   Two words, stacked: what happened, and when. The alert states borrow
+   .b-list-silent and .b-list-late from the shell — an unanswered document and
+   a late payment are the same kind of fact and get the same treatment. */
+.dl-when {
+  font-size: 0.75rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.dl-ago {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+/* Why a deal was lost. The only field on a dead record worth reading again,
+   and the one nobody writes down. Ink, not red: a loss is history, not an
+   alarm, and the alert colour on this screen belongs to the deals that are
+   still rotting. */
+.dl-why {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- cell 3: where it came from ----
+   The one fact on this screen that exists nowhere else in the system. It sits
+   in the track the other two lists use for a ratio, because "how did this
+   reach me" is the third thing you want off a funnel row and there is no
+   better home for it.
+
+   A badge, not a word, because it is the only cell on the row that is a
+   CATEGORY rather than a measurement — everything else here is a name, a
+   date or an amount, and giving the one enumerated field a chip lets the
+   column be read down without reading it. */
+.dl-src {
+  text-align: right;
+}
+
+/* THE BADGE ITSELF MOVED TO shell.css on 2026-09-09 as .b-badge /
+   .b-badge--on, when the Deal record became its second consumer. The split it
+   encodes is not decorative and is worth repeating here, because this is the
+   screen that reads it: a referral and a returning client are work your
+   existing relationships produced, which is the only kind of source you can
+   deliberately make more of. Site and direct are weather. Weight carries
+   that, so the badge still says it in a screenshot, on a projector, or to
+   someone who cannot separate the two inks. */
+
+/* ---- cell 4: money ----
+   ONE number. An unsigned deal owes you nothing, so there is no Outstanding
+   here and no third figure either — structure spec §3.1 still binds. What the
+   second line carries instead is whether the number is an offer somebody has
+   seen or a guess you made, which changes what you are allowed to do with it. */
+.dl-est {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+/* ---- right rail ---- */
+
+/* The source rollup. A count and a total per channel, ranked by money, so the
+   question it answers is "which channel is worth my time" rather than "which
+   channel is loudest". */
+.dl-srcrow {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  padding: 0.625rem 0;
+  align-items: baseline;
+}
+
+.dl-srcrow + .dl-srcrow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  block-size: 1px;
+  background: var(--color-line);
+}
+
+.dl-srcn {
+  font-size: 0.75rem;
+  color: var(--color-ink);
+}
+
+.dl-srcv {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---- empty cells ---- */
+.dl-none {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  padding: 0.5rem 0;
+}
+
+/* ---- soul (mobile pass 2026-10-06) ----
+   On top of the shared list entrance (B.listEnter): each source badge's
+   square stamps in just after its row has risen, and the filled squares —
+   referral and repeat, the channels you can make more of — fill a beat
+   later, so the eye reads down the earned column once. Layout never moves. */
+@media (prefers-reduced-motion: no-preference) {
+  .b-list-enter .b-list-row .b-badge::before {
+    animation: dl-stamp .4s cubic-bezier(.3, 1.6, .5, 1) both;
+    animation-delay: calc(380ms + var(--n, 0) * 50ms);
+  }
+
+  .b-list-enter .b-list-row .b-badge--on::before {
+    animation: dl-stamp .4s cubic-bezier(.3, 1.6, .5, 1) both,
+               dl-fill .35s ease-out both;
+    animation-delay: calc(380ms + var(--n, 0) * 50ms),
+                     calc(620ms + var(--n, 0) * 50ms);
+  }
+}
+
+@keyframes dl-stamp {
+  from { transform: scale(0); }
+}
+
+@keyframes dl-fill {
+  from { background: transparent; }
+}

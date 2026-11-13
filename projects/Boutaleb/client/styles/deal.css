@@ -1,0 +1,507 @@
+/* deal.css — the Deal record.
+   Canonical copy: Blueprinting/wireframes/shell/deal.css
+   Served flat by the companion server as /files/deal.css
+   Structure: Blueprinting/wireframes/specs/2026-09-04-projects-structure.md
+
+   Only what this screen owns. The record header, the tab row, the avatar, the
+   two columns, the section heading, the sticky rail, the feed, the badge,
+   .due, .money, .stat and .btn-solid all live in shell.css and are NOT
+   restated here. The record skeleton was promoted out of the .po- and .cd-
+   prefixes on 2026-09-09, when this screen became the third record. */
+
+/* READ THIS BEFORE ADDING A HEAVY CLASS.
+   Questrial ships ONE weight (400). Any font-weight >= 600 on it renders as
+   fake bold. Every class below that sets weight >= 600 must be listed in this
+   selector so it routes to Bricolage Grotesque. Add yours when you add one. */
+.dr-sval,
+.dr-pname,
+.dr-ptot span,
+.dr-pct,
+.dr-mlbl,
+.dr-state,
+.dr-oname {
+  font-family: var(--font-display);
+}
+
+/* ---------- the three-event line ----------
+   A deal has exactly three moments — you were asked, you sent something, they
+   decided — and every screen in this system that has shown a lifecycle has
+   shown it as a strip rather than a progress bar. A bar implies a percentage,
+   and a deal is not 60% won. The steps that have not happened stay in place,
+   greyed, so the shape of the record is the same whichever stage it is in and
+   you can see what is missing rather than infer it from a shorter row. */
+
+.dr-line {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.dr-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1875rem;
+  min-inline-size: 0;
+}
+
+/* Inset divider, top and bottom, never running the full height of the row —
+   the same rule the rail sections follow. */
+.dr-step + .dr-step {
+  padding-left: 1.5rem;
+}
+
+.dr-step + .dr-step::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  inline-size: 1px;
+  background: var(--color-line);
+}
+
+.dr-slbl {
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.dr-sval {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dr-sago {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+}
+
+/* Not yet happened. Ink, never hue — a step you have not reached is not a
+   fault, and colouring it would make it read as one. */
+.dr-step.is-pending .dr-sval {
+  color: var(--color-ink-muted);
+  font-weight: 400;
+  font-family: 'Questrial', sans-serif;
+}
+
+/* ---------- the offer ----------
+   Borderless phase rows on a three-track grid: what, how long, how much. No
+   header row — three labels above three values that already say what they are
+   is a caption for a caption, same call as the client record's work list. */
+
+.dr-phases {
+  display: flex;
+  flex-direction: column;
+}
+
+.dr-prow,
+.dr-ptot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5rem 7rem;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.6875rem 0;
+}
+
+.dr-prow + .dr-prow {
+  border-top: 1px solid var(--color-line);
+}
+
+/* The total is separated by a heavier rule and restates the header's Value.
+   They are the same number by construction — the phases sum to it — and that
+   is the point: an offer whose breakdown disagrees with its own total teaches
+   you to distrust the total, which is the number the whole funnel sorts by. */
+.dr-ptot {
+  border-top: 1px solid var(--color-ink);
+  margin-top: 0.25rem;
+}
+
+.dr-ptot span {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.dr-pname {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dr-pwk {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.dr-pamt,
+.dr-ptot span:last-child {
+  font-size: 0.75rem;
+  text-align: right;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.dr-ptot span:last-child {
+  font-size: 0.8125rem;
+  color: var(--color-ink);
+}
+
+/* ---------- the payment schedule ----------
+   One line, not a second table. It is three short facts and it belongs
+   directly under the money it splits. */
+
+.dr-sched {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.dr-pay {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.dr-pct {
+  color: var(--color-ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- label/value lines ----------
+   Used by the document meta (drafted, reviewed, sent, expires) and by the
+   client block in the rail. One pattern, because they are the same kind of
+   thing read at two widths, and two treatments would ask the eye to rank
+   them. */
+
+.dr-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  padding-top: 0.125rem;
+}
+
+.dr-mline {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.dr-mlbl {
+  flex: 0 0 4.5rem;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  padding-top: 1px;
+}
+
+.dr-mval {
+  min-inline-size: 0;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.dr-mval a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.dr-mval a:hover {
+  border-bottom-color: var(--color-ink);
+}
+
+/* A field that has not happened yet is muted rather than omitted: on a
+   document, "not sent" is the fact you came to read. */
+.dr-mval.is-none {
+  color: var(--color-ink-muted);
+}
+
+/* ---------- state sentence ----------
+   One line above a document saying what is true of it right now. A grid of
+   dates does not say "nobody has answered in 26 days" and that is the only
+   thing anybody opens this tab to find out. */
+
+.dr-state {
+  margin: 0 0 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.dr-sub {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  max-inline-size: 60ch;
+}
+
+/* ---------- scope and obligations ----------
+   A dash marker rather than a bullet: nothing in this system is round. */
+
+.dr-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dr-list li {
+  position: relative;
+  padding: 0.4375rem 0 0.4375rem 1.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-ink);
+  max-inline-size: 60ch;
+}
+
+.dr-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.9375rem;
+  inline-size: 0.4375rem;
+  block-size: 1px;
+  background: var(--color-ink);
+}
+
+/* ---------- their other deals ----------
+   Borderless rows, same shape as the client record's work list. */
+
+.dr-other {
+  display: flex;
+  flex-direction: column;
+}
+
+.dr-orow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 7rem 7rem;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.6875rem 0.5rem 0.6875rem 0;
+  margin: 0 -0.5rem 0 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.dr-orow + .dr-orow {
+  border-top: 1px solid var(--color-line);
+}
+
+.dr-orow:hover {
+  background: rgba(27, 27, 31, .03);
+}
+
+.dr-oname {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dr-ostat {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.dr-oval {
+  font-size: 0.75rem;
+  text-align: right;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A closed deal stays in the list and stays legible — dimmed, not greyed out.
+   Same treatment as a parked project on the client record. */
+.dr-orow.is-closed .dr-oname {
+  color: var(--color-ink-muted);
+}
+
+/* ---------- prose blocks ---------- */
+
+/* Why it was lost. The only field on a dead record worth reading twice, and
+   the one nobody writes down — so it gets a section, not a caption. */
+.dr-why {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--color-ink);
+  max-inline-size: 60ch;
+}
+
+.dr-none-block {
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  max-inline-size: 60ch;
+  line-height: 1.55;
+}
+
+/* ---------- empty documents ----------
+   A stage that has not been reached shows a sentence and the verb that ends
+   it. The tabs stay visible and are never disabled: a Proposal tab you cannot
+   click tells you less than one that says "nothing offered yet", and hiding
+   it would make the record change shape between stages. */
+
+.dr-empty p {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  max-inline-size: 60ch;
+  line-height: 1.55;
+}
+
+.dr-empty .btn-solid,
+.dr-next .btn-solid {
+  display: inline-flex;
+  inline-size: max-content;
+}
+
+/* ---------- rail: the next move ---------- */
+
+.dr-next p {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+  max-inline-size: 34ch;
+}
+
+/* The source note. On the screen and not only in the data file because this
+   is the field most likely to be widened by whoever reads it next. */
+.dr-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+  max-inline-size: 34ch;
+}
+
+/* ---------- phone (mobile pass 2026-10-06) ----------
+   A deal has one verb at a time, and on a phone the rail lands under the
+   whole record — "Chase reply" sat below the offer, the payment schedule and
+   the other deals, a screen and a half down. On a phone the rail's sections
+   join the record's grid (display:contents) and Next is placed first, ahead
+   of the tab body: what to do, then the facts. Placement by grid row, never
+   order:. The button fills the row so the one verb is a full-width target.
+   From 48rem the rail is a box again, so its display is RESTATED from
+   shell.css (grid at 48rem, flex at 80rem) — this selector outranks
+   shell's .b-rail, so if those values ever change there, change them here. */
+.b-rec-cols > .b-rail {
+  display: contents;
+}
+
+.b-rec-cols > .b-rail > .dr-next-sec {
+  grid-row: 1;
+  padding-top: 0;
+}
+
+/* The tab row's line is already directly above it; a second short rule there
+   read as a stutter. */
+.b-rec-cols > .b-rail > .dr-next-sec::before {
+  content: none;
+}
+
+.b-rec-cols > .b-rec-main {
+  grid-row: 2;
+}
+
+.dr-next-sec .btn-solid {
+  display: flex;
+  inline-size: 100%;
+}
+
+@media (min-width: 48rem) {
+  .b-rec-cols > .b-rail {
+    display: grid;
+  }
+
+  .b-rec-cols > .b-rail > .dr-next-sec,
+  .b-rec-cols > .b-rec-main {
+    grid-row: auto;
+  }
+
+  .b-rec-cols > .b-rail > .dr-next-sec {
+    padding-top: 0;
+  }
+
+  .b-rec-cols > .b-rail > .dr-next-sec::before {
+    content: '';
+  }
+
+  .dr-next-sec .btn-solid {
+    display: inline-flex;
+    inline-size: max-content;
+  }
+}
+
+@media (min-width: 80rem) {
+  .b-rec-cols > .b-rail {
+    display: flex;
+  }
+}
+
+/* ---------- soul (mobile pass 2026-10-06) ----------
+   On top of the shared record entrance: the three event steps rise left to
+   right, the offer's phases rise down the table, and the total's rule draws
+   once they have landed — the sum arriving after its parts. Layout never
+   moves. */
+@media (prefers-reduced-motion: no-preference) {
+  .b-list-enter .dr-step,
+  .b-list-enter .dr-prow {
+    animation: b-list-rise .5s cubic-bezier(.2, .7, .2, 1) both;
+    animation-delay: calc(150ms + var(--n, 0) * 60ms);
+  }
+
+  .b-list-enter .dr-ptot {
+    animation: b-list-rise .5s cubic-bezier(.2, .7, .2, 1) .6s both;
+  }
+}
+
+/* ---------- built 2026-11-13: what the site form said, and close as lost ---------- */
+
+.dr-said { white-space: pre-line; color: var(--color-ink); }
+
+/* Close as lost. Quiet until asked for: a text button under the Next sentence,
+   then one line for the reason and the confirm. 44px targets, square. */
+.dr-lose-open {
+  min-block-size: var(--hit, 2.75rem);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink-muted);
+  font: inherit;
+  font-size: .8125rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+.dr-lose-open:hover { color: var(--color-ink); }
+.dr-lose { display: grid; gap: .5rem; }
+.dr-lose label { font-size: .75rem; color: var(--color-ink-muted); }
+.dr-lose input {
+  min-block-size: var(--hit, 2.75rem);
+  padding-inline: .75rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: .875rem;
+}
+.dr-lose input:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 1px; }
+.dr-lose-err { font-size: .75rem; color: var(--color-bad-ink); }
+.dr-lose-acts { display: flex; justify-content: flex-end; gap: .75rem; }
+.dr-lose-acts .btn-solid, .dr-lose-cancel { min-block-size: var(--hit, 2.75rem); }
+.dr-lose-cancel { padding-inline: .5rem; border: 0; background: none; color: var(--color-ink-muted); font: inherit; font-size: .8125rem; cursor: pointer; }
+.dr-lose-cancel:hover { color: var(--color-ink); }

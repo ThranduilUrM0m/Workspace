@@ -86,3 +86,18 @@ export interface DealView {
     client: ClientSummary;
     enquiry: DealEnquiry | null;
 }
+
+/**
+ * The Log an enquiry form's typed fields. The client picker, the language
+ * chips and the source options live beside it; the requirement line and the
+ * server's dealCreate are what judge it.
+ */
+export const dealNewForm = z.object({
+    title: z.string(),
+    value: z.string(),
+    note: z.string(),
+    clientName: z.string(),
+    clientEmail: z.string(),
+    clientCompany: z.string(),
+});
+export type DealNewForm = z.infer<typeof dealNewForm>;
