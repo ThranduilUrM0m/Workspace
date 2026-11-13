@@ -1,8 +1,9 @@
 import { Schema, type InferSchemaType, type Types } from 'mongoose';
 
 // A public enquiry (T8.1, ADR-017): someone wrote through the footer form
-// or /contact. It is NOT a client, a project or a lead in the pipeline:
-// a human reads it and decides (T8.2). `details` holds what the form asked
+// or /contact. It is never a Project. Since T8.2 a new one also becomes a
+// lead in Deals (DealsService.fromEnquiry: client found by email or made as
+// a lead, then a deal linked back here). `details` holds what the form asked
 // beyond name/email/message (project type; on /contact budget, timeline,
 // stage…), so the create screen can pre-fill from it.
 //

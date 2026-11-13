@@ -26,7 +26,10 @@ export const ClientSchema = new Schema(
     },
     { timestamps: true },
 );
-ClientSchema.index({ name: 'text', company: 'text', email: 'text' });
+// language_override points at a field that never exists: by default Mongo
+// reads `language` as the text-search language of each document, and it
+// refuses "ar" (no Arabic stemmer), so every Arabic client failed to save.
+ClientSchema.index({ name: 'text', company: 'text', email: 'text' }, { language_override: 'textSearchLanguage', default_language: 'none' });
 // One studio record, at most.
 ClientSchema.index({ self: 1 }, { unique: true, partialFilterExpression: { self: true } });
 

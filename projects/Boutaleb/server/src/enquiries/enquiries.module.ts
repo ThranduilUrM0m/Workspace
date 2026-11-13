@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { DealsModule } from '../deals/deals.module.js';
 import { EnquiriesController } from './enquiries.controller.js';
 import { EnquiriesService } from './enquiries.service.js';
 import type { Env } from '../env.js';
@@ -19,6 +20,7 @@ const MINUTE = 60_000;
 // a second instance needs a shared store (public-forms.md §3).
 @Module({
     imports: [
+        DealsModule,
         MongooseModule.forFeature([{ name: ENQUIRY, schema: EnquirySchema }]),
         ThrottlerModule.forRoot([
             { name: 'short', ttl: 10 * MINUTE, limit: 5 },

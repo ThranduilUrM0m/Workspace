@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { contactEnquiry, footerEnquiry, type ContactEnquiry, type FooterEnquiry } from '@repo/schemas';
 import type { Model } from 'mongoose';
 import { ActivityService } from '../activity/activity.service.js';
+import { DealsService } from '../deals/deals.service.js';
 import { CONVERSIONS, type Conversions } from './conversions.js';
 import { ENQUIRY_JOBS, type EnquiryJobs } from './enquiry-jobs.js';
 import { ENQUIRY, type Enquiry } from './enquiry.schema.js';
@@ -37,6 +38,7 @@ export class EnquiriesService {
         @Inject(ENQUIRY_JOBS) private readonly jobs: EnquiryJobs,
         @Inject(CONVERSIONS) private readonly conversions: Conversions,
         private readonly activity: ActivityService,
+        private readonly deals: DealsService,
     ) {}
 
     async receive(raw: Record<string, unknown>, token: TokenCheck): Promise<Answer> {
@@ -115,6 +117,24 @@ export class EnquiriesService {
             target: { type: 'enquiry', id, label: e.name },
         });
         if (first) {
+            // A new enquiry is a lead in Deals (T8.2): awaited, so it is there
+            // when the owner's notice arrives; a failure is logged, never sent back.
+            try {
+                const made = await this.deals.fromEnquiry(e);
+                if (made) {
+                    await this.activity.record({
+                        kind: 'system',
+                        weight: 'notable',
+                        action: 'deal.from_enquiry',
+                        section: 'deals',
+                        target: { type: 'deal', id: made.dealId, label: e.name },
+                        after: { enquiry: id, client: made.clientId, newClient: made.newClient },
+                    });
+                }
+            } catch (err) {
+                this.logger.error(`enquiry ${id}: no deal made`, err as Error);
+                await this.activity.record({ kind: 'system', weight: 'critical', action: 'deal.from_enquiry_failed', section: 'deals', target: { type: 'enquiry', id, label: e.name }, after: { error: String((err as Error).message ?? err) } });
+            }
             this.conversions.count({ source: e.source, locale: e.locale }).catch((err: unknown) => {
                 this.logger.warn(`enquiry ${id}: conversion not counted: ${String((err as Error).message ?? err)}`);
             });
