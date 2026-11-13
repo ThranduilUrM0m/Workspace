@@ -5,6 +5,10 @@
 
 export const ENQUIRY_JOBS = Symbol('EnquiryJobs');
 
+/** What each job is given: the id only, the job reads the record itself. Shared with src/trigger. */
+export type EnquiryJobPayload = { enquiryId: string };
+export type EnquiryNoticePayload = EnquiryJobPayload & { kind: 'new' | 'details' };
+
 export interface EnquiryJobs {
     /**
      * `first`: a new enquiry (receipt + notice). A /contact addition to an

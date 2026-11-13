@@ -10,3 +10,5 @@ export async function renderReceipt(props: ReceiptProps) {
     const [html, text] = await Promise.all([render(element), render(element, { plainText: true })]);
     return { subject: receiptSubject, html, text };
 }
+
+export { renderOwnerNotice, type OwnerNoticeProps } from './ownerNotice';

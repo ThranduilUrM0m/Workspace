@@ -1,5 +1,15 @@
 {
     "extends": "./tsconfig.json",
-    "compilerOptions": { "types": ["node"] },
-    "exclude": ["node_modules", "dist", "src/**/*.test.ts", "src/testing"]
+    "compilerOptions": {
+        "types": [
+            "node"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/**/*.test.ts",
+        "src/testing",
+        "src/trigger"
+    ]
 }

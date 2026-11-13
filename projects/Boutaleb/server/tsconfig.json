@@ -14,9 +14,20 @@
         "skipLibCheck": true,
         "strict": true,
         "strictPropertyInitialization": false,
-        "types": ["node", "vitest/globals"],
-        "customConditions": ["boutaleb-node"]
+        "types": [
+            "node",
+            "vitest/globals"
+        ],
+        "customConditions": [
+            "boutaleb-node"
+        ]
     },
-    "include": ["src"],
-    "exclude": ["node_modules", "dist"]
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/trigger"
+    ]
 }
