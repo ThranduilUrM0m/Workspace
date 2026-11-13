@@ -8,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { business } from '@/lib/business';
 import { useErrorWords } from './error-words';
 import { glyph } from './glyphs';
+import { useFormToken } from '@/lib/form-token';
 
 // The footer's short form (thanks.html), on the shared fields (C3/C4) and
 // the enquiry schema the server will run too. It answers in place, inside
@@ -33,6 +34,7 @@ export function FooterForm() {
     const button = useRef<HTMLButtonElement>(null);
     const heading = useRef<HTMLHeadingElement>(null);
     const formRef = useRef<HTMLFormElement>(null);
+    const token = useFormToken();
 
     const grow = () => {
         const b = button.current!.getBoundingClientRect();
@@ -67,6 +69,9 @@ export function FooterForm() {
         body.set('locale', locale);
         body.set(HONEYPOT, (formRef.current?.elements.namedItem(HONEYPOT) as HTMLInputElement | null)?.value ?? '');
         try {
+            const t = await token.take();
+            if (!t) return setStatus('failed');
+            body.set('t', t);
             const res = await fetch('/api/enquiries', { method: 'POST', body });
             if (res.status === 201) {
                 const { lead } = (await res.json()) as { lead: string };
@@ -78,6 +83,11 @@ export function FooterForm() {
             }
             if (res.status === 422) {
                 const { errors } = (await res.json()) as { errors: Record<string, string> };
+                // A form left open a day: a fresh token, and the failure state asks for one more press.
+                if (errors.form) {
+                    token.reset();
+                    return setStatus('failed');
+                }
                 for (const [name, code] of Object.entries(errors)) form.setError(name as keyof FooterEnquiry, { message: code }, { shouldFocus: true });
                 setStatus('idle');
                 return;
@@ -89,7 +99,7 @@ export function FooterForm() {
     };
 
     return (
-        <div ref={card} className={filled ? 'ff-card is-filled' : 'ff-card'} data-state={status === 'sent' ? 'sent' : undefined}>
+        <div ref={card} className={filled ? 'ff-card is-filled' : 'ff-card'} data-state={status === 'sent' ? 'sent' : undefined} onFocusCapture={token.prime}>
             <p className="ft-cap">{t('missedContact')}</p>
             <Form ref={formRef} className="ff-form" form={form} errorWords={errorWords} onSubmit={onSubmit} inert={status === 'sent'}>
                 <div className="ff-pair">

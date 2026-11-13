@@ -349,8 +349,28 @@ test('error words follow the page language', async ({ page }) => {
     await expect(page.locator('#sec-footer .f-badge')).toHaveText('بريد غير صالح');
 });
 
+// The forms' two calls to the site's own routes, faked in the browser: the
+// route is unit-tested (app/api/enquiries/route.test.ts) and the API's
+// pipeline in the server, so these specs do not need the API running.
+const fakeEnquiryApi = async (page: import('@playwright/test').Page, lead = 'L-ABCDEFGHJK') => {
+    await page.route('**/api/enquiries/token', (r) => r.fulfill({ json: { t: `${Date.now() - 5_000}.sig` } }));
+    await page.route('**/api/enquiries', async (r) => {
+        const body = r.request().postData() ?? '';
+        // Multipart: each value follows its `name="..."` line and a blank line.
+        const field = (name: string) => new RegExp(`name="${name}"\\s+([^\\r\\n]+)`).exec(body)?.[1] ?? '';
+        if (field('source') === 'footer') return r.fulfill({ status: 201, json: { lead } });
+        const email = field('email');
+        const locale = field('locale') || 'fr';
+        return r.fulfill({
+            status: 303,
+            headers: { location: locale === 'fr' ? '/thanks' : `/${locale}/thanks`, 'set-cookie': `bt_thanks_email=${encodeURIComponent(email)}; Path=/; Max-Age=1800; HttpOnly; SameSite=Lax` },
+        });
+    });
+};
+
 test('/contact checks each step before moving on and lands on /thanks', async ({ page, context }) => {
     await context.clearCookies();
+    await fakeEnquiryApi(page);
     await page.goto('/en/contact');
     const main = page.locator('main');
     const rail = page.locator('.rail');
@@ -402,6 +422,7 @@ test('/contact checks each step before moving on and lands on /thanks', async ({
 });
 
 test('/contact keeps every answer when the send fails', async ({ page }) => {
+    await page.route('**/api/enquiries/token', (r) => r.fulfill({ json: { t: `${Date.now() - 5_000}.sig` } }));
     await page.route('**/api/enquiries', (route) => route.abort('connectionreset'));
     await page.goto('/en/contact');
     const main = page.locator('main');
@@ -416,6 +437,7 @@ test('/contact keeps every answer when the send fails', async ({ page }) => {
 });
 
 test('the footer form answers in place and hands its lead to /contact', async ({ page }) => {
+    await fakeEnquiryApi(page);
     await page.goto('/en/services');
     await page.evaluate(() => sessionStorage.clear());
     const card = page.locator('#sec-footer .ff-card');
@@ -438,6 +460,7 @@ test('the footer form answers in place and hands its lead to /contact', async ({
 });
 
 test('the footer form keeps every field when the send fails', async ({ page }) => {
+    await page.route('**/api/enquiries/token', (r) => r.fulfill({ json: { t: `${Date.now() - 5_000}.sig` } }));
     await page.route('**/api/enquiries', (route) => route.abort('connectionreset'));
     await page.goto('/services');
     const card = page.locator('#sec-footer .ff-card');

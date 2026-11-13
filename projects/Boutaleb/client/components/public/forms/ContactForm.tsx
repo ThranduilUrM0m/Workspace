@@ -5,6 +5,7 @@ import { Button, Field, Form, FormFail, Honeypot, SelectField, useSchemaForm, ty
 import { useEffect, useRef, useState } from 'react';
 import { Link } from '@/i18n/navigation';
 import { business } from '@/lib/business';
+import { useFormToken } from '@/lib/form-token';
 import { glyph } from './glyphs';
 
 // /contact (contact.html): one form in three steps beside a rail. Continue
@@ -45,6 +46,7 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
     const [status, setStatus] = useState<'idle' | 'sending' | 'failed'>('idle');
     const [restored, setRestored] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
+    const token = useFormToken();
     const moved = useRef(false);
     const [idempotencyKey] = useState(() => crypto.randomUUID());
 
@@ -115,6 +117,7 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
     const onInvalid = (errors: FieldErrors<ContactEnquiry>) => showFirst(Object.keys(errors));
 
     const onSubmit = async (data: ContactEnquiry) => {
+        if (status === 'sending') return;
         setStatus('sending');
         const body = new FormData();
         for (const [k, v] of Object.entries(data)) if (v !== undefined) body.set(k, String(v));
@@ -123,6 +126,9 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
         body.set(HONEYPOT, (formRef.current?.elements.namedItem(HONEYPOT) as HTMLInputElement | null)?.value ?? '');
         for (const f of files) body.append('files', f);
         try {
+            const t = await token.take();
+            if (!t) return setStatus('failed');
+            body.set('t', t);
             const res = await fetch('/api/enquiries', { method: 'POST', body });
             if (res.ok && res.redirected) {
                 sessionStorage.removeItem(DRAFT);
@@ -131,6 +137,11 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
             }
             if (res.status === 422) {
                 const { errors } = (await res.json()) as { errors: Record<string, string> };
+                // A form left open a day: a fresh token, and the failure state asks for one more press.
+                if (errors.form) {
+                    token.reset();
+                    return setStatus('failed');
+                }
                 for (const [name, code] of Object.entries(errors)) form.setError(name as Field, { message: code });
                 showFirst(Object.keys(errors));
                 setStatus('idle');
@@ -176,7 +187,7 @@ export function ContactForm({ locale, errorWords }: { locale: string; errorWords
                 ))}
             </ol>
 
-            <div className="ff-card c-card">
+            <div className="ff-card c-card" onFocusCapture={token.prime}>
                 {restored && <p className="c-restored">Your earlier answers are back. Attached files are not kept: add them again in step 3.</p>}
                 <Form ref={formRef} className="c-form" form={form} errorWords={errorWords} onSubmit={onSubmit} onInvalid={onInvalid}>
                     <Honeypot />

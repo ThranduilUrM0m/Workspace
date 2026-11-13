@@ -1,51 +1,57 @@
-import { contactEnquiry, footerEnquiry, HONEYPOT } from '@repo/schemas';
 import { NextResponse, type NextRequest } from 'next/server';
 import { defaultLocale, locales } from '@/i18n/locales';
 import { THANKS_COOKIE, THANKS_COOKIE_MAX_AGE } from '@/lib/thanks';
+import { API, formsKey, visitorIp } from './proxy';
 
-// Local stand-in for the server's POST /enquiries (public-forms.md §1), so
-// both forms run end to end before the API exists. It answers as the real
-// one will: invalid input 422 with field codes; a valid /contact send 303
-// to /thanks with the 30-minute email cookie; a valid footer send 201 with
-// the lead it made, for the card's "Add budget and timeline" link. A bot
-// gets the same answer as a person. It stores and sends nothing. M8 points
-// the forms at the API and deletes this file.
+// Both public forms send here; this route passes the send to the API's
+// POST /enquiries (public-forms.md §1), which does the real work: spam,
+// rate limit, validation, idempotency, the write, the emails. Kept on the
+// site's own address so the /thanks cookie is the site's, and so the API
+// endpoint is never reachable from a browser.
+//
+// The API answers 201 { ref, email }; this route turns that into each
+// form's answer: the footer gets 201 { lead } (its card links /contact
+// with it), /contact gets 303 to /thanks with the 30-minute email cookie.
+// 422 and 429 pass through; anything else is 502 and the form shows its
+// failure state.
 
 type Locale = (typeof locales)[number];
 
 export async function POST(request: NextRequest) {
     const data = await request.formData();
-    const raw = Object.fromEntries([...data.entries()].filter(([, v]) => typeof v === 'string')) as Record<string, string>;
-    const locale: Locale = locales.includes(raw.locale as Locale) ? (raw.locale as Locale) : defaultLocale;
-    const thanks = new URL(locale === defaultLocale ? '/thanks' : `/${locale}/thanks`, request.url);
+    // Strings only: files are not sent on yet (no storage for them in T8.1).
+    const fields = Object.fromEntries([...data.entries()].filter(([, v]) => typeof v === 'string')) as Record<string, string>;
+    const locale: Locale = locales.includes(fields.locale as Locale) ? (fields.locale as Locale) : defaultLocale;
 
-    const bot = Boolean(raw[HONEYPOT]);
-
-    if (raw.source === 'footer') {
-        // A filled honeypot is a bot: the same answer as a real send, nothing kept.
-        if (bot) return NextResponse.json({ lead: 'L-0000' }, { status: 201 });
-        const parsed = footerEnquiry.safeParse(raw);
-        if (!parsed.success) return invalid(parsed.error.issues);
-        return NextResponse.json({ lead: `L-${parsed.data.idempotencyKey.slice(0, 4).toUpperCase()}` }, { status: 201 });
+    let res: Response;
+    try {
+        res = await fetch(`${API}/enquiries`, {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-forms-key': formsKey(), 'x-visitor-ip': visitorIp(request) },
+            body: JSON.stringify(fields),
+            cache: 'no-store',
+        });
+    } catch {
+        return NextResponse.json({ error: 'unavailable' }, { status: 502 });
     }
 
-    if (bot) return NextResponse.redirect(thanks, 303);
-    if (raw.source !== 'contact') return NextResponse.json({ errors: { source: 'required' } }, { status: 422 });
-    const parsed = contactEnquiry.safeParse(raw);
-    if (!parsed.success) return invalid(parsed.error.issues);
+    if (res.status === 422 || res.status === 429) return NextResponse.json(await res.json().catch(() => ({})), { status: res.status });
+    if (res.status !== 201) return NextResponse.json({ error: 'unavailable' }, { status: 502 });
 
-    const res = NextResponse.redirect(thanks, 303);
-    res.cookies.set(THANKS_COOKIE, parsed.data.email, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
-        maxAge: THANKS_COOKIE_MAX_AGE,
-        path: '/',
-    });
-    return res;
-}
+    const { ref, email } = (await res.json()) as { ref: string; email: string };
+    if (fields.source === 'footer') return NextResponse.json({ lead: ref }, { status: 201 });
 
-function invalid(issues: { path: PropertyKey[]; message: string }[]) {
-    const errors = Object.fromEntries(issues.map((i) => [String(i.path[0]), i.message]));
-    return NextResponse.json({ errors }, { status: 422 });
+    const thanks = new URL(locale === defaultLocale ? '/thanks' : `/${locale}/thanks`, request.url);
+    const out = NextResponse.redirect(thanks, 303);
+    // A bot's fake success has its email too; the cookie only ever shows a visitor what they typed.
+    if (email) {
+        out.cookies.set(THANKS_COOKIE, email, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: THANKS_COOKIE_MAX_AGE,
+            path: '/',
+        });
+    }
+    return out;
 }
