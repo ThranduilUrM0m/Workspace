@@ -4,6 +4,7 @@ import type { Model } from 'mongoose';
 import request from 'supertest';
 import { DEV_FORMS_PROXY_KEY } from '../env.js';
 import { settle, startApp, type TestApp } from '../testing/app.js';
+import { CONVERSIONS, type Conversions } from './conversions.js';
 import { ENQUIRY_JOBS, type HeldJobs } from './enquiry-jobs.js';
 import { ENQUIRY, type Enquiry } from './enquiry.schema.js';
 import { FormTokens } from './form-token.js';
@@ -12,11 +13,13 @@ let t: TestApp;
 let enquiries: Model<Enquiry>;
 let jobs: HeldJobs;
 let tokens: FormTokens;
+let conversions: Conversions;
 
 beforeAll(async () => {
     t = await startApp();
     enquiries = t.app.get(getModelToken(ENQUIRY));
     jobs = t.app.get(ENQUIRY_JOBS);
+    conversions = t.app.get(CONVERSIONS);
     tokens = t.app.get(FormTokens);
 });
 
@@ -154,6 +157,26 @@ describe('spam', () => {
         expect((await send(footer(), me)).status).toBe(429);
         expect((await send(footer({ nickname: 'x' }), me)).status).toBe(201);
         expect((await send(footer())).status).toBe(201);
+    });
+});
+
+describe('conversions', () => {
+    it('one per new enquiry; never for a retry, a /contact addition or a bot', async () => {
+        const spy = vi.spyOn(conversions, 'count');
+        const body = footer();
+        const f = await send(body);
+        await send(body);
+        await send(contact({ lead: f.body.ref }));
+        await send(footer({ nickname: 'bot' }));
+        await send(contact());
+        expect(spy.mock.calls).toEqual([[{ source: 'footer', locale: 'en' }], [{ source: 'contact', locale: 'fr' }]]);
+        spy.mockRestore();
+    });
+
+    it('a failed count never fails the send', async () => {
+        const spy = vi.spyOn(conversions, 'count').mockRejectedValueOnce(new Error('umami down'));
+        expect((await send(footer())).status).toBe(201);
+        spy.mockRestore();
     });
 });
 

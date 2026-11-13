@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { contactEnquiry, footerEnquiry, type ContactEnquiry, type FooterEnquiry } from '@repo/schemas';
 import type { Model } from 'mongoose';
 import { ActivityService } from '../activity/activity.service.js';
+import { CONVERSIONS, type Conversions } from './conversions.js';
 import { ENQUIRY_JOBS, type EnquiryJobs } from './enquiry-jobs.js';
 import { ENQUIRY, type Enquiry } from './enquiry.schema.js';
 import type { TokenCheck } from './form-token.js';
@@ -34,6 +35,7 @@ export class EnquiriesService {
     constructor(
         @InjectModel(ENQUIRY) private readonly enquiries: Model<Enquiry>,
         @Inject(ENQUIRY_JOBS) private readonly jobs: EnquiryJobs,
+        @Inject(CONVERSIONS) private readonly conversions: Conversions,
         private readonly activity: ActivityService,
     ) {}
 
@@ -112,6 +114,11 @@ export class EnquiriesService {
             section: 'deals',
             target: { type: 'enquiry', id, label: e.name },
         });
+        if (first) {
+            this.conversions.count({ source: e.source, locale: e.locale }).catch((err: unknown) => {
+                this.logger.warn(`enquiry ${id}: conversion not counted: ${String((err as Error).message ?? err)}`);
+            });
+        }
         this.jobs.queue(id, first).catch((err: unknown) => {
             this.logger.error(`enquiry ${id}: jobs not queued`, err as Error);
             void this.activity.record({ kind: 'system', weight: 'critical', action: 'enquiry.jobs_failed', section: 'deals', target: { type: 'enquiry', id, label: e.name }, after: { error: String((err as Error).message ?? err) } });
