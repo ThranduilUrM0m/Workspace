@@ -32,7 +32,7 @@ let transport: Transporter | null = null;
 export function mailer() {
     const user = process.env.SMTP_USER;
     transport ??= createTransport({
-        host: env('SMTP_HOST', 'localhost'),
+        host: env('SMTP_HOST', '127.0.0.1'),
         port: Number(env('SMTP_PORT', '1025')),
         // 587 upgrades with STARTTLS; 465 is TLS from the start.
         secure: env('SMTP_PORT', '1025') === '465',
