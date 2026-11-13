@@ -10,7 +10,7 @@
         "typecheck": "pnpm --filter @repo/schemas build && tsc --noEmit && tsc -p tsconfig.trigger.json",
         "test": "vitest run",
         "seed:owner": "infisical run -- node --conditions=boutaleb-node dist/cli/seed-owner.js",
-        "jobs:dev": "infisical run -- trigger dev"
+        "jobs:dev": "infisical run -- trigger dev --env-file trigger.dev.env"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "3.1166.0",
