@@ -35,3 +35,6 @@ Thumbs.db
 
 # Local file storage (T7.5d), the dev stand-in for the S3 bucket.
 .storage/
+
+# Trigger.dev dev worker build cache (pnpm jobs:dev).
+.trigger/
