@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { validateEnv, type Env } from './env.js';
 import { ActivityModule } from './activity/activity.module.js';
 import { AuthModule } from './auth/auth.module.js';
+import { EnquiriesModule } from './enquiries/enquiries.module.js';
 import { HealthModule } from './health/health.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
 import { StorageModule } from './storage/storage.module.js';
@@ -20,6 +21,7 @@ import { WireframesModule } from './wireframes/wireframes.module.js';
         }),
         ActivityModule,
         AuthModule,
+        EnquiriesModule,
         HealthModule,
         ProjectsModule,
         StorageModule,

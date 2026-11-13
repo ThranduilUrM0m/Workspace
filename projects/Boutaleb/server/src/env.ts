@@ -29,21 +29,31 @@ const envSchema = z
         S3_BUCKET: z.string().min(1).optional(),
         S3_ACCESS_KEY_ID: z.string().min(1).optional(),
         S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+        // Public forms (T8.1). The site's /api/enquiries route forwards each
+        // send here with this key; POST /enquiries refuses anything else.
+        // Local dev falls back to a fixed key; production must set it.
+        FORMS_PROXY_KEY: z.string().min(32).optional(),
+        // Trigger.dev (background jobs). Without it, enquiry emails are
+        // logged as not sent instead of queued.
+        TRIGGER_SECRET_KEY: z.string().min(1).optional(),
     })
     .refine((env) => env.CLERK_SECRET_KEY || env.CLERK_JWT_KEY, {
         message: 'CLERK_SECRET_KEY or CLERK_JWT_KEY is required',
         path: ['CLERK_SECRET_KEY'],
     });
 
-export type Env = z.infer<typeof envSchema> & { SIGNING_KEY: string };
+export type Env = z.infer<typeof envSchema> & { SIGNING_KEY: string; FORMS_PROXY_KEY: string };
+
+/** Local only. Known to the client's dev route too; never valid in production. */
+export const DEV_FORMS_PROXY_KEY = 'dev-only-forms-proxy-key-0000000000000000';
 
 const S3_KEYS = ['S3_ENDPOINT', 'S3_REGION', 'S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const;
 
 export function validateEnv(raw: Record<string, unknown>): Env {
     const env = envSchema.parse(raw);
     // The local defaults must never reach production silently.
-    if (env.NODE_ENV === 'production' && (!raw.MONGODB_URI || !raw.CLIENT_ORIGIN || !raw.PUBLIC_API_URL || !env.SIGNING_KEY)) {
-        throw new Error('MONGODB_URI, CLIENT_ORIGIN, PUBLIC_API_URL and SIGNING_KEY are required in production');
+    if (env.NODE_ENV === 'production' && (!raw.MONGODB_URI || !raw.CLIENT_ORIGIN || !raw.PUBLIC_API_URL || !env.SIGNING_KEY || !env.FORMS_PROXY_KEY)) {
+        throw new Error('MONGODB_URI, CLIENT_ORIGIN, PUBLIC_API_URL, SIGNING_KEY and FORMS_PROXY_KEY are required in production');
     }
     // Half an S3 configuration is a typo, not a choice: refuse it rather than fall back to the local folder.
     const s3 = S3_KEYS.filter((k) => env[k]);
@@ -51,5 +61,5 @@ export function validateEnv(raw: Record<string, unknown>): Env {
         throw new Error(`S3 storage needs all of ${S3_KEYS.join(', ')}; missing ${S3_KEYS.filter((k) => !env[k]).join(', ')}`);
     }
     if (env.NODE_ENV === 'production' && !s3.length) throw new Error('Production stores files in S3: set the S3_* variables');
-    return { ...env, SIGNING_KEY: env.SIGNING_KEY ?? randomBytes(32).toString('hex') };
+    return { ...env, SIGNING_KEY: env.SIGNING_KEY ?? randomBytes(32).toString('hex'), FORMS_PROXY_KEY: env.FORMS_PROXY_KEY ?? DEV_FORMS_PROXY_KEY };
 }

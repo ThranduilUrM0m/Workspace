@@ -22,6 +22,7 @@
         "@nestjs/mongoose": "12.0.0",
         "@nestjs/platform-express": "12.3.2",
         "@nestjs/terminus": "12.1.0",
+        "@nestjs/throttler": "6.7.1",
         "@repo/schemas": "workspace:*",
         "helmet": "8.3.0",
         "mime": "4.1.2",
