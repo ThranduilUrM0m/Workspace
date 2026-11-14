@@ -1,65 +1,61 @@
-import { Body, ConflictException, Controller, Get, Post, Query, Req } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { clientCreate, type ClientCreate } from '@repo/schemas';
-import type { Model } from 'mongoose';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { clientNew, contactCreate, type ClientNew, type ContactCreate } from '@repo/schemas';
 import { z } from 'zod';
 import type { AccessRequest } from '../access/access.guard.js';
 import { Requires } from '../access/requires.decorator.js';
-import { ActivityService } from '../activity/activity.service.js';
 import { ZodPipe } from '../common/zod.pipe.js';
-import { CLIENT, type Client } from './client.schema.js';
+import { ClientsService } from './clients.service.js';
+import { ContactsService } from './contacts.service.js';
 
-const pickQuery = z.object({ q: z.string().trim().max(100).optional() });
+const listQuery = z.object({ q: z.string().trim().max(100).optional() });
 
-const pick = (c: Client) => ({
-    id: String(c._id),
-    name: c.name,
-    company: c.company,
-    email: c.email,
-    status: c.status,
-    language: c.language,
-    self: c.self ?? false,
-});
-
-// Just what New project needs: search clients to pick one, or create one
-// inline as a lead. The Clients screens (M8, T8.3) grow this into the full
-// list, record and edit.
+// /clients (T8.3): the list (also the pickers' search), one client, New
+// client, and the client's contact log. View on Clients reads, Edit writes.
 @Controller('clients')
 export class ClientsController {
     constructor(
-        @InjectModel(CLIENT) private readonly clients: Model<Client>,
-        private readonly activity: ActivityService,
+        private readonly clients: ClientsService,
+        private readonly contacts: ContactsService,
     ) {}
 
     @Get()
     @Requires('view', 'clients')
-    async list(@Query(new ZodPipe(pickQuery)) { q }: z.infer<typeof pickQuery>) {
-        const rx = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i') : null;
-        const filter = rx ? { $or: [{ name: rx }, { company: rx }, { email: rx }] } : {};
-        const rows = await this.clients.find(filter).sort({ updatedAt: -1 }).limit(50).lean<Client[]>();
-        return rows.map(pick);
+    list(@Query(new ZodPipe(listQuery)) { q }: z.infer<typeof listQuery>) {
+        return this.clients.list(q || undefined);
     }
 
-    /** First contact is a lead by definition; Clients owns promoting it. */
+    /** Declared before :id, or ":id" would swallow it. */
+    @Get('recent-contacts')
+    @Requires('view', 'clients')
+    recent() {
+        return this.contacts.recent();
+    }
+
+    @Get(':id')
+    @Requires('view', 'clients')
+    get(@Param('id') id: string) {
+        return this.clients.get(id);
+    }
+
     @Post()
     @Requires('edit', 'clients')
-    async create(@Body(new ZodPipe(clientCreate)) body: ClientCreate, @Req() req: AccessRequest) {
-        // One client per address: a second record for the same person splits
-        // their history in two. The form offers the existing one instead.
-        const clash = await this.clients.findOne({ email: body.email }).lean<Client>();
-        if (clash) throw new ConflictException({ error: 'invalid', fields: { email: 'taken' }, client: pick(clash) });
-        const c = await this.clients.create({ ...body, company: body.company || body.name, status: 'lead' });
-        const out = pick(c.toObject() as Client);
-        await this.activity.record({
-            kind: 'change',
-            weight: 'notable',
-            action: 'client.create',
-            actor: req.member,
-            section: 'clients',
-            target: { type: 'client', id: out.id, label: out.company },
-            after: out,
-            sessionId: req.auth.sessionId,
-        });
-        return out;
+    create(@Body(new ZodPipe(clientNew)) body: ClientNew, @Req() req: AccessRequest) {
+        return this.clients.create(body, req);
+    }
+
+    @Get(':id/contacts')
+    @Requires('view', 'clients')
+    history(@Param('id') id: string) {
+        return this.clients.history(id);
+    }
+
+    @Post(':id/contacts')
+    @Requires('edit', 'clients')
+    log(
+        @Param('id') id: string,
+        @Body(new ZodPipe(contactCreate)) body: ContactCreate,
+        @Req() req: AccessRequest,
+    ) {
+        return this.clients.logContact(id, body, req);
     }
 }

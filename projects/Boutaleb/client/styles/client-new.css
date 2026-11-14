@@ -1,0 +1,25 @@
+/* client-new.css — create client.
+   Ported from Blueprinting/wireframes/shell/client-new.css
+
+   Only what this screen owns, and that is now one rule.
+
+   THE FORM SKELETON MOVED TO shell.css on 2026-09-09. The padded wrap, the two
+   columns, the sticky preview panel and everything in it, the option rows, the
+   action row and the requirement line are .b-form-* there, promoted out of the
+   .cn- and .pn- prefixes when the deal form became the third create screen —
+   the moment this file's own header named on 2026-09-06. The field mechanics,
+   .b-sec-h, .b-form-msg, .b-av and .btn-solid were already shell's. */
+
+/* An inline link inside a note — "open that client instead" when the email
+   collides with an existing record. Not promoted: it is the only link that
+   lives inside body text on any of these screens, and one consumer of a rule
+   cannot tell you what the rule is. */
+.cn-link {
+  color: var(--color-ink);
+  text-decoration: none;
+  border-block-end: 1px solid var(--color-line);
+}
+
+.cn-link:hover {
+  border-bottom-color: var(--color-ink);
+}

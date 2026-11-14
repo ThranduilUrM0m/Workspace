@@ -71,7 +71,7 @@ export function DealsList({ door }: { door?: Door }) {
                 query={query}
                 kind="list"
                 what="deals"
-                className="b-list-wrap"
+                className="b-list-wrap dl-list"
                 action={logIt}
                 isEmpty={(ds) => ds.length === 0}
                 empty={

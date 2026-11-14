@@ -24,8 +24,9 @@ import {
 } from '@repo/ui';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { AppPage } from '@/components/owner/shell/AppPage';
+import { useClient } from '@/lib/clients/queries';
 import { clashOf, slugTaken, useClientSearch, useCreateClient, useCreateProject } from '@/lib/projects/create';
 import { initials } from '@/lib/projects/derive';
 import { useProjects } from '@/lib/projects/queries';
@@ -52,7 +53,8 @@ const LANGS = [
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const NAME_MAX = 120;
 
-export function ProjectNew() {
+/** `clientId`: opened from a client ("Start a project"), so that client arrives already picked. */
+export function ProjectNew({ clientId }: { clientId?: string } = {}) {
     const router = useRouter();
     const form = useSchemaForm(projectNewForm, { name: '', note: '', clientName: '', clientEmail: '', clientCompany: '' });
     const v = form.watch();
@@ -92,6 +94,15 @@ export function ProjectNew() {
         setMode('search');
         setQuery('');
     };
+
+    // Picked once, on arrival, when the link named a client; the studio's own record is not offered here either way.
+    const preset = useClient(clientId ?? '', !!clientId);
+    const [presetDone, setPresetDone] = useState(false);
+    useEffect(() => {
+        if (presetDone || !preset.data) return;
+        setPresetDone(true);
+        if (mode === 'search' && !preset.data.self) pick(preset.data);
+    }, [preset.data, presetDone, mode]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const why = missing();
     const ready = useReady(!why && !busy);

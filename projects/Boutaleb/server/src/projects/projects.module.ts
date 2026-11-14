@@ -7,13 +7,12 @@ import { CLIENT, ClientSchema } from '../clients/client.schema.js';
 import { MILESTONE, MilestoneSchema } from '../milestones/milestone.schema.js';
 import { MilestonesController, OpenMilestonesController } from '../milestones/milestones.controller.js';
 import { MilestonesService } from '../milestones/milestones.service.js';
-import { ClientsController } from '../clients/clients.controller.js';
 import { PROJECT, ProjectSchema } from './project.schema.js';
 import { ProjectsController } from './projects.controller.js';
 import { ProjectsService } from './projects.service.js';
 
-// Projects, their briefs (T7.5b) and milestones (T7.5c), and the slice of Clients they need. Clients gets its own module
-// when its screens arrive (M8) and this one imports it instead.
+// Projects, their briefs (T7.5b) and milestones (T7.5c). Reads the Client
+// model to attach a project's client; the /clients routes live in ClientsModule.
 @Module({
     imports: [
         MongooseModule.forFeature([
@@ -23,7 +22,7 @@ import { ProjectsService } from './projects.service.js';
             { name: MILESTONE, schema: MilestoneSchema },
         ]),
     ],
-    controllers: [ProjectsController, BriefsController, MilestonesController, OpenMilestonesController, ClientsController],
+    controllers: [ProjectsController, BriefsController, MilestonesController, OpenMilestonesController],
     providers: [ProjectsService, BriefsService, MilestonesService],
 })
 export class ProjectsModule {}

@@ -18,6 +18,8 @@ import { isValidObjectId, type Model, type QueryFilter } from 'mongoose';
 import type { AccessRequest } from '../access/access.guard.js';
 import { ActivityService } from '../activity/activity.service.js';
 import { CLIENT, clientSummary, type Client } from '../clients/client.schema.js';
+import { ContactsService } from '../clients/contacts.service.js';
+import { studioDay } from '../common/day.js';
 import { ENQUIRY, type Enquiry } from '../enquiries/enquiry.schema.js';
 import { DEAL, type Deal } from './deal.schema.js';
 
@@ -76,7 +78,8 @@ export class DealsService {
     constructor(
         @InjectModel(DEAL) private readonly deals: Model<Deal>,
         @InjectModel(CLIENT) private readonly clients: Model<Client>,
-        private readonly activity: ActivityService
+        private readonly activity: ActivityService,
+        private readonly contacts: ContactsService
     ) {}
 
     async list(q: DealListQuery): Promise<DealView[]> {
@@ -146,6 +149,13 @@ export class DealsService {
             opened: new Date(),
         });
         const created = await this.find(String(doc._id));
+        // They reached out: that is them acting, so it starts the relationship clock.
+        await this.contacts.add({
+            client: clientId!,
+            kind: 'reply',
+            text: `Enquiry — ${input.title}`,
+            by: req.member ? String(req.member._id) : null,
+        });
         await this.log(req, 'deal.create', created, undefined, view(created));
         return view(created);
     }
@@ -206,6 +216,12 @@ export class DealsService {
                 source: 'site',
                 opened: e.createdAt ?? new Date(),
                 enquiry: e._id,
+            });
+            await this.contacts.add({
+                client: client._id,
+                kind: 'reply',
+                text: `Site enquiry — ${e.message}`.slice(0, 300),
+                at: studioDay(e.createdAt ?? new Date()),
             });
             return { dealId: String(doc._id), clientId: String(client._id), newClient };
         } catch (err) {

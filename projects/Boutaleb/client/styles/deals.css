@@ -39,7 +39,7 @@
    half a rem more than the Projects row gives it. The other four tracks match
    Projects and Clients exactly, so the three lists line up when they are
    opened side by side — which is the whole reason the skeleton is shared. */
-.b-list-wrap {
+.dl-list {
   --row-cols: minmax(0, 1fr) 11rem 5.5rem 9rem 7rem;
 }
 
@@ -54,26 +54,26 @@
    row's "work" area by auto-placement; it is named here so that never
    depends on which cells happen to be free. From 60rem the shared --row-cols
    takes over, restated because this file loads after shell.css. */
-.b-list-row {
+.dl-list .b-list-row {
   grid-template-columns: minmax(0, 1fr) auto 7.25rem;
   column-gap: 0.75rem;
 }
 
-.b-list-act {
+.dl-list .b-list-act {
   padding-inline: 10px;
 }
 
-.b-list-row > .dl-src {
+.dl-list .b-list-row > .dl-src {
   grid-area: work;
 }
 
 @media (min-width: 60rem) {
-  .b-list-row {
+  .dl-list .b-list-row {
     grid-template-columns: var(--row-cols);
     column-gap: 1.25rem;
   }
 
-  .b-list-row > .dl-src {
+  .dl-list .b-list-row > .dl-src {
     grid-area: auto;
   }
 }

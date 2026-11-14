@@ -5,3 +5,4 @@ export * from './briefs';
 export * from './milestones';
 export * from './wireframes';
 export * from './deals';
+export * from './clients';

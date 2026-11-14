@@ -9,7 +9,12 @@ export const metadata: Metadata = { title: 'New project' };
 
 // The one place a project is created (T7.6). A static segment, so "new" is
 // never read as a project id.
-export default async function NewProjectPage() {
+type Props = { searchParams: Promise<{ client?: string | string[] }> };
+
+export default async function NewProjectPage({ searchParams }: Props) {
     await requireOwnerSession();
-    return <ProjectNew />;
+    const { client } = await searchParams;
+    const id = Array.isArray(client) ? client[0] : client;
+    // ?client=<id> from a client's "Start a project": only a real id is passed on.
+    return <ProjectNew clientId={id && /^[a-f0-9]{24}$/.test(id) ? id : undefined} />;
 }

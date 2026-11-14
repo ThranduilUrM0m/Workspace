@@ -1,0 +1,186 @@
+/* clients.css — the Clients list.
+   Ported from Blueprinting/wireframes/shell/clients.css
+   Structure: Blueprinting/wireframes/specs/2026-09-04-projects-structure.md
+
+   Loads AFTER shell.css and reuses its primitives — .btn-solid, .stat,
+   .stat-lbl, .stat-val, .divider, .b-av, .b-kind are defined there and are NOT
+   restated here.
+
+   PROMOTED 2026-09-07. The duplication note that used to head this file has
+   been paid off: the strip, group, row and rail geometry it described are now
+   shell.css's .b-list-* vocabulary, promoted at Deals, the third list. What is
+   left below is the Clients list's own — the two-line identity block beside
+   the avatar, the drift marker, the spoke line, the work and money words — plus
+   the four places where this list genuinely differs from the shared skeleton.
+
+   A base rule is overridden by restating it here: this stylesheet loads only
+   on this screen and always after shell.css, so no scoping selector is needed
+   and none should be added. */
+
+/* READ THIS BEFORE ADDING A HEAVY CLASS.
+   Questrial ships ONE weight (400). Any font-weight >= 600 on it renders as
+   fake bold. Every class in THIS file that sets weight >= 600 must be listed
+   in this selector so it routes to Bricolage Grotesque. The .b-list- classes
+   have their own routing selector at the top of the list block in shell.css —
+   add to that one, not this one, when you add a shared class. */
+.cl-live {
+  font-family: var(--font-display);
+}
+
+/* ---- where this list differs from the shared skeleton ----
+   Four deltas, and each one is a fact about Clients rather than a preference.
+   The row is one track wider in the work cell because "3 of 5" needs more room
+   than "8/12". Identity is a ROW, not a stack, because a client row carries an
+   avatar and a project row does not — the two-line block moves inside it as
+   .cl-idt. The work cell stacks two numbers where Projects prints one. The
+   dated feed's date column is narrower because these dates are relative ages,
+   not calendar dates. */
+.cl-list {
+  --row-cols: minmax(0, 1fr) 11rem 5.5rem 9rem 7rem;
+  --ev-d-w: 2.75rem;
+}
+
+.cl-list .b-list-id {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cl-list .b-list-work {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+/* One line each in the two feeds. A client's touchpoint preview is a message
+   fragment with no natural end, so it is clipped rather than allowed to set
+   the rail's height. */
+.cl-list .b-ev-p,
+.cl-list .b-ac-p {
+  margin-block-start: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- cell 1: identity ----
+   The avatar divergence from the Projects list is argued in the header comment
+   of clients.js. .b-av--md is the dashboard's client-list size and is a shell
+   primitive, so it is not restated here. */
+.cl-idt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-inline-size: 0;
+}
+
+.cl-co {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The derived truth, shown ONLY when it contradicts the stored word. It is
+   set in the ink of a real fact rather than the grey of a caption, because
+   the point of showing it is that it outranks the label beside it — but it
+   gets no colour of its own: a disagreement is information, not an alarm,
+   and the alert red on this screen belongs to money and silence. */
+.cl-drift {
+  white-space: nowrap;
+  color: var(--color-ink);
+  border-block-end: 1px dotted rgba(27, 27, 31, .35);
+}
+
+/* The studio's own record. Not a relationship, so nothing to disagree with. */
+.cl-internal {
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* ---- cell 2: the clock ---- */
+.cl-spoke {
+  font-size: 0.75rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.cl-ago,
+.cl-quiet {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
+/* ---- cell 3: work ----
+   Live projects over total. Two numbers, because a client with four finished
+   projects and none running is a different fact from a client with none at
+   all. No projects means no cell content — the ordinary state of a lead, not a
+   gap in the data. */
+.cl-live {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.cl-of {
+  font-size: 0.6875rem;
+  color: var(--color-ink-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---- empty cell ---- */
+.cl-none {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+  padding: 0.5rem 0;
+}
+
+/* ---- soul (mobile pass 2026-10-02) ----
+   Over the shared list entrance (shell.css, B.listEnter), two things only a
+   client list has. The avatars pop in a beat after their row lands — a face
+   arriving, not a box. And a client with live work carries a small dot that
+   breathes beside the word "live": work is happening for this person right
+   now. The word says it; the dot is the echo, and the dot is round because it
+   is a status light, the same exception as the unread dots. Static under
+   reduced motion, where it is simply a dot. Phone and tablet only: from 60rem
+   the row is the locked one-line table and stays as signed off. */
+.cl-live::before {
+  content: '';
+  display: inline-block;
+  inline-size: .375rem;
+  block-size: .375rem;
+  margin-inline-end: .375rem;
+  margin-block-end: .0625rem;
+  border-radius: 50%;
+  background: var(--color-good);
+  vertical-align: middle;
+}
+
+@media (min-width: 60rem) {
+  .cl-live::before {
+    content: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .b-list-enter .b-list-row .b-av {
+    animation: cl-pop .45s cubic-bezier(.3, 1.6, .5, 1) both;
+    animation-delay: calc(300ms + var(--n, 0) * 50ms);
+  }
+
+  .cl-live::before {
+    animation: cl-breathe 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes cl-pop {
+  from { opacity: 0; transform: scale(.6); }
+}
+
+@keyframes cl-breathe {
+  50% { box-shadow: 0 0 0 .25rem rgba(47, 122, 77, 0); opacity: .55; }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(47, 122, 77, .35); }
+}

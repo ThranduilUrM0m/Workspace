@@ -168,10 +168,13 @@ export function ListRow({
     work,
     money,
     act,
+    avatar,
     n = 0,
 }: {
     name: string;
     href: string;
+    /** A person's row carries their initials (Clients); a project's does not. */
+    avatar?: string;
     meta?: ReactNode;
     clock?: ReactNode;
     work?: ReactNode;
@@ -183,10 +186,26 @@ export function ListRow({
     return (
         <div className="b-list-row" style={{ '--n': n } as CSSProperties}>
             <div className="b-list-id">
-                <Link className="b-list-name" href={href}>
-                    {name}
-                </Link>
-                {meta && <span className="b-list-meta">{meta}</span>}
+                {avatar ? (
+                    <>
+                        <span className="b-av b-av--md" aria-hidden="true">
+                            {avatar}
+                        </span>
+                        <span className="cl-idt">
+                            <Link className="b-list-name" href={href}>
+                                {name}
+                            </Link>
+                            {meta && <span className="b-list-meta">{meta}</span>}
+                        </span>
+                    </>
+                ) : (
+                    <>
+                        <Link className="b-list-name" href={href}>
+                            {name}
+                        </Link>
+                        {meta && <span className="b-list-meta">{meta}</span>}
+                    </>
+                )}
             </div>
             <div className="b-list-clock">{clock}</div>
             <div className="b-list-work">{work}</div>
@@ -264,7 +283,7 @@ export function FeedEvent({ date, tone, title, sub, n = 0 }: { date: string; ton
 
 /* ---------- C18 Kind mark ---------- */
 
-export type Kind = 'call' | 'reply' | 'token' | 'mail';
+export type Kind = 'call' | 'reply' | 'token' | 'mail' | 'sent' | 'note';
 
 /** Who acted, as a word in a colour: a reply or a call is the client; a token or mail is you. */
 export function KindMark({ kind }: { kind: Kind }) {
