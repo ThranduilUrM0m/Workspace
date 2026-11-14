@@ -20,11 +20,22 @@ export function Avatar({ name, size = 'lg' }: { name: string; size?: 'sm' | 'md'
 }
 
 /** C11. Identity left, up to four stats right. The tab row under it draws the one rule. */
-export function RecordHead({ name, meta, stats }: { name: string; meta: ReactNode; stats: ReactNode }) {
+export function RecordHead({
+    name,
+    meta,
+    stats,
+    who = name,
+}: {
+    name: string;
+    meta: ReactNode;
+    stats: ReactNode;
+    /** Whose initials the avatar shows, when the record is not named after a person (a deal shows its client). */
+    who?: string;
+}) {
     return (
         <header className="b-rec-head">
             <div className="b-rec-id">
-                <Avatar name={name} />
+                <Avatar name={who} />
                 <div>
                     <h2 className="b-rec-name">{name}</h2>
                     <div className="b-rec-meta">{meta}</div>

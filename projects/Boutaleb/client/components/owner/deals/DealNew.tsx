@@ -391,7 +391,9 @@ export function DealNew() {
                     <PreviewHead
                         avatar={
                             <span className="b-av b-av--lg" aria-hidden="true">
-                                {v.title.trim() ? initials(v.title) : ' '}
+                                {(client?.name ?? draft?.name)
+                                    ? initials(client?.name ?? draft!.name)
+                                    : ' '}
                             </span>
                         }
                         name={v.title.trim()}
@@ -419,7 +421,7 @@ export function DealNew() {
                         <PreviewRow k="Source" empty={!source}>
                             {source ? SOURCE[source].label : '—'}
                         </PreviewRow>
-                        <PreviewRow k="Your move">Draft a proposal</PreviewRow>
+                        <PreviewRow k="Your move">Draft proposal</PreviewRow>
                         <PreviewRow k="Opened">Today</PreviewRow>
                         <PreviewRow k="Note" empty={!v.note.trim()}>
                             {v.note.trim() ? 'Kept on the deal' : '—'}

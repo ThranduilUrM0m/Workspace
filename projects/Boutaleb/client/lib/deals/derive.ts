@@ -18,6 +18,7 @@ export const SOURCE: Record<DealSource, { label: string; note: string }> = {
     site: { label: 'Site', note: 'Your own site, unprompted.' },
     referral: { label: 'Referral', note: 'Somebody sent them.' },
     repeat: { label: 'Repeat', note: 'You have worked together before.' },
+    social: { label: 'Social', note: 'They saw your posts or profile: Instagram, LinkedIn, Behance.' },
     direct: { label: 'Direct', note: 'They found you some other way.' },
 };
 

@@ -138,6 +138,7 @@ function Head({ d, today }: { d: DealView; today: string }) {
     return (
         <RecordHead
             name={d.title}
+            who={d.client.name}
             meta={
                 <>
                     {d.client.self ? (
@@ -400,6 +401,9 @@ function Lose({ d }: { d: DealView }) {
     );
 }
 
+/** A site enquiry's client is created in the visitor's site language: the first reply should be in it. */
+const REPLY_IN: Record<string, string> = { fr: 'French', en: 'English', ar: 'Arabic' };
+
 function ClientBlock({ d }: { d: DealView }) {
     const c = d.client;
     return (
@@ -421,6 +425,10 @@ function ClientBlock({ d }: { d: DealView }) {
                     <span className="dr-mval">
                         <a href={`mailto:${c.email}`}>{c.email}</a>
                     </span>
+                </div>
+                <div className="dr-mline">
+                    <span className="dr-mlbl">Reply in</span>
+                    <span className="dr-mval">{REPLY_IN[c.language] ?? c.language}</span>
                 </div>
             </div>
         </section>

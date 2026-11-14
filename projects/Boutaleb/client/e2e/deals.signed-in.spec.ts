@@ -237,6 +237,9 @@ test('a site deal shows what they wrote; close it as lost with a reason', async 
     await expect(wrote).toContainText('Six rooms and a booking calendar.');
     await expect(wrote).toContainText('New project');
     await expect(wrote).toContainText('$5k–$15k');
+    // The avatar is the client's, and the first reply goes out in their language.
+    await expect(page.locator('.b-rec-head .b-av')).toHaveText('SA');
+    await expect(page.getByRole('region', { name: 'Client' })).toContainText('Reply inEnglish');
     await expect(
         page.getByRole('navigation', { name: 'Deal sections' }).getByRole('link')
     ).toHaveText(['Overview', 'Proposal', 'Contract']);

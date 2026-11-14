@@ -17,8 +17,13 @@ export type DealStage = (typeof DEAL_STAGES)[number];
 /** The three stages where the deal is still alive. */
 export const DEAL_OPEN: readonly DealStage[] = ['lead', 'proposal', 'contract'];
 
-/** Where the work came from. Referral and repeat are earned; site and direct are weather. */
-export const DEAL_SOURCES = ['site', 'referral', 'repeat', 'direct'] as const;
+/**
+ * Where the work came from. Referral and repeat are earned; site and direct
+ * are weather. Social (they saw your posts or profile) is kept apart from
+ * direct because it is the one channel a solo studio grows by effort, so
+ * "did posting bring work?" must be answerable.
+ */
+export const DEAL_SOURCES = ['site', 'referral', 'repeat', 'social', 'direct'] as const;
 export type DealSource = (typeof DEAL_SOURCES)[number];
 
 const text = (max: number) => z.string().trim().max(max, 'tooLong');
