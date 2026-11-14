@@ -1,6 +1,6 @@
 # Build context: the my_workspace root (pnpm workspace + lockfile), e.g.
 #   docker build -f projects/Boutaleb/server/Dockerfile .
-FROM node:24-alpine AS builder
+FROM node:24.22.3-alpine AS builder
 WORKDIR /repo
 RUN corepack enable
 COPY . .
@@ -9,7 +9,7 @@ RUN pnpm install --frozen-lockfile --filter boutaleb-server... \
     && pnpm --filter boutaleb-server deploy --legacy --prod /out \
     && cp -r projects/Boutaleb/server/dist /out/dist
 
-FROM node:24-alpine AS runner
+FROM node:24.22.3-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=4002
