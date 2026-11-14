@@ -35,6 +35,16 @@ export const clientNew = clientCreate.extend({
 });
 export type ClientNew = z.infer<typeof clientNew>;
 
+/**
+ * Edit client: every stored field, sent whole each time. An empty company
+ * falls back to the name, an empty phone or website clears it. The history
+ * is never edited here: it is append-only.
+ */
+export const clientEdit = clientCreate.extend({
+    status: z.enum(CLIENT_STATUSES, 'required'),
+});
+export type ClientEdit = z.infer<typeof clientEdit>;
+
 /** One entry in a client's history, newest first. */
 export interface ContactView {
     id: string;

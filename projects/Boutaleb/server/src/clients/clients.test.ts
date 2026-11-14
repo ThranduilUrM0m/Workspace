@@ -30,7 +30,12 @@ const newClient = async (over: Record<string, unknown> = {}) =>
     api()
         .post('/clients')
         .set('Authorization', await as())
-        .send({ name: 'Nadia Berrada', email: `nadia+${randomUUID()}@example.ma`, language: 'fr', ...over });
+        .send({
+            name: 'Nadia Berrada',
+            email: `nadia+${randomUUID()}@example.ma`,
+            language: 'fr',
+            ...over,
+        });
 
 describe('New client', () => {
     it('stores the long form; a first entry is a note, so the reply clock has not started', async () => {
@@ -57,7 +62,9 @@ describe('New client', () => {
         const log = await api()
             .get(`/clients/${res.body.id}/contacts`)
             .set('Authorization', await as());
-        expect(log.body).toMatchObject([{ kind: 'note', text: 'Met at the Rabat design fair.', project: null }]);
+        expect(log.body).toMatchObject([
+            { kind: 'note', text: 'Met at the Rabat design fair.', project: null },
+        ]);
     });
 
     it('defaults to a lead with no history; a taken email answers 409 with the client', async () => {
@@ -73,6 +80,83 @@ describe('New client', () => {
     });
 });
 
+describe('Edit client', () => {
+    const edit = async (id: string, body: Record<string, unknown>, who = 'user_owner') =>
+        api()
+            .patch(`/clients/${id}`)
+            .set('Authorization', await as(who))
+            .send(body);
+
+    it('rewrites the stored fields; empty phone/website clear; Activity keeps only what changed', async () => {
+        const c = (
+            await newClient({
+                company: 'Zellige Studio',
+                phone: '+212 600 000 000',
+                website: 'zellige.ma',
+            })
+        ).body;
+        const res = await edit(c.id, {
+            name: 'Nadia B.',
+            company: '',
+            email: c.email,
+            language: 'ar',
+            status: 'active',
+            phone: '',
+            website: 'zellige.ma',
+        });
+        expect(res.status).toBe(200);
+        expect(res.body).toMatchObject({
+            name: 'Nadia B.',
+            company: 'Nadia B.',
+            language: 'ar',
+            status: 'active',
+            phone: null,
+            website: 'zellige.ma',
+        });
+        const ev = await t.events
+            .findOne({ action: 'client.edit', 'target.id': c.id })
+            .lean<{ before: object; after: object }>();
+        expect(ev?.before).toEqual({
+            name: 'Nadia Berrada',
+            company: 'Zellige Studio',
+            language: 'fr',
+            status: 'lead',
+            phone: '+212 600 000 000',
+        });
+        expect(ev?.after).toEqual({
+            name: 'Nadia B.',
+            company: 'Nadia B.',
+            language: 'ar',
+            status: 'active',
+            phone: null,
+        });
+    });
+
+    it('saving nothing new writes no Activity', async () => {
+        const c = (await newClient()).body;
+        const res = await edit(c.id, {
+            name: c.name,
+            email: c.email,
+            language: c.language,
+            status: c.status,
+        });
+        expect(res.status).toBe(200);
+        expect(await t.events.exists({ action: 'client.edit', 'target.id': c.id })).toBeFalsy();
+    });
+
+    it("another client's email answers 409 with that client; viewers 403; unknown 404; bad status 400", async () => {
+        const a = (await newClient()).body;
+        const b = (await newClient()).body;
+        const base = { name: a.name, language: 'fr', status: 'lead' };
+        const clash = await edit(a.id, { ...base, email: b.email.toUpperCase() });
+        expect(clash.status).toBe(409);
+        expect(clash.body.client.id).toBe(b.id);
+        expect((await edit(a.id, { ...base, email: a.email }, 'user_viewer')).status).toBe(403);
+        expect((await edit('0'.repeat(24), { ...base, email: a.email })).status).toBe(404);
+        expect((await edit(a.id, { ...base, email: a.email, status: 'vip' })).status).toBe(400);
+    });
+});
+
 describe('the contact log', () => {
     it('their reply stops the clock; your note does not; a project must be theirs; no future days', async () => {
         const c = (await newClient()).body;
@@ -80,7 +164,11 @@ describe('the contact log', () => {
         const project = await api()
             .post('/projects')
             .set('Authorization', await as())
-            .send({ name: `Spa site ${randomUUID().slice(0, 6)}`, clientId: c.id, governingLanguage: 'fr' });
+            .send({
+                name: `Spa site ${randomUUID().slice(0, 6)}`,
+                clientId: c.id,
+                governingLanguage: 'fr',
+            });
         expect(project.status).toBe(201);
 
         const log = async (body: Record<string, unknown>, id = c.id) =>
@@ -89,7 +177,9 @@ describe('the contact log', () => {
                 .set('Authorization', await as())
                 .send(body);
 
-        expect((await log({ kind: 'sent', text: 'Sent the quote', at: '2026-01-02' })).status).toBe(201);
+        expect((await log({ kind: 'sent', text: 'Sent the quote', at: '2026-01-02' })).status).toBe(
+            201
+        );
         const r = await log({
             kind: 'reply',
             text: 'They approved the quote',
@@ -102,9 +192,13 @@ describe('the contact log', () => {
             at: '2026-01-05',
             project: { id: project.body.id },
         });
-        expect((await log({ kind: 'note', text: 'Thinking about upsell', at: '2026-01-09' })).status).toBe(201);
+        expect(
+            (await log({ kind: 'note', text: 'Thinking about upsell', at: '2026-01-09' })).status
+        ).toBe(201);
 
-        const row = await api().get(`/clients/${c.id}`).set('Authorization', await as());
+        const row = await api()
+            .get(`/clients/${c.id}`)
+            .set('Authorization', await as());
         expect(row.body).toMatchObject({
             lastTheirs: '2026-01-05',
             firstContact: '2026-01-02',
@@ -112,11 +206,15 @@ describe('the contact log', () => {
             projects: [{ id: project.body.id }],
         });
 
-        expect((await log({ kind: 'call', text: 'x', projectId: project.body.id }, other.id)).status).toBe(422);
+        expect(
+            (await log({ kind: 'call', text: 'x', projectId: project.body.id }, other.id)).status
+        ).toBe(422);
         expect((await log({ kind: 'call', text: 'x', at: '2999-01-01' })).status).toBe(422);
         expect((await log({ kind: 'token', text: 'typed by hand' })).status).toBe(400);
         expect(await t.events.exists({ action: 'contact.log', 'target.id': c.id })).toBeTruthy();
-        const recent = await api().get('/clients/recent-contacts').set('Authorization', await as());
+        const recent = await api()
+            .get('/clients/recent-contacts')
+            .set('Authorization', await as());
         expect(recent.status).toBe(200);
         expect(recent.body.length).toBeLessThanOrEqual(8);
         expect(recent.body[0]).toHaveProperty('client.name');
@@ -140,7 +238,9 @@ describe('the contact log', () => {
             });
         expect(sent.status).toBe(201);
         await settle();
-        const found = await api().get(`/clients?q=${encodeURIComponent(email)}`).set('Authorization', await as());
+        const found = await api()
+            .get(`/clients?q=${encodeURIComponent(email)}`)
+            .set('Authorization', await as());
         const c = found.body[0];
         expect(c).toMatchObject({ lastTheirs: studioDay(), contacts: 1 });
 
@@ -148,7 +248,9 @@ describe('the contact log', () => {
             .post('/deals')
             .set('Authorization', await as())
             .send({ clientId: c.id, title: 'Second shop', source: 'repeat' });
-        const log = await api().get(`/clients/${c.id}/contacts`).set('Authorization', await as());
+        const log = await api()
+            .get(`/clients/${c.id}/contacts`)
+            .set('Authorization', await as());
         expect(log.body.map((e: { text: string }) => e.text).sort()).toEqual([
             'Enquiry — Second shop',
             'Site enquiry — A shop for argan oil.',
@@ -163,10 +265,21 @@ describe('reading and rights', () => {
         const all = await api().get('/clients').set('Authorization', viewer);
         expect(all.status).toBe(200);
         expect(all.body.find((x: { id: string }) => x.id === c.id)).toMatchObject({ contacts: 0 });
-        expect((await api().get(`/clients/${'0'.repeat(24)}`).set('Authorization', viewer)).status).toBe(404);
+        expect(
+            (
+                await api()
+                    .get(`/clients/${'0'.repeat(24)}`)
+                    .set('Authorization', viewer)
+            ).status
+        ).toBe(404);
         expect((await api().get('/clients/nope').set('Authorization', viewer)).status).toBe(404);
         expect(
-            (await api().post(`/clients/${c.id}/contacts`).set('Authorization', viewer).send({ kind: 'call', text: 'x' })).status
+            (
+                await api()
+                    .post(`/clients/${c.id}/contacts`)
+                    .set('Authorization', viewer)
+                    .send({ kind: 'call', text: 'x' })
+            ).status
         ).toBe(403);
     });
 });

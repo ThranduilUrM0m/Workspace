@@ -5,7 +5,7 @@ import {
     UnprocessableEntityException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { ClientNew, ClientRow, ContactCreate, ContactView } from '@repo/schemas';
+import type { ClientEdit, ClientNew, ClientRow, ContactCreate, ContactView } from '@repo/schemas';
 import { isValidObjectId, type Model, type Types } from 'mongoose';
 import type { AccessRequest } from '../access/access.guard.js';
 import { ActivityService } from '../activity/activity.service.js';
@@ -16,6 +16,17 @@ import { ContactsService } from './contacts.service.js';
 
 const escape = (q: string) => q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/** The fields Edit client writes, with absent optional ones as null so before/after compare cleanly. */
+const editable = (c: Client) => ({
+    name: c.name,
+    company: c.company,
+    email: c.email,
+    status: c.status,
+    language: c.language,
+    phone: c.phone ?? null,
+    website: c.website ?? null,
+});
+
 // The Clients screens' reads and writes. Sends facts, never verdicts: who
 // needs you, standing and silence are derived on screen from these rows.
 @Injectable()
@@ -24,7 +35,7 @@ export class ClientsService {
         @InjectModel(CLIENT) private readonly clients: Model<Client>,
         @InjectModel(PROJECT) private readonly projects: Model<Project>,
         private readonly contacts: ContactsService,
-        private readonly activity: ActivityService,
+        private readonly activity: ActivityService
     ) {}
 
     /** Everyone, or a search (the pickers type into it, so it stays capped at 50). */
@@ -76,6 +87,71 @@ export class ClientsService {
             after: out,
             sessionId: req.auth.sessionId,
         });
+        return out;
+    }
+
+    /**
+     * Edit client. The same one-per-address rule as create, checked against
+     * everyone else. Activity keeps the fields before and after, and only
+     * when something actually changed.
+     */
+    async update(id: string, body: ClientEdit, req: AccessRequest): Promise<ClientRow> {
+        const c = await this.find(id);
+        if (body.email !== c.email) {
+            const clash = await this.clients
+                .findOne({ email: body.email, _id: { $ne: c._id } })
+                .lean<Client>();
+            if (clash) {
+                const [client] = await this.rows([clash]);
+                throw new ConflictException({
+                    error: 'invalid',
+                    fields: { email: 'taken' },
+                    client,
+                });
+            }
+        }
+        const next = {
+            name: body.name,
+            company: body.company || body.name,
+            email: body.email,
+            status: body.status,
+            language: body.language,
+            phone: body.phone || null,
+            website: body.website || null,
+        };
+        const before = editable(c);
+        const changed = (Object.keys(next) as (keyof typeof next)[]).filter(
+            (k) => next[k] !== before[k]
+        );
+        if (!changed.length) return this.get(id);
+        const set = Object.fromEntries(
+            changed.filter((k) => next[k] !== null).map((k) => [k, next[k]])
+        );
+        const unset = Object.fromEntries(
+            changed.filter((k) => next[k] === null).map((k) => [k, 1])
+        );
+        const saved = await this.clients
+            .findByIdAndUpdate(
+                c._id,
+                { $set: set, ...(Object.keys(unset).length ? { $unset: unset } : {}) },
+                { returnDocument: 'after' }
+            )
+            .lean<Client>();
+        if (!saved) throw new NotFoundException({ error: 'not_found' });
+        const pick = <T extends Record<string, unknown>>(o: T) =>
+            Object.fromEntries(changed.map((k) => [k, o[k]]));
+        await this.activity.record({
+            kind: 'change',
+            weight: 'notable',
+            action: 'client.edit',
+            actor: req.member,
+            section: 'clients',
+            target: { type: 'client', id: String(c._id), label: saved.company },
+            before: pick(before),
+            after: pick(editable(saved)),
+            sessionId: req.auth.sessionId,
+        });
+        const [out] = await this.rows([saved]);
         return out;
     }
 

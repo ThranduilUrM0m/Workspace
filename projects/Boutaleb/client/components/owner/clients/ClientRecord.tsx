@@ -120,6 +120,7 @@ function Ready({ c, tab }: { c: ClientRow; tab: ClientTab }) {
                     <>
                         <RecSection title="Contact">
                             <Contact c={c} />
+                            <RecMore href={`/app/clients/${c.id}/edit`}>Edit details</RecMore>
                         </RecSection>
                         {!c.self && tab === 'overview' && (
                             <RecSection title="Their language">

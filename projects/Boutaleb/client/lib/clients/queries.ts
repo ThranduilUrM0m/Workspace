@@ -1,9 +1,18 @@
 'use client';
 
-import type { ClientNew, ClientRow, ContactCreate, ContactView, RecentContact } from '@repo/schemas';
+import type {
+    ClientEdit,
+    ClientNew,
+    ClientRow,
+    ContactCreate,
+    ContactView,
+    RecentContact,
+} from '@repo/schemas';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useApi } from '@/lib/api';
+import { dealKeys } from '@/lib/deals/queries';
 import { clientKeys } from '@/lib/projects/create';
+import { projectKeys } from '@/lib/projects/queries';
 
 // The Clients screens' reads and writes. Keys hang off clientKeys.all, so
 // anything that writes a client (New project, Log an enquiry) refreshes
@@ -54,6 +63,25 @@ export function useNewClient() {
         onSuccess: (c) => {
             qc.setQueryData(clientRows.one(c.id), c);
             void qc.invalidateQueries({ queryKey: clientKeys.all });
+        },
+    });
+}
+
+/** Edit client. Projects and deals carry the client's name and language, so they refresh too. */
+export function useEditClient(id: string) {
+    const api = useApi();
+    const qc = useQueryClient();
+    return useMutation({
+        mutationFn: (body: ClientEdit) =>
+            api<ClientRow>(`/clients/${encodeURIComponent(id)}`, {
+                method: 'PATCH',
+                body: JSON.stringify(body),
+            }),
+        onSuccess: (c) => {
+            qc.setQueryData(clientRows.one(c.id), c);
+            void qc.invalidateQueries({ queryKey: clientKeys.all });
+            void qc.invalidateQueries({ queryKey: projectKeys.all });
+            void qc.invalidateQueries({ queryKey: dealKeys.all });
         },
     });
 }

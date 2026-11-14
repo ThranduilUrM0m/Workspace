@@ -83,6 +83,14 @@ async function api(page: Page, opts: { empty?: boolean } = {}) {
         const req = r.request();
         const url = new URL(req.url());
         const path = url.pathname;
+        if (req.method() === 'PATCH') {
+            const body = req.postDataJSON() as Record<string, unknown>;
+            seen.push({ path, body });
+            const i = all.findIndex((c) => path === `/clients/${c.id}`);
+            const saved = { ...all[i], ...body, company: body.company ?? body.name, phone: body.phone || null, website: body.website || null };
+            all[i] = saved as never;
+            return r.fulfill({ json: saved });
+        }
         if (req.method() === 'POST') {
             const body = req.postDataJSON() as Record<string, unknown>;
             seen.push({ path, body });
@@ -181,6 +189,43 @@ test('New client sends the long form once and lands on the record', async ({ pag
         status: 'lead',
         firstEntry: 'Instagram DM about a shop.',
     });
+});
+
+test('Edit details: prefilled, grey until changed, sends every field, back on the record', async ({ page }) => {
+    const seen = await api(page);
+    await page.goto(`/app/clients/${SARA}`);
+    await page.getByRole('link', { name: 'Edit details' }).click();
+    await expect(page).toHaveURL(`/app/clients/${SARA}/edit`);
+    await expect(page.getByLabel('Name')).toHaveValue('Sara Alaoui');
+    await expect(page.getByLabel('Phone (optional)')).toHaveValue('+212 600 000 000');
+    const save = page.getByRole('button', { name: 'Save changes' });
+    await expect(save).toBeDisabled();
+    await expect(page.getByText('Nothing changed yet.')).toBeVisible();
+    await expect(page.getByLabel('How they got in touch (optional)')).toHaveCount(0);
+
+    // Her own email is not a clash; another client's is.
+    await page.getByLabel('Email').fill('omar@example.ma');
+    await expect(page.getByRole('link', { name: 'Open that client instead' })).toBeVisible();
+    await page.getByLabel('Email').fill('sara@atlas.ma');
+
+    await page.getByLabel('Phone (optional)').fill('');
+    await page.getByRole('radio', { name: 'FR', exact: true }).or(page.getByRole('button', { name: 'FR', exact: true })).click();
+    await expect(page.getByText('Anything already sent stays in English.')).toBeVisible();
+    await save.click();
+    await expect(page).toHaveURL(new RegExp(`/app/clients/${SARA}$`));
+    expect(seen[0]).toEqual({
+        path: `/clients/${SARA}`,
+        body: {
+            name: 'Sara Alaoui',
+            company: 'Atlas Riads',
+            email: 'sara@atlas.ma',
+            language: 'fr',
+            phone: '',
+            website: '',
+            status: 'lead',
+        },
+    });
+    await expect(page.getByRole('region', { name: 'Contact', exact: true })).not.toContainText('+212');
 });
 
 test('a taken email offers the existing client instead', async ({ page }) => {
