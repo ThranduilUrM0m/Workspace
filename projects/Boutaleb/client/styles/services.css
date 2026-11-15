@@ -26,7 +26,7 @@
   font-family:var(--f-body);color:var(--ink);background:var(--bg);
 }
 .services-v1 h1,.services-v1 h2,.services-v1 .ghost{font-family:var(--f-head);}
-.services-v1 .wrap{max-width:68.75rem;margin:0 auto;padding-inline:1.25rem;}
+.services-v1 .wrap{padding-inline:var(--site-gutter);}
 
 /* Ghost word: centred by flex, so it overflows both sides equally and the
    same rule holds under dir="rtl" (a left:50% + translate would not). */
@@ -129,7 +129,6 @@
 .services-v1 .qa-end{padding:2rem .25rem 0;font-size:.9375rem;color:var(--muted);}
 
 @media (min-width:48rem){
-  .services-v1 .wrap{padding-inline:2rem;}
   .services-v1 .s-hero{padding-block-end:5rem;}
   .services-v1 .s-hero .ghost{top:-4.375rem;}
   .services-v1 .s-sec{padding-block:5rem;}

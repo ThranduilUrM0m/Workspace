@@ -25,7 +25,7 @@
   --rule:rgba(27,27,31,.1); --fill:#232326;
   font-family:var(--f-body);color:var(--ink);background:var(--bg);padding-bottom:3.5rem;overflow-x:clip;
 }
-.contact-v1 .wrap{max-width:63.75rem;margin:0 auto;padding-inline:1.25rem;}
+.contact-v1 .wrap{padding-inline:var(--site-gutter);}
 .contact-v1 h1,.contact-v1 h2,.contact-v1 h3{margin:0;font-family:var(--f-head);}
 .contact-v1 button:focus-visible,.contact-v1 a:focus-visible,.contact-v1 .dz:focus-within{outline:2px solid var(--accent);outline-offset:2px;}
 
@@ -95,9 +95,6 @@
 
 @media (min-width:40rem){
   .contact-v1 .n-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 2.5rem;}
-}
-@media (min-width:48rem){
-  .contact-v1 .wrap{padding-inline:2.5rem;}
 }
 @media (min-width:56rem){
   .contact-v1 .c-layout{grid-template-columns:17.5rem minmax(0,1fr);gap:clamp(2.5rem,1rem + 4vw,4.5rem);align-items:start;}

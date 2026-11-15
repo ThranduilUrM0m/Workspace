@@ -8,24 +8,25 @@
             longer fits beside an image or a second card below this
      56rem  blog: the offset card and its ghost number need the room
      64rem  trust stats: four across still overflows at 760px */
-.home-v1{max-width:73.75rem;margin:0 auto;color:var(--ink);}
+.home-v1{color:var(--ink);}
 .home-v1 .eyebrow{color:var(--clay-ink);font:.6875rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem;}
 .home-v1 .ph{background:repeating-linear-gradient(45deg,#EDE7DE,#EDE7DE 8px,#E4DCD0 8px,#E4DCD0 16px);display:flex;align-items:center;justify-content:center;color:rgba(27,27,31,.62);font:.6875rem var(--f-body);text-transform:uppercase;letter-spacing:.05em;}
-.home-v1 .sec{padding:3.5rem 1.5rem 4.5rem;}
+.home-v1 .sec{padding:3.5rem var(--site-gutter) 4.5rem;}
 
 /* ===== HERO — zero breakpoints: clamp() scales the type continuously ===== */
 .home-v1 #sec-hero{display:flex;flex-direction:column;height:calc(100dvh - var(--bar-h));min-height:30rem;}
 .home-v1 #sec-hero .hero-main{position:relative;flex:1;min-height:0;overflow:hidden;}
-.home-v1 .h-built{position:absolute;inset-inline-start:.5rem;top:0;bottom:0;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:#EDE7DE;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:0;}
+.home-v1 .h-built{position:absolute;inset-inline-start:var(--site-gutter);top:0;bottom:0;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:#EDE7DE;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:0;}
 .home-v1 .h-word{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:1;text-align:center;}
 .home-v1 .h-word > div{position:relative;display:inline-block;}
 .home-v1 .h-care{position:absolute;top:50%;left:0;width:100%;translate:0 -50%;text-align:center;font:400 clamp(3.25rem,16vw,5rem) var(--font-cookie),cursive;color:var(--clay);white-space:nowrap;}
 .home-v1 .h-bespoke{display:block;font:700 clamp(3.5rem,17vw,5.25rem)/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;white-space:nowrap;}
-.home-v1 .h-pitch{position:absolute;inset-inline-start:4.75rem;bottom:1.75rem;max-width:13.75rem;z-index:3;}
+.home-v1 .h-pitch{position:absolute;inset-inline-start:calc(var(--site-gutter) + 4.25rem);bottom:1.75rem;max-width:13.75rem;z-index:3;}
 .home-v1 .h-pitch .eyebrow{margin-bottom:.5rem;}
 .home-v1 .h-line{font:1.375rem/1.2 var(--f-head);margin-bottom:.625rem;}
 .home-v1 .h-cta{display:inline-flex;align-items:center;min-height:var(--hit);background:#232326;color:var(--ground);font:.6875rem var(--f-body);padding:.5rem 1rem;letter-spacing:.03em;text-decoration:none;}
-.home-v1 .h-strip{border-top:var(--hair) solid var(--line);padding:.75rem 1.5rem;display:flex;justify-content:flex-end;font:.625rem var(--f-body);color:var(--muted);flex-shrink:0;}
+.home-v1 .h-strip{position:relative;padding:.75rem var(--site-gutter);display:flex;justify-content:flex-end;font:.625rem var(--f-body);color:var(--muted);flex-shrink:0;}
+.home-v1 .h-strip::before{content:"";position:absolute;inset-inline:var(--site-gutter);inset-block-start:0;height:var(--hair);background:var(--line);}
 @media (min-width:48rem){.home-v1 #sec-hero{height:calc(100dvh - 3.6875rem);}}
 @media (min-width:48rem) and (pointer:fine){.home-v1 .h-cta{min-height:0;}}
 
@@ -164,7 +165,7 @@ mask-composite:intersect;}
  title or excerpt grows it instead of crowding it. The ghost index "01."
  sits upright on the card's top edge; from 56rem it goes back to the
  rotated number on the corner and the offset card. ===== */
-.home-v1 .bs-wrap{position:relative;padding:3rem 1.5rem 3rem;}
+.home-v1 .bs-wrap{position:relative;padding:3rem var(--site-gutter) 3rem;}
 .home-v1 .bc-frame{position:relative;}
 .home-v1 .bc-ghostNumWrap{position:absolute;z-index:3;top:0;inset-inline-end:.5rem;translate:0 -58%;pointer-events:none;}
 .home-v1 .bc-ghostNum,.home-v1 .bc-ghostNumOutline{font:700 4.5rem/1 var(--f-head);}
@@ -202,7 +203,7 @@ mask-composite:intersect;}
 .home-v1 .bc-dots button{min-width:1.5rem;height:var(--hit);display:flex;align-items:center;justify-content:center;border:0;background:none;padding:0;font:.625rem var(--f-body);color:rgba(27,27,31,.62);cursor:pointer;}
 .home-v1 .bc-dots button[aria-current]::before{content:"";width:1.875rem;height:3px;background:var(--ink);}
 @media (min-width:56rem){
-.home-v1 .bs-wrap{display:flex;align-items:flex-end;min-height:26.25rem;padding:1.5rem 2.5rem 3rem;}
+.home-v1 .bs-wrap{display:flex;align-items:flex-end;min-height:26.25rem;padding:1.5rem var(--site-gutter) 3rem;}
 .home-v1 .bs-wrap::before{content:"";flex:0 0 2.5rem;}
 .home-v1 .bs-right{flex:1;min-width:0;position:relative;}
 .home-v1 .bc-frame{width:70%;margin-inline-start:auto;}

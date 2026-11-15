@@ -25,7 +25,7 @@
   --rule:rgba(27,27,31,.1);
   font-family:var(--f-body);color:var(--ink);background:var(--bg);
 }
-.work-v1 .wrap{max-width:73.75rem;margin:0 auto;padding-inline:1.25rem;}
+.work-v1 .wrap{padding-inline:var(--site-gutter);}
 .work-v1 .font-display{font-family:var(--f-head);}
 .work-v1 .meta{font-size:.5625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
 .work-v1 .accent{width:1.5rem;height:2px;background:var(--accent);margin:.5rem 0;}
@@ -114,7 +114,6 @@
   .work-v1 .g3{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 @media (min-width:48rem){
-  .work-v1 .wrap{padding-inline:3.5rem;}
   .work-v1 .gwork{inset-inline-start:3.5rem;}
   .work-v1 .w-hero-row{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:2rem;}
   .work-v1 .w-hero .w-aside{max-width:14.375rem;text-align:end;}
