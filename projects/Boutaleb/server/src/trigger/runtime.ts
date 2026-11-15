@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import { createTransport, type Transporter } from 'nodemailer';
 import { ActivitySchema, ACTIVITY } from '../activity/activity.schema.js';
+import { CLIENT, ClientSchema } from '../clients/client.schema.js';
 import { ENQUIRY, EnquirySchema, type Enquiry } from '../enquiries/enquiry.schema.js';
+import { PROJECT, ProjectSchema } from '../projects/project.schema.js';
 
 // What the jobs need, outside Nest: they run in Trigger.dev's worker, not
 // in the API process. One Mongo connection and one mail transport per
@@ -25,6 +27,8 @@ export async function models() {
     return {
         enquiries: (m.models[ENQUIRY] ?? m.model(ENQUIRY, EnquirySchema)) as mongoose.Model<Enquiry>,
         activity: m.models[ACTIVITY] ?? m.model(ACTIVITY, ActivitySchema),
+        projects: m.models[PROJECT] ?? m.model(PROJECT, ProjectSchema),
+        clients: m.models[CLIENT] ?? m.model(CLIENT, ClientSchema),
     };
 }
 

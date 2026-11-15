@@ -23,6 +23,9 @@ const Area = new Schema(
     { _id: false },
 );
 
+/** A client's answers saved while they are still typing (T8.4): one per prompt, keyed 'area.part'. */
+const Draft = new Schema({ key: { type: String, required: true }, a: { type: String, default: '', maxlength: 4000 } }, { _id: false });
+
 const Reading = new Schema(
     {
         summary: { type: String, required: true },
@@ -45,6 +48,7 @@ export const BriefSchema = new Schema(
         revision: { type: Number, default: 0 },
         reading: { type: Reading, default: null },
         areas: { type: [Area], default: () => [] },
+        draft: { type: [Draft], default: () => [] },
     },
     { timestamps: true },
 );

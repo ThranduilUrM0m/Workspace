@@ -8,6 +8,7 @@ import { ClientsModule } from './clients/clients.module.js';
 import { DealsModule } from './deals/deals.module.js';
 import { EnquiriesModule } from './enquiries/enquiries.module.js';
 import { HealthModule } from './health/health.module.js';
+import { PortalModule } from './portal/portal.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
 import { StorageModule } from './storage/storage.module.js';
 import { WireframesModule } from './wireframes/wireframes.module.js';
@@ -27,6 +28,7 @@ import { WireframesModule } from './wireframes/wireframes.module.js';
         DealsModule,
         EnquiriesModule,
         HealthModule,
+        PortalModule,
         ProjectsModule,
         StorageModule,
         WireframesModule,

@@ -6,3 +6,4 @@ export * from './milestones';
 export * from './wireframes';
 export * from './deals';
 export * from './clients';
+export * from './portal';
