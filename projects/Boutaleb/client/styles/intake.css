@@ -93,3 +93,9 @@
 .pi-w-area .pi-ta { max-inline-size: 76ch; }
 .pi-w-foot { position: relative; margin-block-start: 2rem; padding-block-start: 1.25rem; }
 .pi-w-n { display: inline-block; margin-inline-start: .5rem; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+
+/* The magic link, shown once right after it is made (T8.4). */
+.pi-link { margin-block-start: 1.25rem; padding: .875rem 1rem; background: var(--color-accent-tint); }
+.pi-link-row { display: flex; flex-wrap: wrap; gap: .625rem; }
+.pi-link-in { flex: 1 1 16rem; min-inline-size: 0; min-block-size: var(--hit); padding: .5rem .75rem; border: 1px solid var(--color-line); border-radius: 0; background: #fff; color: var(--color-ink); font: .8125rem var(--font-body); }
+.pi-link-row .btn-solid { min-block-size: var(--hit); }

@@ -27,6 +27,7 @@ const project = (over: Record<string, unknown> = {}) => ({
 });
 const none = { projectId: ID, state: 'none', mine: false, seed: null, sentAt: null, submittedAt: null, decidedAt: null, reason: null, revision: 0, reading: null, areas: [] };
 
+const LINK = `http://localhost:3002/p/${'A'.repeat(43)}`;
 const LONG = 'A long enough answer that says something you can actually plan the work against.';
 const fromClient = {
     ...none,
@@ -50,6 +51,12 @@ async function api(page: Page, p: Record<string, unknown>, start: Record<string,
         const path = new URL(req.url()).pathname.replace(`/projects/${ID}`, '');
         if (path === '') return r.fulfill({ json: p });
         if (path === '/milestones') return r.fulfill({ json: [] });
+        if (path === '/portal-link') {
+            if (req.method() === 'GET') return r.fulfill({ json: { live: false, issuedAt: null, emailedAt: null, lastOpen: null } });
+            const send = (req.postDataJSON() as { send: boolean }).send;
+            seen.push({ method: req.method(), path, body: { send } });
+            return r.fulfill({ status: 201, json: { live: true, issuedAt: '2026-11-15T09:00:00.000Z', emailedAt: send ? '2026-11-15T09:00:00.000Z' : null, lastOpen: null, url: LINK, sent: send } });
+        }
         if (req.method() === 'GET') return r.fulfill({ json: brief });
         const body = req.postDataJSON();
         seen.push({ method: req.method(), path, body });
@@ -101,6 +108,29 @@ test("a client's project: no writing it for them, the questionnaire goes with th
     await page.goto(`/app/projects/${ID}?tab=intake`);
     await expect(page.getByRole('heading', { name: 'Nothing sent yet.' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Write the brief' })).toHaveCount(0);
+});
+
+test('Send intake: issues a link, emails it in the client\'s language, shows it once', async ({ page }) => {
+    const seen = await api(page, project({ client, status: 'intake_pending' }), none, () => 500);
+    await page.goto(`/app/projects/${ID}?tab=intake`);
+    await expect(page.getByText('Goes to omar@example.ma, in French.')).toBeVisible();
+    await page.getByRole('button', { name: 'Send intake' }).click();
+    await expect.poll(() => seen[0]).toMatchObject({ method: 'POST', path: '/portal-link', body: { send: true } });
+    await expect(page.getByText('Emailed to omar@example.ma')).toBeVisible();
+    await expect(page.getByLabel('Magic link')).toHaveValue(LINK);
+    await expect(page.getByText('This is the only time the link is shown.')).toBeVisible();
+});
+
+test('Copy link instead: a link for WhatsApp, nothing emailed, copied to the clipboard', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    const seen = await api(page, project({ client, status: 'intake_pending' }), none, () => 500);
+    await page.goto(`/app/projects/${ID}?tab=intake`);
+    await page.getByRole('button', { name: 'Copy link instead' }).click();
+    await expect.poll(() => seen[0]).toMatchObject({ path: '/portal-link', body: { send: false } });
+    await expect(page.getByText('Link ready to copy')).toBeVisible();
+    await page.getByRole('button', { name: 'Copy link', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Copied' })).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(LINK);
 });
 
 test('a client submission: read, approve over thin areas, or send back with a reason', async ({ page }) => {

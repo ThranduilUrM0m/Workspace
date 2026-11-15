@@ -1,10 +1,11 @@
 'use client';
 
-import { BRIEF_AREAS, BRIEF_PARTS, isThin, REASON_MIN, type BriefArea, type BriefView, type ProjectView } from '@repo/schemas';
+import { BRIEF_AREAS, BRIEF_PARTS, isThin, REASON_MIN, type BriefArea, type BriefView, type PortalLinkIssued, type ProjectView } from '@repo/schemas';
 import { useState, type ReactNode } from 'react';
 import { QueryGate } from '@/components/owner/data/QueryGate';
 import { ApiError } from '@/lib/api';
 import { useBrief, useBriefAct } from '@/lib/projects/brief';
+import { useIssueLink, usePortalLink } from '@/lib/projects/portal';
 import { ago, todayIso } from '@/lib/projects/derive';
 
 // The Intake tab (wireframes/shell/project-intake.js, structure spec §7).
@@ -57,11 +58,7 @@ function Nothing({ p, b, write }: { p: ProjectView; b: BriefView; write?: () => 
     }
     if (b.state === 'awaiting' && b.sentAt) {
         const n = ago(b.sentAt.slice(0, 10), todayIso());
-        return (
-            <Empty title={`Sent ${n} day${n === 1 ? '' : 's'} ago. Nothing back yet.`}>
-                <p>Nobody has opened the questionnaire. A reminder is the whole correct answer to silence; it goes out from the magic link.</p>
-            </Empty>
-        );
+        return <Sent p={p} title={`Sent ${n} day${n === 1 ? '' : 's'} ago. Nothing back yet.`} />;
     }
     return (
         <Empty title="Nothing sent yet.">
@@ -71,9 +68,81 @@ function Nothing({ p, b, write }: { p: ProjectView; b: BriefView; write?: () => 
                     {b.seed}
                 </Seed>
             )}
+            <LinkActions p={p} />
         </Empty>
     );
 }
+
+/** The link is out and nothing is back: say whether they have even opened it, and offer the reminder. */
+function Sent({ p, title }: { p: ProjectView; title: string }) {
+    const link = usePortalLink(p.id);
+    const open = link.data?.lastOpen;
+    return (
+        <Empty title={title}>
+            <p>
+                {open
+                    ? `They opened the questionnaire on ${fmt(open)} and have not sent it yet. A reminder is the whole correct answer to silence.`
+                    : 'Nobody has opened the questionnaire. A reminder is the whole correct answer to silence.'}
+            </p>
+            <LinkActions p={p} again />
+        </Empty>
+    );
+}
+
+/**
+ * Sending the questionnaire: by email in the client's language, or as a link
+ * to paste into WhatsApp. Only the link's hash is stored, so a link can be
+ * shown once, here, right after it is made; another copy means a new link,
+ * and the old one stops working. Said plainly where the buttons are, because
+ * "Copy a new link" otherwise reads as harmless.
+ */
+function LinkActions({ p, again }: { p: ProjectView; again?: boolean }) {
+    const issue = useIssueLink(p.id);
+    const [made, setMade] = useState<PortalLinkIssued | null>(null);
+    const [copied, setCopied] = useState(false);
+    const c = p.client;
+    if (!c || c.self) return null;
+    const go = (send: boolean) => {
+        setCopied(false);
+        issue.mutate(send, { onSuccess: setMade });
+    };
+    const copy = async () => {
+        if (!made) return;
+        await navigator.clipboard.writeText(made.url);
+        setCopied(true);
+    };
+    return (
+        <>
+            <div className="pi-acts">
+                <button type="button" className="btn-solid" disabled={issue.isPending} onClick={() => go(true)}>
+                    {issue.isPending ? 'Making the link…' : again ? 'Email a new link' : 'Send intake'}
+                </button>
+                <button type="button" className="pi-ghost" disabled={issue.isPending} onClick={() => go(false)}>
+                    {again ? 'Copy a new link' : 'Copy link instead'}
+                </button>
+            </div>
+            <p className="pi-note">
+                {again ? 'A new link replaces the one already sent: the old one stops working. ' : ''}
+                Goes to {c.email}, in {LANGUAGE_NAME[c.language]}.
+            </p>
+            <Failure error={issue.error} />
+            {made && (
+                <div className="pi-link" role="status">
+                    <span className="pi-seed-h">{made.sent ? `Emailed to ${c.email}` : 'Link ready to copy'}</span>
+                    <div className="pi-link-row">
+                        <input className="pi-link-in" readOnly value={made.url} aria-label="Magic link" onFocus={(e) => e.currentTarget.select()} />
+                        <button type="button" className="btn-solid" onClick={() => void copy()}>
+                            {copied ? 'Copied' : 'Copy link'}
+                        </button>
+                    </div>
+                    <span className="pi-seed-n">This is the only time the link is shown. Anyone who has it can open the questionnaire, so paste it into the client&apos;s own chat only.</span>
+                </div>
+            )}
+        </>
+    );
+}
+
+const LANGUAGE_NAME = { en: 'English', fr: 'French', ar: 'Arabic' } as const;
 
 function Empty({ title, children }: { title: string; children: ReactNode }) {
     return (
@@ -283,6 +352,8 @@ function Decide({ p, b, thin, write }: { p: ProjectView; b: BriefView; thin: num
                     Reopen
                 </button>
                 <Failure error={act.error} />
+                {/* Sending it back tells them nothing by itself: the same link, emailed again, is how they find out. */}
+                <LinkActions p={p} again />
             </div>
         );
     }

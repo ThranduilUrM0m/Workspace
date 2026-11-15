@@ -1,0 +1,457 @@
+/* Ported from Blueprinting/wireframes/shell/portal-intake.css (T8.4), rebuilt
+   mobile-first with logical properties. The wireframe was desktop-first with
+   left/right and px-era paddings; every rule here starts at the phone and
+   adds space where space appears.
+
+   Breakpoints, each named by what breaks:
+     40rem  the three phases of the method fit side by side
+     56rem  a part's label column stands beside its questions (below this the
+            label would squeeze the answers to a sliver)
+   Units: rem for type and spacing, clamp() for the gutter and the opening
+   lines, dvh (never vh) for the reveal, ch for measure, px only for
+   hairlines and the 44px touch minimum.
+
+   TONE IS THE FUNCTIONAL REQUIREMENT. This is the only screen a client ever
+   sees and it asks for an hour of careful writing: more air than any ERP
+   screen, a real measure on every paragraph, one action visible at a time.
+
+   Arabic: dir="rtl" on .pt-root flips every logical rule for free; the face
+   switches to IBM Plex Arabic and tracking is zeroed (letter-spacing breaks
+   connected script). */
+
+.pt-page{margin:0;background:#F7F5F2;}
+
+.pt-root,
+.pt-gone{
+  --bg:#F7F5F2;
+  --ink:#1B1B1F;
+  --fill:#232326;
+  --muted:#4A4A50;
+  --faint:#707076;
+  --line:rgba(27,27,31,.1);
+  --field-line:rgba(27,27,31,.25);
+  --accent:#C4694A;
+  --accent-ink:#A65336;
+  --accent-tint:rgba(196,105,74,.08);
+  --bad-ink:#B73629;
+  --f-head:var(--font-bricolage),var(--font-questrial),system-ui,sans-serif;
+  --f-body:var(--font-questrial),system-ui,sans-serif;
+  --gutter:clamp(1.25rem,.5rem + 3vw,2.5rem);
+  --top-h:4.25rem;
+  --hit:44px;
+  font-family:var(--f-body);
+  color:var(--ink);
+  background:var(--bg);
+}
+
+.pt-root *,
+.pt-root *::before,
+.pt-root *::after{box-sizing:border-box;}
+
+.pt-root{
+  min-block-size:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow-x:clip;
+}
+
+.pt-root[dir="rtl"]{--f-head:var(--font-plex-arabic),'Segoe UI',Tahoma,sans-serif;--f-body:var(--font-plex-arabic),'Segoe UI',Tahoma,sans-serif;}
+.pt-root[dir="rtl"] *{letter-spacing:0 !important;}
+
+.pt-root :focus-visible{outline:2px solid var(--fill);outline-offset:2px;}
+
+/* Questrial ships ONE weight (400): everything that wants more is routed to Bricolage. */
+.pt-mark,
+.pt-beat1,
+.pt-beat2,
+.pt-body h1,
+.pt-kicker,
+.pt-lede b,
+.pt-turn h2,
+.pt-beat h2,
+.pt-beat-n,
+.pt-deal h2,
+.pt-deal-k,
+.pt-promise b,
+.pt-expect b,
+.pt-bar-n,
+.pt-sec-n,
+.pt-sec-h,
+.pt-q-n,
+.pt-btn,
+.pt-back h2,
+.pt-gone h1{font-family:var(--f-head);}
+
+/* ---------- chrome ---------- */
+
+/* The wordmark standard: lowercase, Bricolage 700, ink, and only the full
+   stop in accent. The language switch lives in this bar and the bar is
+   sticky, so a reader can change their mind halfway down the reveal. */
+.pt-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  min-block-size:var(--top-h);
+  padding-inline:var(--gutter);
+  position:sticky;
+  inset-block-start:0;
+  z-index:5;
+  background:var(--bg);
+}
+
+/* The wordmark is a Latin word in every language: isolated, so the full stop stays on its right in Arabic. */
+.pt-mark{font-size:1.1875rem;font-weight:700;letter-spacing:.02em;color:var(--ink);direction:ltr;unicode-bidi:isolate;}
+.pt-dot{color:var(--accent);}
+
+.pt-langs{display:flex;gap:.125rem;}
+
+/* Three plain words, not a dropdown: a reader who cannot read the current
+   language cannot read a select's label either. */
+.pt-lang{
+  min-block-size:var(--hit);
+  min-inline-size:var(--hit);
+  padding-inline:.625rem;
+  border:0;
+  background:none;
+  cursor:pointer;
+  font:.8125rem var(--f-body);
+  color:var(--muted);
+  transition:color .18s ease;
+}
+.pt-lang:hover{color:var(--ink);}
+.pt-lang.is-on{color:var(--ink);background:rgba(27,27,31,.06);}
+
+.pt-main{
+  flex:1;
+  inline-size:100%;
+  max-inline-size:46rem;
+  margin-inline:auto;
+  padding:1.5rem var(--gutter) 4rem;
+}
+.pt-main--intro{max-inline-size:none;padding:0 0 4rem;}
+.pt-main--form{max-inline-size:66rem;}
+
+.pt-foot{
+  padding:1.25rem var(--gutter) 2rem;
+  font-size:.75rem;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* ---------- the opening reveal ---------- */
+
+/* Three viewports tall with one sticky stage. The page scrolls normally the
+   whole time: nothing is captured, nothing runs on a timer. dvh, never vh: on
+   a phone the collapsing browser bar makes vh taller than the screen. */
+.pt-hero{
+  block-size:300dvh;
+  position:relative;
+  margin-block-start:calc(var(--top-h) * -1);
+}
+
+.pt-stage{
+  position:sticky;
+  inset-block-start:0;
+  block-size:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding-inline:var(--gutter);
+  text-align:center;
+}
+
+/* Both beats share one spot. Every beat enters from just above and settles
+   down, and leaves by continuing down: two lines moving the same way read as
+   one gesture. */
+.pt-beat1,
+.pt-beat2{
+  position:absolute;
+  inset-inline-start:50%;
+  inset-block-start:50%;
+  inline-size:min(100%,22ch);
+  margin:0;
+  line-height:1.1;
+  letter-spacing:-.02em;
+  pointer-events:none;
+  opacity:0;
+  filter:blur(5px);
+  translate:-50% calc(-50% - 1.75rem);
+  transition:opacity .3s ease,translate .3s ease,filter .3s ease;
+}
+.pt-root[dir="rtl"] .pt-beat1,
+.pt-root[dir="rtl"] .pt-beat2{translate:50% calc(-50% - 1.75rem);}
+
+.pt-beat1{font-size:clamp(2.25rem,1.2rem + 5.6vw,6rem);font-weight:700;}
+.pt-beat2{font-size:clamp(1.5rem,.9rem + 3vw,3.5rem);font-weight:600;inline-size:min(100%,26ch);color:rgba(27,27,31,.78);}
+
+/* Leaving takes .3s; arriving takes .6s and starts .18s late, so the first
+   line is gone before the second commits: a hand-off, not a dissolve. */
+.pt-stage[data-beat="0"] .pt-beat1,
+.pt-stage[data-beat="1"] .pt-beat2{
+  opacity:1;
+  filter:blur(0);
+  translate:-50% -50%;
+  transition:opacity .6s cubic-bezier(.16,1,.3,1) .18s,translate .7s cubic-bezier(.16,1,.3,1) .18s,filter .6s ease .18s;
+}
+.pt-root[dir="rtl"] .pt-stage[data-beat="0"] .pt-beat1,
+.pt-root[dir="rtl"] .pt-stage[data-beat="1"] .pt-beat2{translate:50% -50%;}
+
+.pt-stage[data-beat="1"] .pt-beat1{translate:-50% calc(-50% + 1.75rem);}
+.pt-root[dir="rtl"] .pt-stage[data-beat="1"] .pt-beat1{translate:50% calc(-50% + 1.75rem);}
+
+.pt-scrollcue{
+  position:absolute;
+  inset-inline-start:50%;
+  inset-block-end:3rem;
+  translate:-50% 0;
+  font-size:.6875rem;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  opacity:0;
+  transition:opacity .5s ease;
+}
+.pt-root[dir="rtl"] .pt-scrollcue{translate:50% 0;}
+.pt-stage[data-beat="0"] .pt-scrollcue{opacity:1;}
+
+/* Reduced motion: no sticky trap, no cross-fade. The same two lines, stacked. */
+.pt-hero--still{
+  block-size:auto;
+  margin:0 auto;
+  padding:3rem var(--gutter) 2rem;
+  max-inline-size:52rem;
+}
+.pt-hero--still .pt-beat1,
+.pt-hero--still .pt-beat2{
+  position:static;
+  translate:none !important;
+  opacity:1;
+  filter:none;
+  margin:0 0 1rem;
+  inline-size:auto;
+}
+
+/* ---------- the argument ---------- */
+
+.pt-body{
+  max-inline-size:46rem;
+  margin-inline:auto;
+  padding-inline:var(--gutter);
+}
+
+.pt-kicker{
+  display:block;
+  margin-block-end:1rem;
+  font-size:.6875rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.pt-body h1{
+  margin:0 0 1.5rem;
+  font-size:clamp(1.75rem,1.35rem + 1.4vw,2.5rem);
+  font-weight:700;
+  line-height:1.2;
+  letter-spacing:-.01em;
+  max-inline-size:20ch;
+  text-wrap:balance;
+}
+
+.pt-lede{
+  margin:0 0 1.5rem;
+  font-size:1.0625rem;
+  line-height:1.7;
+  max-inline-size:62ch;
+  color:rgba(27,27,31,.78);
+}
+.pt-lede b{font-weight:700;color:var(--ink);}
+
+.pt-turn{margin-block:2.75rem 1.5rem;}
+.pt-turn h2{margin:.5rem 0 0;font-size:1.375rem;font-weight:600;line-height:1.3;max-inline-size:26ch;}
+
+/* The three phases: one argument in three parts. A column on the phone, a
+   row where they fit. The divider is inset, never touching the edge. */
+.pt-beats{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:1.75rem;
+  margin-block-end:2.75rem;
+  padding-block-start:1.75rem;
+  position:relative;
+}
+.pt-beats::before{content:'';position:absolute;inset-inline:0 3rem;inset-block-start:0;block-size:1px;background:var(--line);}
+
+.pt-beat-n{display:block;margin-block-end:.5rem;font-size:.6875rem;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);font-variant-numeric:tabular-nums;}
+.pt-beat h2{margin:0 0 .5rem;font-size:1rem;font-weight:600;line-height:1.3;}
+.pt-beat p{margin:0;font-size:.875rem;line-height:1.65;color:var(--muted);}
+
+/* The turn of the argument, tinted because it is the paragraph the whole
+   page exists to make readable, and its promise is binding. */
+.pt-deal{padding:1.5rem 1.25rem;background:var(--accent-tint);margin-block-end:2rem;}
+.pt-deal-k{display:block;margin-block-end:.625rem;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);}
+.pt-deal h2{margin:0 0 .875rem;font-size:1.25rem;font-weight:600;line-height:1.3;max-inline-size:26ch;}
+.pt-deal p{margin:0 0 .875rem;font-size:.9375rem;line-height:1.7;max-inline-size:64ch;}
+.pt-deal p:last-child{margin-block-end:0;}
+
+.pt-promise{padding-inline-start:1rem;border-inline-start:2px solid var(--accent);color:rgba(27,27,31,.82);}
+.pt-promise b{font-weight:700;}
+
+.pt-expect{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem 2rem;
+  padding-block:1.125rem;
+  margin-block-end:2rem;
+  font-size:.875rem;
+  color:var(--muted);
+  position:relative;
+}
+.pt-expect::after{content:'';position:absolute;inset-inline:0 3rem;inset-block-end:0;block-size:1px;background:var(--line);}
+
+.pt-acts{display:flex;align-items:center;flex-wrap:wrap;gap:1.25rem;}
+
+.pt-btn{
+  min-block-size:var(--hit);
+  padding:.875rem 2rem;
+  border:0;
+  background:var(--fill);
+  color:#fff;
+  cursor:pointer;
+  font-size:.9375rem;
+  font-weight:600;
+  transition:background .18s ease;
+}
+.pt-btn:hover{background:var(--ink);}
+.pt-btn:disabled{background:rgba(27,27,31,.18);cursor:default;}
+
+.pt-esc{font-size:.875rem;line-height:1.55;color:var(--muted);max-inline-size:36ch;}
+
+.pt-done h1{max-inline-size:24ch;}
+
+/* ---------- the questions ---------- */
+
+/* Sticky under the header, belonging to the form: it leaves with the form
+   instead of hovering over the footer. On the phone the five jump links are
+   a row that scrolls sideways. */
+.pt-bar{
+  position:sticky;
+  inset-block-start:var(--top-h);
+  z-index:2;
+  display:grid;
+  gap:.25rem;
+  padding-block:.5rem;
+  margin-block-end:1rem;
+  background:var(--bg);
+  border-block-end:1px solid var(--line);
+}
+.pt-bar-l{display:flex;align-items:baseline;flex-wrap:wrap;gap:.25rem .875rem;}
+.pt-bar-n{font-size:.875rem;font-weight:600;font-variant-numeric:tabular-nums;}
+.pt-bar-s{font-size:.75rem;color:var(--muted);}
+
+.pt-jump{display:flex;gap:1.125rem;overflow-x:auto;scrollbar-width:none;}
+.pt-jump::-webkit-scrollbar{display:none;}
+.pt-jump-a{
+  flex:none;
+  display:inline-flex;
+  align-items:center;
+  min-block-size:var(--hit);
+  font-size:.8125rem;
+  color:var(--muted);
+  text-decoration:none;
+  border-block-end:1px solid transparent;
+  transition:color .18s ease,border-color .18s ease;
+}
+.pt-jump-a:hover{color:var(--ink);border-block-end-color:var(--ink);}
+
+/* The sent-back note: the owner's one reason, in their words, above the form. */
+.pt-back{padding:1.25rem;margin-block-end:1.5rem;background:var(--accent-tint);border-inline-start:2px solid var(--accent);}
+.pt-back h2{margin:0 0 .5rem;font-size:1.125rem;font-weight:600;line-height:1.3;}
+.pt-back p{margin:0 0 .5rem;font-size:.9375rem;color:var(--muted);}
+.pt-back blockquote{margin:0;font-size:1rem;line-height:1.65;white-space:pre-line;}
+
+/* Each part: label column + questions. One column until the label can stand
+   beside the answers; the label then stays on screen while they are written,
+   which is when the reason is needed. */
+.pt-sec{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:1.5rem;
+  padding-block-start:2rem;
+  margin-block-start:2rem;
+  position:relative;
+  scroll-margin-block-start:calc(var(--top-h) + 4rem);
+}
+.pt-sec::before{content:'';position:absolute;inset-inline:0 3rem;inset-block-start:0;block-size:1px;background:var(--line);}
+.pt-sec:first-child{margin-block-start:.5rem;padding-block-start:0;}
+.pt-sec:first-child::before{content:none;}
+
+.pt-sec-n{display:block;margin-block-end:.5rem;font-size:.6875rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);}
+.pt-sec-h{margin:0 0 .625rem;font-size:1.25rem;font-weight:600;line-height:1.25;}
+.pt-sec-why{margin:0 0 .875rem;font-size:.875rem;line-height:1.65;color:var(--muted);}
+.pt-sec-c{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+.pt-qs{display:grid;gap:1.75rem;}
+
+/* No floating label: the question IS the label and it is a sentence. */
+.pt-q label{display:block;margin-block-end:.5rem;font-size:1rem;line-height:1.6;max-inline-size:62ch;}
+.pt-q-n{margin-inline-end:.5rem;font-size:.6875rem;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+.pt-q textarea{
+  display:block;
+  inline-size:100%;
+  background:#fff;
+  border:1px solid var(--field-line);
+  border-radius:0;
+  color:var(--ink);
+  font:1rem/1.6 var(--f-body);
+  padding:.75rem .875rem;
+  outline:none;
+  resize:vertical;
+  transition:border-color .18s ease;
+}
+.pt-q textarea:focus{border-color:var(--fill);}
+.pt-q textarea::placeholder{color:var(--faint);}
+
+.pt-send{padding-block-start:2rem;margin-block-start:3rem;position:relative;}
+.pt-send::before{content:'';position:absolute;inset-inline:0 3rem;inset-block-start:0;block-size:1px;background:var(--line);}
+.pt-send-n{margin:0 0 1.25rem;font-size:.9375rem;line-height:1.65;color:var(--muted);max-inline-size:58ch;}
+.pt-fail{margin:1rem 0 0;font-size:.9375rem;color:var(--bad-ink);}
+
+/* ---------- a link that opens nothing ---------- */
+
+.pt-gone{
+  min-block-size:100dvh;
+  padding:var(--gutter);
+  max-inline-size:40rem;
+  margin-inline:auto;
+  display:grid;
+  align-content:center;
+  gap:2rem;
+}
+.pt-gone section{padding-block-start:1.5rem;position:relative;}
+.pt-gone section::before{content:'';position:absolute;inset-inline:0 3rem;inset-block-start:0;block-size:1px;background:var(--line);}
+.pt-gone h1{margin:0 0 .5rem;font-size:1.25rem;font-weight:700;line-height:1.3;}
+.pt-gone p{margin:0;font-size:.9375rem;line-height:1.65;color:var(--muted);}
+
+/* ---------- 40rem: the three phases fit side by side ---------- */
+
+@media (min-width:40rem){
+  .pt-beats{grid-template-columns:repeat(3,minmax(0,1fr));gap:2rem;}
+  .pt-deal{padding:1.75rem 2rem;}
+  .pt-bar{grid-template-columns:auto 1fr;align-items:center;gap:2rem;}
+  .pt-jump{justify-content:flex-end;}
+}
+
+/* ---------- 56rem: a part's label column stands beside its questions ---------- */
+
+@media (min-width:56rem){
+  .pt-sec{grid-template-columns:15rem minmax(0,1fr);gap:3.5rem;padding-block-start:2.5rem;margin-block-start:2.5rem;}
+  .pt-sec-l{position:sticky;inset-block-start:calc(var(--top-h) + 4.5rem);align-self:start;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .pt-root *{transition-duration:.01ms !important;}
+}
