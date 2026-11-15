@@ -46,9 +46,12 @@
      The hue stays on fills, bars, dots and icons (3:1). Text in a hue, and
      white text on a clay fill, use the -ink twin (4.5:1 on white, ground and
      the hue's own tint). Large text (>=24px, or >=18.66px bold) may keep the
-     hue. Accent is (P); status hues are fixed. */
-  --color-accent: #C4694A;       /* (P) */
-  --color-accent-ink: #A65336;   /* (P) */
+     hue. Accent (terracotta) confirmed 2026-11-15 after a five-way comparison
+     (Blueprinting/wireframes/accent-comparison.html): it is the only
+     candidate that keeps ink text legible on the clay footer ground. Status
+     hues are fixed. */
+  --color-accent: #C4694A;
+  --color-accent-ink: #A65336;
   --color-accent-tint: rgb(196 105 74 / .08);
   --color-good: #2F7A4D;
   --color-good-ink: #2D7449;
