@@ -17,13 +17,14 @@ import { isValidObjectId, type Model } from 'mongoose';
 import type { AccessRequest } from '../access/access.guard.js';
 import { ActivityService } from '../activity/activity.service.js';
 import { BRIEF, type Brief } from '../briefs/brief.schema.js';
-import type { Client } from '../clients/client.schema.js';
+import { CLIENT, type Client } from '../clients/client.schema.js';
 import { ContactsService } from '../clients/contacts.service.js';
 import { studioDay } from '../common/day.js';
 import type { Env } from '../env.js';
 import { PROJECT, type Project } from '../projects/project.schema.js';
-import { PORTAL_JOBS, type PortalJobs } from './portal-jobs.js';
+import { PORTAL_JOBS, type PortalJobs, type PortalLinkPayload } from './portal-jobs.js';
 import { PORTAL_LINK, type PortalLink } from './portal-link.schema.js';
+import { PORTAL_RESEND, RESEND_WINDOW_MS, type PortalResend } from './portal-resend.schema.js';
 
 type Owned = Omit<Project, 'client'> & { client: Client | null };
 
@@ -54,6 +55,8 @@ export class PortalService {
         @InjectModel(PORTAL_LINK) private readonly links: Model<PortalLink>,
         @InjectModel(PROJECT) private readonly projects: Model<Project>,
         @InjectModel(BRIEF) private readonly briefs: Model<Brief>,
+        @InjectModel(CLIENT) private readonly clients: Model<Client>,
+        @InjectModel(PORTAL_RESEND) private readonly resends: Model<PortalResend>,
         private readonly activity: ActivityService,
         private readonly contacts: ContactsService,
         private readonly config: ConfigService<Env, true>,
@@ -76,20 +79,7 @@ export class PortalService {
         if (!p.client || p.client.self) throw new NotFoundException({ error: 'not_found' });
         if (p.archivedAt || p.status === 'completed') throw new NotFoundException({ error: 'not_found' });
 
-        const token = randomBytes(32).toString('base64url');
-        const now = new Date();
-        const link = await this.links
-            .findOneAndUpdate({ project: projectId }, { $set: { hash: hashOf(token), issuedAt: now, emailedAt: send ? now : null, lastOpenDay: null } }, { upsert: true, returnDocument: 'after' })
-            .lean<PortalLink>();
-        const url = `${this.config.get('CLIENT_ORIGIN', { infer: true }).replace(/\/$/, '')}/p/${token}`;
-
-        // The questionnaire is now with the client. A brief already answered stays as it is.
-        const brief = await this.briefs.findOne({ project: projectId }).lean<Brief>();
-        if (!brief || brief.state === 'none') {
-            await this.briefs.updateOne({ project: projectId }, { $set: { state: 'awaiting', sentAt: now } }, { upsert: true });
-        } else if (brief.state === 'awaiting') {
-            await this.briefs.updateOne({ project: projectId }, { $set: { sentAt: now } });
-        }
+        const { link, url } = await this.mint(projectId, send);
 
         if (send) await this.jobs.sendLink({ projectId, url });
         await this.contacts.add({
@@ -110,6 +100,73 @@ export class PortalService {
             sessionId: req.auth.sessionId,
         });
         return { ...this.statusOf(link), url, sent: send };
+    }
+
+    /* ---------- "email me my access link" (T8.5) ---------- */
+
+    /**
+     * A visitor with no working link gives an email address. If a client has
+     * it and a project of theirs is still waiting on its brief, each such
+     * project gets a new link (the old one dies) and one email per client
+     * lists them. Says nothing about whether anything happened: the caller
+     * answers the same words either way. At most one send per address per 24
+     * hours.
+     */
+    async resend(email: string): Promise<void> {
+        const clients = await this.clients.find({ email, self: { $ne: true } }).lean<Client[]>();
+        if (!clients.length) return;
+
+        const projects = await this.projects
+            .find({ client: { $in: clients.map((c) => c._id) }, archivedAt: null, status: { $ne: 'completed' } })
+            .sort({ createdAt: 1 })
+            .lean<Project[]>();
+        const waiting = await this.briefs.find({ project: { $in: projects.map((p) => p._id) }, state: { $in: ['awaiting', 'sent_back'] } }, { project: 1 }).lean<{ project: unknown }[]>();
+        const ids = new Set(waiting.map((b) => String(b.project)));
+        const eligible = projects.filter((p) => ids.has(String(p._id)));
+        if (!eligible.length) return;
+
+        if (!(await this.takeSlot(email))) return;
+        try {
+            for (const c of clients) {
+                const theirs = eligible.filter((p) => String(p.client) === String(c._id));
+                if (!theirs.length) continue;
+                const items: PortalLinkPayload[] = [];
+                for (const p of theirs) {
+                    const { url } = await this.mint(String(p._id), true);
+                    items.push({ projectId: String(p._id), url });
+                    await this.contacts.add({ client: c._id, project: p._id, kind: 'token', text: 'Intake link re-sent at their request', by: null });
+                    await this.activity.record({
+                        kind: 'change',
+                        weight: 'notable',
+                        action: 'portal.resend',
+                        section: 'projects',
+                        target: { type: 'project', id: String(p._id), label: p.name },
+                        after: { emailed: true },
+                    });
+                }
+                await this.jobs.sendResend({ clientId: String(c._id), items });
+            }
+        } catch (e) {
+            // Nothing went out: the address must not be locked for a day because of it.
+            await this.resends.deleteOne({ key: hashOf(email) });
+            throw e;
+        }
+    }
+
+    /**
+     * One conditional write. A row younger than 24 hours does not match the
+     * filter, so the upsert tries to insert a second row for the same key and
+     * the unique index refuses: that refusal is the answer "already sent".
+     */
+    private async takeSlot(email: string): Promise<boolean> {
+        const now = new Date();
+        try {
+            await this.resends.updateOne({ key: hashOf(email), sentAt: { $lte: new Date(now.getTime() - RESEND_WINDOW_MS) } }, { $set: { sentAt: now } }, { upsert: true });
+            return true;
+        } catch (e) {
+            if ((e as { code?: number }).code === 11000) return false;
+            throw e;
+        }
     }
 
     /* ---------- the client's side ---------- */
@@ -169,6 +226,30 @@ export class PortalService {
             after: { state: 'submitted', revision: after.revision },
         });
         return this.viewOf(p, after);
+    }
+
+    /**
+     * Makes a new link for a project, replacing any earlier one (its hash is
+     * overwritten, so the old link dies at once), and puts a brief that has
+     * not been sent yet into `awaiting`. Returns the link: the one time it
+     * exists in the clear.
+     */
+    private async mint(projectId: string, emailed: boolean): Promise<{ link: PortalLink; url: string }> {
+        const token = randomBytes(32).toString('base64url');
+        const now = new Date();
+        const link = await this.links
+            .findOneAndUpdate({ project: projectId }, { $set: { hash: hashOf(token), issuedAt: now, emailedAt: emailed ? now : null, lastOpenDay: null } }, { upsert: true, returnDocument: 'after' })
+            .lean<PortalLink>();
+        const url = `${this.config.get('CLIENT_ORIGIN', { infer: true }).replace(/\/$/, '')}/p/${token}`;
+
+        // The questionnaire is now with the client. A brief already answered stays as it is.
+        const brief = await this.briefs.findOne({ project: projectId }).lean<Brief>();
+        if (!brief || brief.state === 'none') {
+            await this.briefs.updateOne({ project: projectId }, { $set: { state: 'awaiting', sentAt: now } }, { upsert: true });
+        } else if (brief.state === 'awaiting') {
+            await this.briefs.updateOne({ project: projectId }, { $set: { sentAt: now } });
+        }
+        return { link, url };
     }
 
     /* ---------- internals ---------- */

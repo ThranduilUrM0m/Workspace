@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { portalAnswers, portalIssue, portalSubmit, type PortalAnswers, type PortalIssue } from '@repo/schemas';
+import { portalAnswers, portalIssue, portalResend, portalSubmit, type PortalAnswers, type PortalIssue, type PortalResend } from '@repo/schemas';
 import type { AccessRequest } from '../access/access.guard.js';
 import { Requires } from '../access/requires.decorator.js';
 import { Public } from '../auth/public.decorator.js';
@@ -24,6 +24,24 @@ export class PortalLinkController {
     @Requires('edit', 'projects')
     issue(@Param('id') id: string, @Body(new ZodPipe(portalIssue)) body: PortalIssue, @Req() req: AccessRequest) {
         return this.portal.issue(id, body.send, req);
+    }
+}
+
+// "Email me my access link" (T8.5), for a visitor who has no working link.
+// Same doors as the client's calls: the site only, and the per-visitor
+// throttle. It answers the same two words whatever happened. Declared before
+// PortalController so `portal/resend` is never read as `portal/:token`.
+@Controller('portal/resend')
+@Public()
+@UseGuards(PortalProxyGuard, PortalThrottler)
+export class PortalResendController {
+    constructor(private readonly portal: PortalService) {}
+
+    @Post()
+    @HttpCode(200)
+    async resend(@Body(new ZodPipe(portalResend)) body: PortalResend) {
+        await this.portal.resend(body.email);
+        return { ok: true };
     }
 }
 

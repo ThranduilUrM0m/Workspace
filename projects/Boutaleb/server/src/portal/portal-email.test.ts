@@ -1,7 +1,11 @@
 import { renderPortalLink } from '@repo/emails';
 
 const url = `http://localhost:3002/p/${'A'.repeat(43)}`;
-const base = { name: 'Omar Fassi', project: 'Villa Zerhoun — Site', url, site: 'http://localhost:3002' };
+const base = { name: 'Omar Fassi', items: [{ project: 'Villa Zerhoun — Site', url }], site: 'http://localhost:3002' };
+const two = [
+    { project: 'Villa Zerhoun — Site', url },
+    { project: 'Riad Nozha', url: `http://localhost:3002/p/${'B'.repeat(43)}` },
+];
 
 describe('the magic-link email', () => {
     it('English: left to right, greets by first name, carries the link in the button and as text', async () => {
@@ -25,6 +29,20 @@ describe('the magic-link email', () => {
         expect(html).toContain('dir="rtl"');
         expect(html).toContain('direction:ltr');
         expect(html).toContain('مرحباً Omar،');
+    });
+
+    it('several projects: one email, a labelled button and link for each, in every language', async () => {
+        for (const language of ['en', 'fr', 'ar'] as const) {
+            const { subject, html, text } = await renderPortalLink({ ...base, items: two, language });
+            expect(subject).not.toContain('Villa');
+            for (const i of two) {
+                expect(html).toContain(`href="${i.url}"`);
+                expect(html).toContain(i.project);
+                expect(text).toContain(i.url);
+            }
+        }
+        expect((await renderPortalLink({ ...base, items: two, language: 'en' })).subject).toBe('Your briefs');
+        expect((await renderPortalLink({ ...base, items: two, language: 'fr' })).subject).toBe('Vos briefs');
     });
 
     it('never uses the first person in any language (public-copy rule)', async () => {

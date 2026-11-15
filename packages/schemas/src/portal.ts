@@ -60,3 +60,12 @@ export type PortalAnswers = z.infer<typeof portalAnswers>;
 export const portalSubmit = portalAnswers.superRefine((v, ctx) => {
     if (!Object.values(v.answers).some((a) => a.trim())) ctx.addIssue({ code: 'custom', path: ['answers'], message: 'required' });
 });
+
+/**
+ * "Email me my access link" (T8.5): the one thing a visitor with no link can
+ * ask. The answer never says whether the address belongs to a client.
+ */
+export const portalResend = z.object({
+    email: z.string().trim().min(1, 'required').max(254, 'tooLong').pipe(z.email('email')).transform((e) => e.toLowerCase()),
+});
+export type PortalResend = z.infer<typeof portalResend>;

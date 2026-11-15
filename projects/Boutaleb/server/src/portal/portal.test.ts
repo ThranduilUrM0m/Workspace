@@ -8,6 +8,7 @@ import { DEV_FORMS_PROXY_KEY } from '../env.js';
 import { PROJECT, type Project } from '../projects/project.schema.js';
 import { HeldPortalJobs, PORTAL_JOBS } from './portal-jobs.js';
 import { PORTAL_LINK, type PortalLink } from './portal-link.schema.js';
+import { PORTAL_RESEND } from './portal-resend.schema.js';
 
 let t: TestApp;
 let briefs: Model<Brief>;
@@ -218,5 +219,118 @@ describe('answering', () => {
 
         await site.post(`/portal/${tk}/submit`).send({ answers: { 'discovery.what': 'Rooms for rent.', 'requirements.day1': 'Bookings only.' } });
         expect((await briefs.findOne({ project: id }).lean())).toMatchObject({ state: 'submitted', revision: 2, reason: null });
+    });
+});
+
+describe('"email me my access link"', () => {
+    // Its own visitor address each time: the whole file otherwise shares one, and the 60/min throttle counts it.
+    let visitor = 0;
+    const resend = (email: string) => api().post('/portal/resend').set('x-forms-key', DEV_FORMS_PROXY_KEY).set('x-visitor-ip', `198.51.100.${++visitor}`).send({ email });
+    const heldFor = (clientId: string) => held.heldResends.filter((r) => r.clientId === clientId);
+    const mail = () => `resend+${Math.random().toString(36).slice(2)}@example.ma`;
+
+    async function client(email: string) {
+        const res = await api().post('/clients').set('Authorization', await owner()).send({ name: 'Omar Fassi', company: 'Villa Zerhoun', email, language: 'fr' });
+        return res.body.id as string;
+    }
+    async function projectFor(clientId: string, name: string) {
+        const res = await api().post('/projects').set('Authorization', await owner()).send({ name, governingLanguage: 'fr', clientId });
+        return res.body.id as string;
+    }
+
+    it('issues a new link, kills the old one, queues one email, and logs it', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        const id = await projectFor(clientId, 'Resend A');
+        const old = tokenOf((await issue(id, true)).body.url);
+
+        const res = await resend(email);
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({ ok: true });
+
+        const [sent] = heldFor(clientId);
+        expect(sent?.items).toHaveLength(1);
+        expect(sent?.items[0]?.projectId).toBe(id);
+        const fresh = tokenOf(sent!.items[0]!.url);
+        expect((await site.get(`/portal/${old}`)).status).toBe(404);
+        expect((await site.get(`/portal/${fresh}`)).status).toBe(200);
+
+        expect(await contacts.countDocuments({ client: clientId, kind: 'token', text: 'Intake link re-sent at their request' })).toBe(1);
+        expect(await t.events.countDocuments({ action: 'portal.resend', 'target.id': id })).toBe(1);
+    });
+
+    it('answers the same words for an address that is no client, and queues nothing', async () => {
+        const before = held.heldResends.length;
+        const stranger = await resend(mail());
+        expect(stranger.status).toBe(200);
+        expect(stranger.body).toEqual({ ok: true });
+        expect(held.heldResends).toHaveLength(before);
+    });
+
+    it('is case-insensitive about the address', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        await issue(await projectFor(clientId, 'Resend Case'));
+        await resend(email.toUpperCase());
+        expect(heldFor(clientId)).toHaveLength(1);
+    });
+
+    it('sends at most once per address per 24 hours, and again after that', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        await issue(await projectFor(clientId, 'Resend B'));
+        await resend(email);
+        const again = await resend(email);
+        expect(again.body).toEqual({ ok: true });
+        expect(heldFor(clientId)).toHaveLength(1);
+
+        await t.app.get(getModelToken(PORTAL_RESEND)).updateMany({}, { $set: { sentAt: new Date(Date.now() - 25 * 3_600_000) } });
+        await resend(email);
+        expect(heldFor(clientId)).toHaveLength(2);
+    });
+
+    it('several waiting projects: one email, a link each; submitted, archived, completed and never-sent ones are left out', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        const a = await projectFor(clientId, 'Many A');
+        const b = await projectFor(clientId, 'Many B');
+        const submitted = await projectFor(clientId, 'Many submitted');
+        const archived = await projectFor(clientId, 'Many archived');
+        const completed = await projectFor(clientId, 'Many completed');
+        await projectFor(clientId, 'Many never sent');
+        for (const id of [a, b, submitted, archived, completed]) await issue(id);
+        await site.post(`/portal/${tokenOf((await issue(submitted)).body.url)}/submit`).send({ answers: { 'discovery.what': 'Done.' } });
+        await projects.updateOne({ _id: archived }, { $set: { archivedAt: new Date() } });
+        await projects.updateOne({ _id: completed }, { $set: { status: 'completed' } });
+
+        await resend(email);
+        const sent = heldFor(clientId);
+        expect(sent).toHaveLength(1);
+        expect(sent[0]?.items.map((i) => i.projectId).sort()).toEqual([a, b].sort());
+    });
+
+    it('a sent-back brief gets its link too', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        const id = await projectFor(clientId, 'Resend sent back');
+        await site.post(`/portal/${tokenOf((await issue(id)).body.url)}/submit`).send({ answers: { 'discovery.what': 'First.' } });
+        await api().post(`/projects/${id}/brief/send-back`).set('Authorization', await owner()).send({ reason: 'The day-one list contradicts the budget.' });
+        await resend(email);
+        expect(heldFor(clientId)[0]?.items[0]?.projectId).toBe(id);
+    });
+
+    it('an address with nothing waiting does not use up its 24 hours', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        await resend(email);
+        expect(heldFor(clientId)).toHaveLength(0);
+        await issue(await projectFor(clientId, 'Resend late'));
+        await resend(email);
+        expect(heldFor(clientId)).toHaveLength(1);
+    });
+
+    it('refuses a malformed address, and anyone but the site', async () => {
+        expect((await resend('not-an-email')).status).toBe(400);
+        expect((await api().post('/portal/resend').send({ email: 'a@b.co' })).status).toBe(401);
     });
 });

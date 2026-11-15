@@ -3,13 +3,15 @@ import { ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { BRIEF, BriefSchema } from '../briefs/brief.schema.js';
+import { CLIENT, ClientSchema } from '../clients/client.schema.js';
 import { ClientsModule } from '../clients/clients.module.js';
 import type { Env } from '../env.js';
 import { PROJECT, ProjectSchema } from '../projects/project.schema.js';
-import { PortalController, PortalLinkController } from './portal.controller.js';
+import { PortalController, PortalLinkController, PortalResendController } from './portal.controller.js';
 import { PortalProxyGuard, PortalThrottler } from './portal.guards.js';
 import { PORTAL_JOBS, HeldPortalJobs } from './portal-jobs.js';
 import { PORTAL_LINK, PortalLinkSchema } from './portal-link.schema.js';
+import { PORTAL_RESEND, PortalResendSchema } from './portal-resend.schema.js';
 import { PortalService } from './portal.service.js';
 import { TriggerPortalJobs } from './trigger-portal-jobs.js';
 
@@ -20,12 +22,14 @@ import { TriggerPortalJobs } from './trigger-portal-jobs.js';
         ClientsModule,
         MongooseModule.forFeature([
             { name: PORTAL_LINK, schema: PortalLinkSchema },
+            { name: CLIENT, schema: ClientSchema },
+            { name: PORTAL_RESEND, schema: PortalResendSchema },
             { name: PROJECT, schema: ProjectSchema },
             { name: BRIEF, schema: BriefSchema },
         ]),
         ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 60 }]),
     ],
-    controllers: [PortalLinkController, PortalController],
+    controllers: [PortalLinkController, PortalResendController, PortalController],
     providers: [
         PortalService,
         PortalProxyGuard,
