@@ -95,7 +95,9 @@ export function PortalLinkEmail({ language, name, project, url, site }: PortalLi
             <tr>
               <td style={{ padding: '40px 24px 0' }}>
                 <img src={`${site}/email/glyph-64.png`} width={32} height={30} alt="" style={{ display: 'inline-block', border: 0, verticalAlign: 'middle' }} />
-                <span style={{ font: `700 18px/1 ${HEAD}`, color: INK, padding: '0 12px', verticalAlign: 'middle' }}>Boutaleb</span>
+                <span style={{ font: `700 18px/1 ${HEAD}`, color: INK, padding: '0 12px', verticalAlign: 'middle', direction: 'ltr' }}>
+                  boutaleb<span style={{ color: CLAY }}>.</span>
+                </span>
               </td>
             </tr>
             <tr>

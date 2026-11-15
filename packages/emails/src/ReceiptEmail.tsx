@@ -92,7 +92,9 @@ export function ReceiptEmail({ source, name, email, answers, message, site, addD
                       <td width={32} style={{ paddingRight: 12, verticalAlign: 'middle' }}>
                         <img src={`${site}/email/glyph-64.png`} width={32} height={30} alt="" style={{ display: 'block', border: 0 }} />
                       </td>
-                      <td style={{ verticalAlign: 'middle', font: `700 18px/1 ${HEAD}`, color: INK }}>Boutaleb</td>
+                      <td style={{ verticalAlign: 'middle', font: `700 18px/1 ${HEAD}`, color: INK }}>
+                        boutaleb<span style={{ color: '#C4694A' }}>.</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

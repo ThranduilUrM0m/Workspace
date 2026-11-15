@@ -133,10 +133,11 @@ export function PortalIntake({ token, initial }: { token: string; initial: Porta
                             type="button"
                             className={`pt-lang${lang === l.key ? ' is-on' : ''}`}
                             lang={l.key}
+                            aria-label={l.label}
                             aria-current={lang === l.key ? 'true' : undefined}
                             onClick={() => setLang(l.key)}
                         >
-                            {l.label}
+                            {l.key.toUpperCase()}
                         </button>
                     ))}
                 </div>

@@ -104,23 +104,29 @@
 .pt-mark{font-size:1.1875rem;font-weight:700;letter-spacing:.02em;color:var(--ink);direction:ltr;unicode-bidi:isolate;}
 .pt-dot{color:var(--accent);}
 
-.pt-langs{display:flex;gap:.125rem;}
+/* Three short codes on one thin grey line; the line turns solid ink under the
+   language in use. Codes, not words, because the switch is on screen the whole
+   time and has to stay small; the full name is each button's accessible name.
+   Not a dropdown: a reader who cannot read the current language cannot read a
+   select's label either. */
+.pt-langs{display:flex;gap:.25rem;border-block-end:1px solid rgba(27,27,31,.18);}
 
-/* Three plain words, not a dropdown: a reader who cannot read the current
-   language cannot read a select's label either. */
 .pt-lang{
   min-block-size:var(--hit);
   min-inline-size:var(--hit);
-  padding-inline:.625rem;
+  padding-inline:.5rem;
+  margin-block-end:-1px;
   border:0;
+  border-block-end:2px solid transparent;
   background:none;
   cursor:pointer;
   font:.8125rem var(--f-body);
+  letter-spacing:.08em;
   color:var(--muted);
-  transition:color .18s ease;
+  transition:color .18s ease,border-color .18s ease;
 }
 .pt-lang:hover{color:var(--ink);}
-.pt-lang.is-on{color:var(--ink);background:rgba(27,27,31,.06);}
+.pt-lang.is-on{color:var(--ink);border-block-end-color:var(--ink);}
 
 .pt-main{
   flex:1;
