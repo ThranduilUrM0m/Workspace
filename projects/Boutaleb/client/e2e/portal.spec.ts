@@ -19,6 +19,7 @@ const reset = () => {
 };
 
 let api: Server;
+let resendStatus = 200;
 const seen: { method: string; url: string; key: string | undefined; body: string }[] = [];
 
 test.beforeAll(async () => {
@@ -33,6 +34,8 @@ test.beforeAll(async () => {
                 res.writeHead(status, { 'content-type': 'application/json' });
                 res.end(JSON.stringify(json));
             };
+            // "Email me my access link" (T8.5): the real API answers { ok: true } whatever the address.
+            if (req.method === 'POST' && token === 'resend') return resendStatus === 200 ? send(200, { ok: true }) : send(resendStatus, { error: 'x' });
             if (!rec) return send(404, { error: 'not_found' });
             const view = () => ({ state: rec.state, project: rec.project, who: 'Villa Zerhoun', language: rec.language, reason: rec.reason, answers: rec.state === 'done' ? {} : rec.answers });
             if (req.method === 'GET' && !action) return send(200, view());
@@ -58,6 +61,56 @@ test.afterAll(async () => {
 test.beforeEach(() => {
     reset();
     seen.length = 0;
+    resendStatus = 200;
+});
+
+test.describe('email me my access link (T8.5)', () => {
+    test('the dead-link page leads to it, and /p is never indexed or cached and stays out of the language redirect', async ({ page }) => {
+        await page.goto(`/p/${'Z'.repeat(43)}`);
+        await page.getByRole('link', { name: 'Get a new link by email' }).click();
+        await expect(page).toHaveURL(/\/p$/);
+        const res = await page.goto('/p');
+        expect(res?.headers()['x-robots-tag']).toContain('noindex');
+        expect(res?.headers()['cache-control']).toContain('no-store');
+        expect(res?.headers()['referrer-policy']).toBe('no-referrer');
+        await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute('content', /noindex/);
+    });
+
+    test('asks for an address, refuses a bad one, sends a good one, and says the same words whatever it is', async ({ page }) => {
+        await page.goto('/p');
+        await page.getByRole('button', { name: 'English' }).click();
+        await page.getByLabel('Your email address').fill('nope');
+        await page.getByRole('button', { name: 'Send the link' }).click();
+        await expect(page.locator('#resend-problem')).toContainText('does not look like an email address');
+        expect(seen).toHaveLength(0);
+
+        await page.getByLabel('Your email address').fill('Omar@Example.ma');
+        await page.getByRole('button', { name: 'Send the link' }).click();
+        await expect(page.getByRole('heading', { name: 'Done, if there was something to send.' })).toBeVisible();
+        expect(seen).toHaveLength(1);
+        expect(seen[0]).toMatchObject({ method: 'POST', url: '/portal/resend' });
+        expect(seen[0]!.key).toMatch(/^dev-only-forms-proxy-key/);
+        expect(JSON.parse(seen[0]!.body)).toEqual({ email: 'omar@example.ma' });
+    });
+
+    test('a failed send is said to have failed, and can be tried again', async ({ page }) => {
+        resendStatus = 500;
+        await page.goto('/p');
+        await page.getByRole('button', { name: 'English' }).click();
+        await page.getByLabel('Your email address').fill('omar@example.ma');
+        await page.getByRole('button', { name: 'Send the link' }).click();
+        await expect(page.locator('#resend-problem')).toContainText('Nothing was sent');
+        resendStatus = 200;
+        await page.getByRole('button', { name: 'Send the link' }).click();
+        await expect(page.getByRole('heading', { name: 'Done, if there was something to send.' })).toBeVisible();
+    });
+
+    test('reads in Arabic right to left, with the address field left to right', async ({ page }) => {
+        await page.goto('/p');
+        await page.getByRole('button', { name: 'العربية' }).click();
+        await expect(page.locator('.pt-root')).toHaveAttribute('dir', 'rtl');
+        await expect(page.locator('#resend-email')).toHaveAttribute('dir', 'ltr');
+    });
 });
 
 test('a link that opens nothing is a 404 in three languages, never indexed and never cached', async ({ page }) => {

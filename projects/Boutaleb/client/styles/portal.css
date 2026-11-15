@@ -461,3 +461,39 @@
 @media (prefers-reduced-motion:reduce){
   .pt-root *{transition-duration:.01ms !important;}
 }
+
+/* ---------- "email me my access link" (T8.5) ---------- */
+
+.pt-gone-link{
+  display:inline-flex;
+  align-items:center;
+  min-block-size:var(--hit);
+  margin-block-start:.5rem;
+  font-size:.9375rem;
+  color:var(--ink);
+  text-decoration:underline;
+  text-underline-offset:.25em;
+  text-decoration-color:var(--accent);
+}
+.pt-gone-link:hover{color:var(--accent-ink);}
+
+.pt-resend{padding-block:clamp(2rem,6dvh,4rem);max-inline-size:36rem;}
+.pt-resend h1{margin:0 0 .75rem;font-family:var(--f-head);font-size:1.5rem;font-weight:700;line-height:1.25;}
+.pt-resend-p{margin:0 0 2rem;font-size:.9375rem;line-height:1.65;color:var(--muted);max-inline-size:58ch;}
+.pt-resend .pt-q input{
+  display:block;
+  inline-size:100%;
+  min-block-size:var(--hit);
+  background:#fff;
+  border:1px solid var(--field-line);
+  border-radius:0;
+  color:var(--ink);
+  font:1rem/1.6 var(--f-body);
+  padding:.5rem .875rem;
+  outline:none;
+  transition:border-color .18s ease;
+}
+.pt-resend .pt-q input:focus{border-color:var(--fill);}
+.pt-resend .pt-q input::placeholder{color:var(--faint);}
+.pt-resend .pt-q input[aria-invalid]{border-color:var(--bad-ink);}
+.pt-resend-go{margin-block-start:1.5rem;}

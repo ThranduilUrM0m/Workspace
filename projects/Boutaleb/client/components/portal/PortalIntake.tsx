@@ -2,7 +2,8 @@
 
 import { BRIEF_AREAS, BRIEF_PARTS, type PortalView } from '@repo/schemas';
 import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
-import { COPY, PORTAL_LANGS, type PortalLang } from '@/lib/portal/copy';
+import { COPY, type PortalLang } from '@/lib/portal/copy';
+import { LangSwitch } from './LangSwitch';
 
 // The client's page behind their magic link (T8.4; wireframe
 // Blueprinting/wireframes/shell/portal-intake.js, rewritten client-centred).
@@ -126,21 +127,7 @@ export function PortalIntake({ token, initial }: { token: string; initial: Porta
                 <span className="pt-mark">
                     boutaleb<span className="pt-dot">.</span>
                 </span>
-                <div className="pt-langs">
-                    {PORTAL_LANGS.map((l) => (
-                        <button
-                            key={l.key}
-                            type="button"
-                            className={`pt-lang${lang === l.key ? ' is-on' : ''}`}
-                            lang={l.key}
-                            aria-label={l.label}
-                            aria-current={lang === l.key ? 'true' : undefined}
-                            onClick={() => setLang(l.key)}
-                        >
-                            {l.key.toUpperCase()}
-                        </button>
-                    ))}
-                </div>
+                <LangSwitch lang={lang} onPick={setLang} />
             </header>
 
             <main className={`pt-main${screen === 'form' ? ' pt-main--form' : ' pt-main--intro'}`}>

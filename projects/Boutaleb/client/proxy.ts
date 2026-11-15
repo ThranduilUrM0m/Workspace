@@ -30,6 +30,6 @@ export default function proxy(request: NextRequest, event: NextFetchEvent) {
 
 export const config = {
     // Everything except the API, Next internals, files (anything with a dot)
-    // and /p/<token>: the client's page names no language in its URL.
-    matcher: '/((?!api|_next|p/|.*\\..*).*)',
+    // and /p, /p/<token>: the client's pages name no language in their URL.
+    matcher: '/((?!api|_next|p(?:/|$)|.*\\..*).*)',
 };
