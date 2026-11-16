@@ -206,6 +206,17 @@ describe('answering', () => {
         expect((await site.get(`/portal/${tk}`)).body.state).toBe('done');
     });
 
+    it('a double click sends once: one submission, one revision, one log line', async () => {
+        const { id, clientId } = await forClient('Answer double');
+        const tk = tokenOf((await issue(id)).body.url);
+        const body = { answers: { 'discovery.what': 'Rooms for rent.' } };
+        const both = await Promise.all([site.post(`/portal/${tk}/submit`).send(body), site.post(`/portal/${tk}/submit`).send(body)]);
+        expect(both.map((r) => r.status).sort()).toEqual([200, 404]);
+        expect((await briefs.findOne({ project: id }).lean())?.revision).toBe(1);
+        expect(await contacts.countDocuments({ client: clientId, kind: 'reply' })).toBe(1);
+        expect(await t.events.countDocuments({ action: 'portal.submit', 'target.id': id })).toBe(1);
+    });
+
     it('a sent-back brief reopens with the reason and the earlier answers, and comes back as revision 2', async () => {
         const { id } = await forClient('Answer E');
         const tk = tokenOf((await issue(id)).body.url);
@@ -267,11 +278,27 @@ describe('"email me my access link"', () => {
         expect(held.heldResends).toHaveLength(before);
     });
 
-    it('is case-insensitive about the address', async () => {
+    it('is case-insensitive about the address, both as typed and as the owner stored it', async () => {
         const email = mail();
         const clientId = await client(email);
         await issue(await projectFor(clientId, 'Resend Case'));
         await resend(email.toUpperCase());
+        expect(heldFor(clientId)).toHaveLength(1);
+
+        // The owner typed capitals into the client record; the visitor types lower case.
+        const stored = `Omar.${Math.random().toString(36).slice(2)}@Example.MA`;
+        const capsId = await client(stored);
+        await issue(await projectFor(capsId, 'Resend Case stored'));
+        await resend(stored.toLowerCase());
+        expect(heldFor(capsId)).toHaveLength(1);
+    });
+
+    it('two requests at the same moment send one email, not two', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        await issue(await projectFor(clientId, 'Resend race'));
+        const both = await Promise.all([resend(email), resend(email)]);
+        expect(both.map((r) => r.status)).toEqual([200, 200]);
         expect(heldFor(clientId)).toHaveLength(1);
     });
 
