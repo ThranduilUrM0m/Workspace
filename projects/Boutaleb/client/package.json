@@ -8,6 +8,7 @@
     "start": "next start -p 3002",
     "test": "jest",
     "test:e2e": "playwright test",
+    "test:live": "playwright test e2e/portal.live.spec.ts --project=chromium",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
