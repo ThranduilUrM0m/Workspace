@@ -46,7 +46,7 @@ export function PortalIntake({ token, initial }: { token: string; initial: Porta
         dirty.current = {};
         setSaving('saving');
         try {
-            const res = await fetch(`/api/portal/${token}/draft`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answers: batch }) });
+            const res = await fetch(`/api/portal/${token}/draft`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answers: batch, at: Date.now() }) });
             if (!res.ok) throw new Error(String(res.status));
             setSaving(Object.keys(dirty.current).length ? 'saving' : 'saved');
             return true;
@@ -67,6 +67,41 @@ export function PortalIntake({ token, initial }: { token: string; initial: Porta
     };
 
     useEffect(() => () => void (timer.current && clearTimeout(timer.current)), []);
+
+    // Leaving the page (closing the tab, switching app on a phone) must not
+    // lose what was typed in the last 0.8 s: send it now, with keepalive so
+    // the browser finishes the request after the page is gone. `at` lets the
+    // API keep the newest answer if an earlier save lands after this one.
+    useEffect(() => {
+        const leave = () => {
+            const batch = dirty.current;
+            if (!Object.keys(batch).length) return;
+            const body = JSON.stringify({ answers: batch, at: Date.now() });
+            // keepalive bodies are capped at 64 KiB; a bigger batch goes on the normal save.
+            if (new Blob([body]).size > 60_000) return void flush();
+            dirty.current = {};
+            if (timer.current) clearTimeout(timer.current);
+            timer.current = null;
+            // If the page comes back (a phone switching apps), the save line must tell the truth.
+            void fetch(`/api/portal/${token}/draft`, { method: 'PUT', keepalive: true, headers: { 'content-type': 'application/json' }, body })
+                .then((res) => {
+                    if (!res.ok) throw new Error(String(res.status));
+                    if (!Object.keys(dirty.current).length) setSaving('saved');
+                })
+                .catch(() => {
+                    dirty.current = { ...batch, ...dirty.current };
+                    setSaving('failed');
+                    timer.current = setTimeout(() => void flush(), RETRY_AFTER);
+                });
+        };
+        const hidden = () => document.visibilityState === 'hidden' && leave();
+        window.addEventListener('pagehide', leave);
+        document.addEventListener('visibilitychange', hidden);
+        return () => {
+            window.removeEventListener('pagehide', leave);
+            document.removeEventListener('visibilitychange', hidden);
+        };
+    }, [token, flush]);
 
     const answered = BRIEF_PARTS.filter((p) => answers[p.key]?.trim()).length;
 

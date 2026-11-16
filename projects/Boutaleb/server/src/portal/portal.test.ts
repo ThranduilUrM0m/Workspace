@@ -168,6 +168,25 @@ describe('answering', () => {
         expect((await briefs.findOne({ project: id }).lean())?.state).toBe('awaiting');
     });
 
+    it('a slow older save that lands last does not put an older answer over a newer one', async () => {
+        const { id } = await forClient('Answer order');
+        const tk = tokenOf((await issue(id)).body.url);
+        await site.put(`/portal/${tk}/draft`).send({ at: 2000, answers: { 'discovery.what': 'Newer.' } });
+        await site.put(`/portal/${tk}/draft`).send({ at: 1000, answers: { 'discovery.what': 'Older.', 'ux.feel': 'Calm.' } });
+        const res = await site.get(`/portal/${tk}`);
+        // The older save still brings the prompt nobody had answered yet.
+        expect(res.body.answers).toEqual({ 'discovery.what': 'Newer.', 'ux.feel': 'Calm.' });
+    });
+
+    it('two saves at the same moment keep both: neither drops the other\'s prompts', async () => {
+        const { id } = await forClient('Answer together');
+        const tk = tokenOf((await issue(id)).body.url);
+        const keys = ['discovery.what', 'ux.feel', 'requirements.day1'];
+        const all = await Promise.all(keys.map((k, i) => site.put(`/portal/${tk}/draft`).send({ at: 100 + i, answers: { [k]: `A${i}` } })));
+        expect(all.map((r) => r.status)).toEqual([200, 200, 200]);
+        expect((await site.get(`/portal/${tk}`)).body.answers).toEqual({ 'discovery.what': 'A0', 'ux.feel': 'A1', 'requirements.day1': 'A2' });
+    });
+
     it('refuses an unknown prompt', async () => {
         const { id } = await forClient('Answer B');
         const tk = tokenOf((await issue(id)).body.url);

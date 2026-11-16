@@ -23,8 +23,8 @@ const Area = new Schema(
     { _id: false },
 );
 
-/** A client's answers saved while they are still typing (T8.4): one per prompt, keyed 'area.part'. */
-const Draft = new Schema({ key: { type: String, required: true }, a: { type: String, default: '', maxlength: 4000 } }, { _id: false });
+/** A client's answers saved while they are still typing (T8.4): one per prompt, keyed 'area.part'. `at` is the browser's clock when that answer was sent: two saves that land out of order cannot put an older answer over a newer one. */
+const Draft = new Schema({ key: { type: String, required: true }, a: { type: String, default: '', maxlength: 4000 }, at: { type: Number, default: 0 } }, { _id: false });
 
 const Reading = new Schema(
     {

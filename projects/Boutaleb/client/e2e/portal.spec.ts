@@ -160,6 +160,18 @@ test('answers: intro, start, type, saved on the server, survive a reload, send, 
     await expect(page.getByRole('textbox')).toHaveCount(0);
 });
 
+test('what was typed just before the tab closes is still saved', async ({ page }) => {
+    await page.goto(`/p/${OPEN}`);
+    await page.getByRole('button', { name: 'Start the brief' }).click();
+    await page.getByLabel(/What does the business do\?/).fill('Typed, then gone.');
+    // Well inside the 0.8 s pause before a normal save: only the leave-time save can carry it.
+    await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent('pagehide')));
+    await page.close();
+    await expect.poll(() => store[OPEN]!.answers['discovery.what']).toBe('Typed, then gone.');
+    const put = seen.find((s) => s.method === 'PUT');
+    expect(JSON.parse(put!.body).at).toEqual(expect.any(Number));
+});
+
 test('the page speaks the client\'s language and switches to Arabic right to left without a reload', async ({ page }) => {
     await page.goto(`/p/${OPEN}`);
     const root = page.locator('.pt-root');

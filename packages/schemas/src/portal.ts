@@ -48,9 +48,14 @@ export interface PortalView {
 const answer = z.string().trim().max(4000, 'tooLong');
 const known = new Set(BRIEF_PARTS.map((p) => p.key));
 
-/** Only known prompts; an empty one stays empty. */
+/**
+ * Only known prompts; an empty one stays empty. `at` (draft saves): the
+ * browser's clock when the save left. Per prompt, the API keeps the answer
+ * with the latest `at`, so saves that land out of order (a slow one, or the
+ * one sent as the tab closes) never put an older answer over a newer one.
+ */
 export const portalAnswers = z
-    .object({ answers: z.record(z.string(), answer) })
+    .object({ answers: z.record(z.string(), answer), at: z.number().int().nonnegative().optional() })
     .superRefine((v, ctx) => {
         for (const k of Object.keys(v.answers)) if (!known.has(k)) ctx.addIssue({ code: 'custom', path: ['answers', k], message: 'unknown' });
     });

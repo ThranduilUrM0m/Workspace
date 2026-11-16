@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -200,13 +200,25 @@ export class PortalService {
     /** Saves what is typed so far. A refresh, or another phone, picks up where it stopped. */
     async save(token: string, body: PortalAnswers): Promise<{ saved: true }> {
         const { p } = await this.resolve(token);
-        const brief = await this.briefs.findOne({ project: p._id }).lean<Brief>();
-        if (this.stateOf(brief) === 'done') throw new NotFoundException({ error: 'not_found' });
-        const merged = new Map((brief?.draft ?? []).map((d) => [d.key, d.a ?? '']));
-        for (const [k, a] of Object.entries(body.answers)) merged.set(k, a);
-        const draft = [...merged].map(([key, a]) => ({ key, a }));
-        await this.briefs.updateOne({ project: p._id }, { $set: { draft } }, { upsert: true });
-        return { saved: true };
+        const at = body.at ?? Date.now();
+        // Conditional on the draft as read: two saves at the same moment
+        // cannot drop each other's prompts; the loser reads again and merges.
+        for (let tries = 0; tries < 5; tries++) {
+            const brief = await this.briefs.findOne({ project: p._id }).lean<Brief>();
+            if (this.stateOf(brief) === 'done') throw new NotFoundException({ error: 'not_found' });
+            const was = brief?.draft ?? [];
+            // Per prompt, the newest save wins, whatever order the saves land in.
+            const merged = new Map(was.map((d) => [d.key, { a: d.a ?? '', at: d.at ?? 0 }]));
+            for (const [k, a] of Object.entries(body.answers)) {
+                if ((merged.get(k)?.at ?? -1) <= at) merged.set(k, { a, at });
+            }
+            const draft = [...merged].map(([key, v]) => ({ key, ...v }));
+            const res = brief
+                ? await this.briefs.updateOne({ project: p._id, draft: was, state: brief.state }, { $set: { draft } })
+                : await this.briefs.updateOne({ project: p._id }, { $setOnInsert: { draft } }, { upsert: true });
+            if (brief ? res.matchedCount : res.upsertedCount) return { saved: true };
+        }
+        throw new ConflictException({ error: 'busy' });
     }
 
     /**
