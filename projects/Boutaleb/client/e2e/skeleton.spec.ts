@@ -196,6 +196,20 @@ test('terms and the legal notice render on the shared legal layout', async ({ pa
     await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
 });
 
+// The 320px sweep below never saw the home page's blog card, whose ghost
+// number hangs past its edge: the side gutter must leave it room at desktop
+// widths too (regression 2026-11-16, after the one-gutter change).
+for (const locale of ['fr', 'ar']) {
+    test(`/${locale} home has no horizontal scroll from tablet to wide screen`, async ({ page }) => {
+        for (const width of [900, 1366, 1600]) {
+            await page.setViewportSize({ width, height: 800 });
+            await page.goto(`/${locale}`);
+            const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+            expect(overflow, `${width}px`).toBe(0);
+        }
+    });
+}
+
 for (const path of [
     '/en/terms',
     '/legal-notice',

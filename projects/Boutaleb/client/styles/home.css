@@ -203,7 +203,10 @@ mask-composite:intersect;}
 .home-v1 .bc-dots button{min-width:1.5rem;height:var(--hit);display:flex;align-items:center;justify-content:center;border:0;background:none;padding:0;font:.625rem var(--f-body);color:rgba(27,27,31,.62);cursor:pointer;}
 .home-v1 .bc-dots button[aria-current]::before{content:"";width:1.875rem;height:3px;background:var(--ink);}
 @media (min-width:56rem){
-.home-v1 .bs-wrap{display:flex;align-items:flex-end;min-height:26.25rem;padding:1.5rem var(--site-gutter) 3rem;}
+/* The rotated ghost number (pinned physically right, both directions) hangs
+   ~4rem plus its outline past the card's right edge: that padding never drops
+   below 5rem, or the page scrolls sideways (measured 900-1600px, 2026-11-16). */
+.home-v1 .bs-wrap{display:flex;align-items:flex-end;min-height:26.25rem;padding:1.5rem max(var(--site-gutter),5rem) 3rem var(--site-gutter);}
 .home-v1 .bs-wrap::before{content:"";flex:0 0 2.5rem;}
 .home-v1 .bs-right{flex:1;min-width:0;position:relative;}
 .home-v1 .bc-frame{width:70%;margin-inline-start:auto;}
