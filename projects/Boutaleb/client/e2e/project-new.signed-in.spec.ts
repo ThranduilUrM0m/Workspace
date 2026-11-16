@@ -128,7 +128,8 @@ test('a typed slug is sent and, when taken, flagged rather than changed', async 
     await page.getByLabel('Slug').fill('Widget One');
     await expect(page.getByLabel('Slug')).toHaveValue('widget-one');
     await create(page).click();
-    expect(seen.at(-1)).toMatchObject({ body: { slug: 'widget-one' } });
+    // The click resolves before the request is sent: wait for it, never read `seen` straight after.
+    await expect.poll(() => seen.at(-1)?.body).toMatchObject({ slug: 'widget-one' });
     await expect(page.getByText('That slug is already taken.')).toBeVisible();
     await expect(create(page)).toBeDisabled();
 });
