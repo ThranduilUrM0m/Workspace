@@ -39,8 +39,9 @@ export class PortalResendController {
 
     @Post()
     @HttpCode(200)
-    async resend(@Body(new ZodPipe(portalResend)) body: PortalResend) {
-        await this.portal.resend(body.email);
+    resend(@Body(new ZodPipe(portalResend)) body: PortalResend) {
+        // Not awaited: the answer must not take longer for a client's address.
+        this.portal.request(body.email);
         return { ok: true };
     }
 }

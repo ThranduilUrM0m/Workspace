@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -107,12 +107,31 @@ export class PortalService {
     /**
      * A visitor with no working link gives an email address. If a client has
      * it and a project of theirs is still waiting on its brief, each such
-     * project gets a new link (the old one dies) and one email per client
-     * lists them. Says nothing about whether anything happened: the caller
-     * answers the same words either way. At most one send per address per 24
-     * hours.
+     * project gets a new link and one email per client lists them. The link
+     * the owner sent keeps working (see portal-link.schema.ts: the new link
+     * goes in the second slot). At most one send per address per 24 hours.
+     *
+     * `request` starts this and returns at once, before any database read:
+     * the answer takes the same time whether the address is a client's or
+     * not, so the response time cannot tell a guesser which addresses are
+     * clients (the words were already the same; the timing was not).
      */
-    async resend(email: string): Promise<void> {
+    request(email: string): void {
+        const run = this.resend(email)
+            .catch((e: unknown) => this.log.error(`resend failed: ${e instanceof Error ? e.message : String(e)}`))
+            .finally(() => this.inflight.delete(run));
+        this.inflight.add(run);
+    }
+
+    /** Tests only: wait for every resend started by `request` to finish. */
+    async settled(): Promise<void> {
+        await Promise.allSettled([...this.inflight]);
+    }
+
+    private readonly inflight = new Set<Promise<unknown>>();
+    private readonly log = new Logger('Portal');
+
+    private async resend(email: string): Promise<void> {
         const clients = await this.clients.find({ email, self: { $ne: true } }).lean<Client[]>();
         if (!clients.length) return;
 
@@ -132,7 +151,7 @@ export class PortalService {
                 if (!theirs.length) continue;
                 const items: PortalLinkPayload[] = [];
                 for (const p of theirs) {
-                    const { url } = await this.mint(String(p._id), true);
+                    const { url } = await this.mint(String(p._id), true, 'resend');
                     items.push({ projectId: String(p._id), url });
                     await this.contacts.add({ client: c._id, project: p._id, kind: 'token', text: 'Intake link re-sent at their request', by: null });
                     await this.activity.record({
@@ -229,17 +248,29 @@ export class PortalService {
     }
 
     /**
-     * Makes a new link for a project, replacing any earlier one (its hash is
-     * overwritten, so the old link dies at once), and puts a brief that has
-     * not been sent yet into `awaiting`. Returns the link: the one time it
-     * exists in the clear.
+     * Makes a new link for a project and puts a brief that has not been sent
+     * yet into `awaiting`. Returns the link: the one time it exists in the
+     * clear.
+     *
+     * `owner`: replaces both slots, so every earlier link dies at once.
+     * `resend`: fills only the second slot; the owner's link keeps working.
+     * A project with no link yet gets its first one either way.
      */
-    private async mint(projectId: string, emailed: boolean): Promise<{ link: PortalLink; url: string }> {
+    private async mint(projectId: string, emailed: boolean, slot: 'owner' | 'resend' = 'owner'): Promise<{ link: PortalLink; url: string }> {
         const token = randomBytes(32).toString('base64url');
         const now = new Date();
-        const link = await this.links
-            .findOneAndUpdate({ project: projectId }, { $set: { hash: hashOf(token), issuedAt: now, emailedAt: emailed ? now : null, lastOpenDay: null } }, { upsert: true, returnDocument: 'after' })
+        let link: PortalLink | null = null;
+        if (slot === 'resend') {
+            link = await this.links.findOneAndUpdate({ project: projectId }, { $set: { resentHash: hashOf(token), emailedAt: now } }, { returnDocument: 'after' }).lean<PortalLink>();
+        }
+        link ??= await this.links
+            .findOneAndUpdate(
+                { project: projectId },
+                { $set: { hash: hashOf(token), resentHash: null, issuedAt: now, emailedAt: emailed ? now : null, lastOpenDay: null } },
+                { upsert: true, returnDocument: 'after' },
+            )
             .lean<PortalLink>();
+        if (!link) throw new Error('portal link was not written');
         const url = `${this.config.get('CLIENT_ORIGIN', { infer: true }).replace(/\/$/, '')}/p/${token}`;
 
         // The questionnaire is now with the client. A brief already answered stays as it is.
@@ -280,7 +311,8 @@ export class PortalService {
     private async resolve(token: string): Promise<{ link: PortalLink; p: Owned }> {
         const gone = new NotFoundException({ error: 'not_found' });
         if (!PORTAL_TOKEN.test(token)) throw gone;
-        const link = await this.links.findOne({ hash: hashOf(token) }).lean<PortalLink>();
+        const h = hashOf(token);
+        const link = await this.links.findOne({ $or: [{ hash: h }, { resentHash: h }] }).lean<PortalLink>();
         if (!link) throw gone;
         const p = await this.projects.findById(link.project).populate('client').lean<Owned>();
         if (!p || !p.client || p.client.self || p.archivedAt || p.status === 'completed') throw gone;

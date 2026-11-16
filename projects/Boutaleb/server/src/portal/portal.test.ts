@@ -9,6 +9,7 @@ import { PROJECT, type Project } from '../projects/project.schema.js';
 import { HeldPortalJobs, PORTAL_JOBS } from './portal-jobs.js';
 import { PORTAL_LINK, type PortalLink } from './portal-link.schema.js';
 import { PORTAL_RESEND } from './portal-resend.schema.js';
+import { PortalService } from './portal.service.js';
 
 let t: TestApp;
 let briefs: Model<Brief>;
@@ -236,7 +237,12 @@ describe('answering', () => {
 describe('"email me my access link"', () => {
     // Its own visitor address each time: the whole file otherwise shares one, and the 60/min throttle counts it.
     let visitor = 0;
-    const resend = (email: string) => api().post('/portal/resend').set('x-forms-key', DEV_FORMS_PROXY_KEY).set('x-visitor-ip', `198.51.100.${++visitor}`).send({ email });
+    // The API answers before the work is done (timing must not tell a client's address apart): wait for it.
+    const resend = async (email: string) => {
+        const res = await api().post('/portal/resend').set('x-forms-key', DEV_FORMS_PROXY_KEY).set('x-visitor-ip', `198.51.100.${++visitor}`).send({ email });
+        await t.app.get(PortalService).settled();
+        return res;
+    };
     const heldFor = (clientId: string) => held.heldResends.filter((r) => r.clientId === clientId);
     const mail = () => `resend+${Math.random().toString(36).slice(2)}@example.ma`;
 
@@ -249,11 +255,11 @@ describe('"email me my access link"', () => {
         return res.body.id as string;
     }
 
-    it('issues a new link, kills the old one, queues one email, and logs it', async () => {
+    it('issues a new link, keeps the owner\'s one alive, queues one email, and logs it', async () => {
         const email = mail();
         const clientId = await client(email);
         const id = await projectFor(clientId, 'Resend A');
-        const old = tokenOf((await issue(id, true)).body.url);
+        const owners = tokenOf((await issue(id, true)).body.url);
 
         const res = await resend(email);
         expect(res.status).toBe(200);
@@ -263,11 +269,61 @@ describe('"email me my access link"', () => {
         expect(sent?.items).toHaveLength(1);
         expect(sent?.items[0]?.projectId).toBe(id);
         const fresh = tokenOf(sent!.items[0]!.url);
-        expect((await site.get(`/portal/${old}`)).status).toBe(404);
+        // Someone who only knows the address cannot kill the link the owner sent.
+        expect((await site.get(`/portal/${owners}`)).status).toBe(200);
         expect((await site.get(`/portal/${fresh}`)).status).toBe(200);
 
         expect(await contacts.countDocuments({ client: clientId, kind: 'token', text: 'Intake link re-sent at their request' })).toBe(1);
         expect(await t.events.countDocuments({ action: 'portal.resend', 'target.id': id })).toBe(1);
+    });
+
+    it('a later resend replaces only the earlier resent link; the owner\'s re-issue kills both', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        const id = await projectFor(clientId, 'Resend slots');
+        const owners = tokenOf((await issue(id)).body.url);
+        await resend(email);
+        const first = tokenOf(heldFor(clientId)[0]!.items[0]!.url);
+
+        await t.app.get(getModelToken(PORTAL_RESEND)).updateMany({}, { $set: { sentAt: new Date(Date.now() - 25 * 3_600_000) } });
+        await resend(email);
+        const second = tokenOf(heldFor(clientId)[1]!.items[0]!.url);
+        expect((await site.get(`/portal/${first}`)).status).toBe(404);
+        expect((await site.get(`/portal/${second}`)).status).toBe(200);
+        expect((await site.get(`/portal/${owners}`)).status).toBe(200);
+
+        // The owner issuing again is the one way to kill every earlier link.
+        const fresh = tokenOf((await issue(id)).body.url);
+        expect((await site.get(`/portal/${owners}`)).status).toBe(404);
+        expect((await site.get(`/portal/${second}`)).status).toBe(404);
+        expect((await site.get(`/portal/${fresh}`)).status).toBe(200);
+    });
+
+    it('a resent link answers, saves and submits like the owner\'s', async () => {
+        const email = mail();
+        const clientId = await client(email);
+        const id = await projectFor(clientId, 'Resend works');
+        await issue(id);
+        await resend(email);
+        const tk = tokenOf(heldFor(clientId)[0]!.items[0]!.url);
+        expect((await site.put(`/portal/${tk}/draft`).send({ answers: { 'discovery.what': 'Draft.' } })).status).toBe(200);
+        expect((await site.post(`/portal/${tk}/submit`).send({ answers: { 'discovery.what': 'Sent.' } })).status).toBe(200);
+        expect((await briefs.findOne({ project: id }).lean())?.state).toBe('submitted');
+    });
+
+    it('answers without waiting for the work, so the timing tells nothing', async () => {
+        const svc = t.app.get(PortalService) as unknown as { resend: (e: string) => Promise<void> };
+        const real = svc.resend;
+        let release!: () => void;
+        svc.resend = () => new Promise<void>((ok) => (release = ok));
+        try {
+            const res = await api().post('/portal/resend').set('x-forms-key', DEV_FORMS_PROXY_KEY).set('x-visitor-ip', '198.51.100.250').send({ email: mail() });
+            expect(res.status).toBe(200); // answered while the work is still stuck
+        } finally {
+            release();
+            svc.resend = real;
+            await t.app.get(PortalService).settled();
+        }
     });
 
     it('answers the same words for an address that is no client, and queues nothing', async () => {
