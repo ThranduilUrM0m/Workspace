@@ -26,7 +26,7 @@ function send(fields: Record<string, string>, headers: Record<string, string> = 
 describe('POST /api/enquiries (the site route in front of the API)', () => {
     it('forwards the fields as JSON with the proxy key and the visitor address', async () => {
         api(201, { ref: 'L-ABCDEFGHJK', email: 'sara@x.ma' });
-        await send(footer, { 'x-forwarded-for': '41.92.1.7, 10.0.0.1' });
+        await send(footer, { 'x-forwarded-for': '203.0.113.66, 41.92.1.7' });
         expect(calls[0]!.url).toBe('http://localhost:4002/enquiries');
         const h = calls[0]!.init.headers as Record<string, string>;
         expect(h['x-visitor-ip']).toBe('41.92.1.7');

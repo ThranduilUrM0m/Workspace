@@ -23,7 +23,7 @@ const call = (verb: typeof PUT | typeof POST, action: string, body: unknown, hea
 describe('/api/portal/<token>/<action>', () => {
     it('draft: forwards the answers with the proxy key and the visitor address', async () => {
         api(200, { saved: true });
-        const res = await call(PUT, 'draft', { answers: { 'discovery.what': 'Rooms.' } }, { 'x-forwarded-for': '41.92.1.7, 10.0.0.1' });
+        const res = await call(PUT, 'draft', { answers: { 'discovery.what': 'Rooms.' } }, { 'x-forwarded-for': '203.0.113.66, 41.92.1.7' });
         expect(res.status).toBe(200);
         expect(calls[0]!.url).toBe(`http://localhost:4002/portal/${TOKEN}/draft`);
         expect(calls[0]!.init.method).toBe('PUT');

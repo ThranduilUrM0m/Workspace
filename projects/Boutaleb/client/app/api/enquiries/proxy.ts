@@ -20,7 +20,19 @@ export function formsKey(): string {
     return DEV_FORMS_PROXY_KEY;
 }
 
-/** The visitor's address, as the host saw it: Netlify's own header first, then the standard one. */
-export function visitorIp(req: NextRequest): string {
-    return req.headers.get('x-nf-client-connection-ip') ?? req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'local';
+/**
+ * The visitor's address, as the host saw it, for the API's per-visitor
+ * throttle. Netlify's own header first: Netlify sets it and a visitor cannot.
+ * Elsewhere, the LAST entry of X-Forwarded-For: that one is appended by the
+ * proxy in front of the site; every entry before it is whatever the visitor
+ * chose to send, so trusting the first lets anyone dodge the throttle by
+ * sending a new made-up address each time.
+ */
+export function visitorFrom(h: Headers): string {
+    const netlify = h.get('x-nf-client-connection-ip')?.trim();
+    if (netlify) return netlify;
+    const hops = h.get('x-forwarded-for')?.split(',').map((s) => s.trim()).filter(Boolean) ?? [];
+    return hops.at(-1) ?? 'local';
 }
+
+export const visitorIp = (req: NextRequest): string => visitorFrom(req.headers);

@@ -18,7 +18,7 @@ const call = (body: unknown, headers: Record<string, string> = {}) => POST(new N
 describe('/api/portal/resend', () => {
     it('forwards the address with the proxy key and the visitor address, and answers ok', async () => {
         api(200, { ok: true });
-        const res = await call({ email: 'omar@example.ma' }, { 'x-forwarded-for': '41.92.1.7, 10.0.0.1' });
+        const res = await call({ email: 'omar@example.ma' }, { 'x-forwarded-for': '203.0.113.66, 41.92.1.7' });
         expect(res.status).toBe(200);
         expect(await res.json()).toEqual({ ok: true });
         expect(calls[0]!.url).toBe('http://localhost:4002/portal/resend');
