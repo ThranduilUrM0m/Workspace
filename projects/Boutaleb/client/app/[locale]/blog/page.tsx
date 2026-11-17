@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import { PostCard, postDates } from '@/components/public/blog/PostCard';
+import { PostCover } from '@/components/public/blog/PostCover';
 import { postCategoryLabel, posts, type PostCategory } from '@/content/posts';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
@@ -70,7 +71,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
 
             <div className="wrap">
                 <article className="feat">
-                    <Link className="ph" href={`/blog/${featured.slug}`} aria-hidden="true" tabIndex={-1} />
+                    <Link className="ph" href={`/blog/${featured.slug}`} aria-hidden="true" tabIndex={-1}>
+                        <PostCover post={featured} />
+                    </Link>
                     <div>
                         <div className="eyebrow">Featured · {postCategoryLabel[featured.category]}</div>
                         <h2>
@@ -103,14 +106,11 @@ export default async function BlogPage({ params, searchParams }: Props) {
                             <section>
                                 <h2 className="label">Best of the Week</h2>
                                 <Link className="best" href={`/blog/${best.slug}`}>
-                                    <span className="tag">post image</span>
+                                    <PostCover post={best} />
                                     <div className="scrim" />
                                     <div className="gnum" aria-hidden="true">
                                         <span>01.</span>
                                         <span>01.</span>
-                                    </div>
-                                    <div className="gword" aria-hidden="true">
-                                        {postCategoryLabel[best.category]}
                                     </div>
                                     <div className="body">
                                         <div className="cat">{postCategoryLabel[best.category]}</div>
@@ -131,7 +131,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
                             <div className="rated">
                                 {topRated.map((p) => (
                                     <Link key={p.slug} className="rate" href={`/blog/${p.slug}`}>
-                                        <div className="ph" />
+                                        <div className="ph">
+                                            <PostCover post={p} />
+                                        </div>
                                         <div className="kicker">{postCategoryLabel[p.category]}</div>
                                         <h3>{p.title}</h3>
                                         <div className="rmeta">
@@ -149,7 +151,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
                         <div className="mv">
                             {bigViewed && (
                                 <Link className="mv-big" href={`/blog/${bigViewed.slug}`}>
-                                    <div className="ph" />
+                                    <div className="ph">
+                                        <PostCover post={bigViewed} />
+                                    </div>
                                     <div className="kicker">{postCategoryLabel[bigViewed.category]}</div>
                                     <h3>{bigViewed.title}</h3>
                                     <div className="mmeta">
@@ -161,7 +165,9 @@ export default async function BlogPage({ params, searchParams }: Props) {
                             )}
                             {viewedRows.map((p) => (
                                 <Link key={p.slug} className="mv-row" href={`/blog/${p.slug}`}>
-                                    <div className="ph" />
+                                    <div className="ph">
+                                        <PostCover post={p} />
+                                    </div>
                                     <div className="mv-t">
                                         <div className="kicker">{postCategoryLabel[p.category]}</div>
                                         <h3>{p.title}</h3>
