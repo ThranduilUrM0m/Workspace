@@ -23,7 +23,7 @@ overrides:
     # vulnerable range and stays inside its major. All sit under next
     # (sass, styled-jsx).
     # Drop a line once its parent ships the fix on its own.
-    'picomatch@>=4.0.0 <4.0.4': '^4.0.4'
+    'picomatch@>=4.0.0 <4.0.4': '4.0.7'
     'immutable@>=5.0.0 <5.1.8': '^5.1.8'
     'browserslist@<4.28.7': '^4.28.7'
     'source-map-js@>=1.0.0 <1.2.2': '^1.2.2'
