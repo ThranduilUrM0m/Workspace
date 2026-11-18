@@ -4,14 +4,13 @@ import { setRequestLocale } from 'next-intl/server';
 import { CommentForm } from '@/components/public/blog/CommentForm';
 import { CommentActions, PostActions } from '@/components/public/blog/PostActions';
 import { Icon, PostCard, postDates } from '@/components/public/blog/PostCard';
-import { PostCover } from '@/components/public/blog/PostCover';
 import { PhoneToc, SideToc } from '@/components/public/blog/PostToc';
 import { authorCard, postBySlug, postCategoryLabel, posts, type PostBlock, type PostComment } from '@/content/posts';
 import type { Locale } from '@/i18n/routing';
 import { Link } from '@/i18n/navigation';
 import { related } from '@/lib/blog';
 import { getErrorWords } from '@/lib/error-words';
-import { localePath, seoFor } from '@/lib/seo';
+import { seoFor } from '@/lib/seo';
 import '@/styles/post.css';
 
 // Ported from Blueprinting/wireframes/public/blog-post.html ("Option B v2").
@@ -31,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale, slug } = await params;
     const post = postBySlug(slug);
     if (!post) return {};
-    return seoFor({ title: post.title, seo: { description: post.excerpt }, image: localePath(`/blog/${slug}/opengraph-image`, locale as Locale) }, locale as Locale, {
+    return seoFor({ title: post.title, seo: { description: post.excerpt } }, locale as Locale, {
         path: `/blog/${slug}`,
         translated: TRANSLATED,
     });
@@ -71,9 +70,7 @@ export default async function PostPage({ params }: Props) {
                 </header>
 
                 <figure className="hero">
-                    <div className="ph" role="img" aria-label={`Cover: ${post.title}`}>
-                        <PostCover post={post} />
-                    </div>
+                    <div className="ph" role="img" aria-label="Featured image" />
                     <figcaption>
                         <span>{post.caption}</span>
                     </figcaption>

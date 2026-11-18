@@ -1,5 +1,4 @@
 import { postCategoryLabel, type Post } from '@/content/posts';
-import { PostCover } from '@/components/public/blog/PostCover';
 import { Link } from '@/i18n/navigation';
 
 // The archive card (blog.html .post), also the related-posts card under a
@@ -42,9 +41,7 @@ export function PostCard({ post, month, className = 'post' }: { post: Post; mont
                     {month}
                 </time>
             </div>
-            <div className="ph">
-                <PostCover post={post} />
-            </div>
+            <div className="ph" />
             <div className="pbody">
                 <h3>{post.title}</h3>
                 <p className="teaser">{post.excerpt}</p>
