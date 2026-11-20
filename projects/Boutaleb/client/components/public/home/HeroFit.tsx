@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 // Layout the home hero needs from JS, all measured from the real DOM:
 // 1. BESPOKE is sized to the exact width of "made with care" (two fonts, any locale).
-// 2. Both words sit on the figure's collar, wherever object-fit:cover crops the image.
+// 2. Both words sit centred in the visible hero area (above the strip / stacked pitch).
 // 3. When the pitch would cover the figure (portrait screens), the image stage
 //    stops above the pitch ([data-stack]); CSS guesses by aspect ratio until this runs.
 // 4. BUILT reads bottom-up: the ink of its B lands exactly on the CTA's bottom edge.
@@ -12,7 +12,6 @@ import { useEffect } from 'react';
 // Source image geometry (public/images/hero/wall-*.{jpg,png}, 1920x1224).
 const IMG_W = 1920;
 const IMG_H = 1224;
-const ANCHOR_Y = 0.522; // words' centre, as a fraction of the image height (collar line)
 const FIG_HALF = 145; // figure's half-width in image px (bbox x 815-1100, centre ~960)
 
 export function HeroFit() {
@@ -53,13 +52,12 @@ export function HeroFit() {
             }
             bespoke.style.fontSize = `${size}px`;
 
-            // 2. vertical anchor inside the (possibly shortened) stage
-            const sh = stage.clientHeight;
-            const s = Math.max(W / IMG_W, sh / IMG_H);
-            const dispH = IMG_H * s;
-            const y = ANCHOR_Y * dispH - (dispH - sh); // image anchored to the bottom
-            const half = care.getBoundingClientRect().height / 2;
-            stage.style.setProperty('--anchor-y', `${Math.max(y, half)}px`);
+            // 2. words centred in the visible hero area (above the strip, and above
+            //    the pitch when stacked), as in the approved test page
+            const st = stage.getBoundingClientRect();
+            const m = main.getBoundingClientRect();
+            const y = (m.top + Math.min(st.bottom, m.bottom)) / 2 - st.top;
+            stage.style.setProperty('--anchor-y', `${y}px`);
 
             // 4. BUILT on the CTA baseline
             const cs = getComputedStyle(built);
