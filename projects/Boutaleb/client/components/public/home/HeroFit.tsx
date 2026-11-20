@@ -14,6 +14,8 @@ import { useEffect } from 'react';
 const IMG_W = 1920;
 const IMG_H = 1224;
 const FIG_HALF = 145; // figure's half-width in image px (bbox x 815-1100, centre ~960)
+const BUILT_INK = 0.9; // share of BUILT's line box its letters actually cover
+const PITCH_GAP = 16; // big screens: pitch hugs the BUILT ghost
 const STACK_Y = 0.64; // stacked layout: words' centre as a fraction of the visible photo
 
 export function HeroFit() {
@@ -36,7 +38,7 @@ export function HeroFit() {
             const big = matchMedia('(min-width: 100rem)').matches;
 
             // 5. Big screens: BUILT runs the full height, from the CTA bottom up to a
-            //    small top margin, and the pitch steps aside to clear it.
+            //    small top margin, and the pitch sits right against it.
             built.style.fontSize = '';
             pitch.style.insetInlineStart = '';
             if (big) {
@@ -48,10 +50,12 @@ export function HeroFit() {
                     size *= length / built.getBoundingClientRect().height;
                 }
                 built.style.fontSize = `${size}px`;
+                // The line box (.85em) is wider than the letters: the ink fills
+                // BUILT_INK of it from the box's left edge (rotate:180deg puts it there
+                // in both directions; measured on Bricolage 700, bowls included).
                 const b = built.getBoundingClientRect();
-                const edge = rtl ? h.right - b.left : b.right - h.left;
-                const start = parseFloat(getComputedStyle(pitch).insetInlineStart);
-                pitch.style.insetInlineStart = `${Math.max(start, edge + 24)}px`;
+                const edge = rtl ? h.right - b.left : b.left + b.width * BUILT_INK - h.left;
+                pitch.style.insetInlineStart = `${edge + PITCH_GAP}px`;
             }
 
             // 3. stack decision, on the unstacked geometry (image over the whole hero)
