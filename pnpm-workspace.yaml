@@ -17,8 +17,8 @@ catalog:
 # tests, only its runtime code, so pinning to the jest devDependency's
 # version is safe.
 overrides:
-    jest-mock: '30.4.1'
-    jest-environment-node: '30.4.1'
+    jest-mock: '30.5.2'
+    jest-environment-node: '30.5.2'
     # Security floors (pnpm audit, 2026-10-24). Each targets only the
     # vulnerable range and stays inside its major. All sit under next
     # (sass, styled-jsx).
