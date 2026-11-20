@@ -7,7 +7,7 @@ import type { PageRecord } from '../page-record';
 type Card = { eyebrow: string; title: string; text: string };
 
 export type HomeBlocks = {
-    hero: { built: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
+    hero: { built: string; alt: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
     approach: { eyebrow: string; heading: string; sub: string; items: { title: string; text: string }[]; image: string };
     about: { eyebrow: string; image: string; heading: string; text: string; cta: string };
     process: { eyebrow: string; heading: string; sub: string; cards: Card[]; link: string; image: string };
@@ -28,6 +28,7 @@ export const homePage: PageRecord<HomeBlocks> = {
             blocks: {
                 hero: {
                     built: 'BUILT',
+                    alt: 'A man in a charcoal suit sits on a tall black stool in front of a sunlit earthen wall, his face covered by a torn terracotta paper patch.',
                     script: 'made with care',
                     word: 'Bespoke',
                     eyebrow: '002 · custom web products',

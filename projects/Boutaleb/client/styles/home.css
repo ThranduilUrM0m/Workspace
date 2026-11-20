@@ -14,19 +14,30 @@
 .home-v1 .sec{padding:3.5rem var(--site-gutter) 4.5rem;}
 
 /* ===== HERO — zero breakpoints: clamp() scales the type continuously ===== */
-.home-v1 #sec-hero{display:flex;flex-direction:column;height:calc(100dvh - var(--bar-h));min-height:30rem;}
-.home-v1 #sec-hero .hero-main{position:relative;flex:1;min-height:0;overflow:hidden;}
-.home-v1 .h-built{position:absolute;inset-inline-start:var(--site-gutter);top:0;bottom:0;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:#EDE7DE;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:0;}
-.home-v1 .h-word{position:absolute;left:50%;top:50%;translate:-50% -50%;z-index:1;text-align:center;}
-.home-v1 .h-word > div{position:relative;display:inline-block;}
-.home-v1 .h-care{position:absolute;top:50%;left:0;width:100%;translate:0 -50%;text-align:center;font:400 clamp(3.25rem,16vw,5rem) var(--font-cookie),cursive;color:var(--clay);white-space:nowrap;}
-.home-v1 .h-bespoke{display:block;font:700 clamp(3.5rem,17vw,5.25rem)/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;white-space:nowrap;}
-.home-v1 .h-pitch{position:absolute;inset-inline-start:calc(var(--site-gutter) + 4.25rem);bottom:1.75rem;max-width:13.75rem;z-index:3;}
-.home-v1 .h-pitch .eyebrow{margin-bottom:.5rem;}
+/* Image hero (Wall, locked 2026-11-20). Layers, back to front: wall photo,
+   BESPOKE, cut-out figure, "made with care", then BUILT / pitch / strip.
+   HeroFit.tsx measures: BESPOKE width = script width, words on the collar line
+   (--anchor-y), BUILT's B on the CTA bottom, and [data-stack] when the pitch
+   would cover the figure. One CSS guess before it runs: portrait = stacked. */
+.home-v1 #sec-hero{--clay-deep:#8A3A20;position:relative;display:flex;flex-direction:column;height:calc(100dvh - var(--bar-h));min-height:30rem;overflow:hidden;isolation:isolate;}
+.home-v1 .h-stage{position:absolute;inset:0;}
+.home-v1 .h-img{object-fit:cover;object-position:50% 100%;z-index:0;}
+.home-v1 .h-img.h-fig{z-index:2;}
+.home-v1 #sec-hero .hero-main{position:relative;flex:1;min-height:0;}
+.home-v1 .h-care,.home-v1 .h-bespoke{position:absolute;left:50%;top:var(--anchor-y,50%);width:max-content;translate:-50% -50%;white-space:nowrap;pointer-events:none;}
+.home-v1 .h-bespoke{z-index:1;font:700 5rem/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;text-shadow:0 .1rem 1.5rem rgba(28,26,23,.22),0 0 .1rem rgba(28,26,23,.18);opacity:0;transition:opacity .3s;}
+.home-v1 #sec-hero[data-fit] .h-bespoke{opacity:1;}
+.home-v1 .h-care{z-index:3;font:400 clamp(3.5rem,18vw,6.75rem) var(--font-cookie),cursive;color:var(--clay-deep);}
+.home-v1 .h-built{position:absolute;inset-inline-start:var(--site-gutter);bottom:1.75rem;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:var(--ink);opacity:.14;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:4;}
+.home-v1 .h-pitch{position:absolute;inset-inline-start:calc(var(--site-gutter) + 4.25rem);bottom:1.75rem;max-width:13.75rem;z-index:5;}
+.home-v1 .h-pitch .eyebrow{margin-bottom:.5rem;color:var(--clay-deep);}
 .home-v1 .h-line{font:1.375rem/1.2 var(--f-head);margin-bottom:.625rem;}
 .home-v1 .h-cta{display:inline-flex;align-items:center;min-height:var(--hit);background:#232326;color:var(--ground);font:.6875rem var(--f-body);padding:.5rem 1rem;letter-spacing:.03em;text-decoration:none;}
-.home-v1 .h-strip{position:relative;padding:.75rem var(--site-gutter);display:flex;justify-content:flex-end;font:.625rem var(--f-body);color:var(--muted);flex-shrink:0;}
+.home-v1 .h-strip{position:relative;z-index:5;padding:.75rem var(--site-gutter);display:flex;justify-content:flex-end;font:.625rem var(--f-body);color:var(--muted);flex-shrink:0;}
 .home-v1 .h-strip::before{content:"";position:absolute;inset-inline:var(--site-gutter);inset-block-start:0;height:var(--hair);background:var(--line);}
+/* Stacked (pitch would cover the figure): the photo stops above the pitch and fades into the ground. */
+.home-v1 #sec-hero[data-stack] .h-stage{bottom:var(--stack-room,13rem);-webkit-mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);}
+@media (max-aspect-ratio:1/1){.home-v1 #sec-hero:not([data-fit]) .h-stage{bottom:13rem;-webkit-mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);}}
 @media (min-width:48rem){.home-v1 #sec-hero{height:calc(100dvh - 3.6875rem);}}
 @media (min-width:48rem) and (pointer:fine){.home-v1 .h-cta{min-height:0;}}
 

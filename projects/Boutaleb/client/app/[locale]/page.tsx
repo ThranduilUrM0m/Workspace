@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
+import Image from 'next/image';
 import { cookie } from '@/app/fonts';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
+import { HeroFit } from '@/components/public/home/HeroFit';
 import { pickLocale, type Locale } from '@/content/page-record';
 import { homePage } from '@/content/pages/home';
 import { newestPosts, postCategoryLabel } from '@/content/posts';
@@ -9,6 +11,8 @@ import { clientNames, stats, testimonials } from '@/content/proof';
 import { featuredProjects, workCategoryLabel } from '@/content/work';
 import { Link } from '@/i18n/navigation';
 import { seoFor } from '@/lib/seo';
+import heroFigure from '@/public/images/hero/wall-figure.png';
+import heroScene from '@/public/images/hero/wall-scene.jpg';
 import '@/styles/home.css';
 
 // Ported from Blueprinting/wireframes/public/homepage.html (locked). Work,
@@ -52,15 +56,20 @@ export default async function HomePage({ params }: Props) {
         <div className={`home-v1 ${cookie.variable}`} id="page-wrap">
             <main id="main" lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <section id="sec-hero">
+                    {/* Layers, back to front: wall, BESPOKE, figure, "made with care". The h1
+                        creates no stacking context, so the figure can sit between its two words. */}
+                    <div className="h-stage">
+                        <Image className="h-img" src={heroScene} alt={hero.alt} fill preload sizes="100vw" placeholder="blur" />
+                        <h1 className="h-word">
+                            <span className="h-care">{hero.script}</span> <span className="h-bespoke">{hero.word}</span>
+                        </h1>
+                        <Image className="h-img h-fig" src={heroFigure} alt="" fill preload sizes="100vw" />
+                    </div>
+                    <HeroFit />
                     <div className="hero-main">
                         <div className="h-built" aria-hidden="true">
                             {hero.built}
                         </div>
-                        <h1 className="h-word">
-                            <div>
-                                <span className="h-care">{hero.script}</span> <span className="h-bespoke">{hero.word}</span>
-                            </div>
-                        </h1>
                         <div className="h-pitch">
                             <div className="eyebrow">{hero.eyebrow}</div>
                             <div className="h-line">
