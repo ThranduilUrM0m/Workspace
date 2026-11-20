@@ -2,7 +2,7 @@
     "name": "my_workspace",
     "private": true,
     "version": "1.0.0",
-    "packageManager": "pnpm@10.15.0",
+    "packageManager": "pnpm@10.34.5",
     "workspaces": ["projects/*/client", "projects/*/server", "packages/*"],
     "scripts": {
         "dev": "turbo run dev --parallel",
