@@ -1,10 +1,10 @@
 # Next multi-stage Dockerfile
-FROM node:18-alpine AS deps
+FROM node:18.20.8-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm ci --only=production || true
 
-FROM node:18-alpine AS builder
+FROM node:18.20.8-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm install
@@ -14,7 +14,7 @@ RUN npm install
 # the real client deploy target and injects these correctly before its own build.
 RUN npm run build
 
-FROM node:18-alpine AS runner
+FROM node:18.20.8-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 RUN apk add --no-cache bash curl && curl -1sLf 'https://artifacts-cli.infisical.com/setup.alpine.sh' | bash && apk add --no-cache infisical
