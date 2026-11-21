@@ -245,10 +245,18 @@ test('/services carries the three anchors the footer and redirects point at', as
         await expect(page.locator(`#${id}`)).toBeAttached();
     await expect(page.locator('.p-row')).toHaveCount(7);
     await expect(page.locator('.qa > div')).toHaveCount(8);
-    // English copy only so far: the French and Arabic URLs render it, unindexed.
-    await page.goto('/services');
-    await expect(page.locator('main')).toHaveAttribute('lang', 'en');
-    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    // Translated (R3, 2026-11-21): each URL renders its own language, indexed,
+    // with the same anchors and row counts.
+    for (const [path, lang] of [
+        ['/services', 'fr'],
+        ['/ar/services', 'ar'],
+    ] as const) {
+        await page.goto(path);
+        await expect(page.locator('main')).toHaveAttribute('lang', lang);
+        await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+        await expect(page.locator('.p-row')).toHaveCount(7);
+        await expect(page.locator('.qa > div')).toHaveCount(8);
+    }
 });
 
 test('/about renders its four blocks; standards cards take keyboard focus', async ({ page }) => {
