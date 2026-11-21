@@ -72,6 +72,8 @@ export function HeroFit() {
             // 1. width match. Bricolage has an optical-size axis, so its width is not
             //    linear in font-size: refine a few times (converges to < 1px).
             const target = care.getBoundingClientRect().width;
+            // Hidden or not laid out yet: dividing by a 0 width would pin BESPOKE at 0px.
+            if (target <= 0) return;
             let size = 100;
             for (let i = 0; i < 4; i++) {
                 bespoke.style.fontSize = `${size}px`;
@@ -101,7 +103,9 @@ export function HeroFit() {
         };
 
         let raf = 0;
+        let alive = true;
         const schedule = () => {
+            if (!alive) return; // fonts.ready can settle after unmount (locale switch)
             cancelAnimationFrame(raf);
             raf = requestAnimationFrame(fit);
         };
@@ -109,6 +113,7 @@ export function HeroFit() {
         ro.observe(hero);
         document.fonts.ready.then(schedule);
         return () => {
+            alive = false;
             ro.disconnect();
             cancelAnimationFrame(raf);
         };
