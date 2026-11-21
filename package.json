@@ -38,10 +38,10 @@
     "devDependencies": {
         "@types/react": "*",
         "@types/react-dom": "*",
-        "concurrently": "*",
-        "prettier": "^3.8.1",
+        "concurrently": "9.2.1",
+        "prettier": "3.8.1",
         "react": "*",
         "react-dom": "*",
-        "turbo": "*"
+        "turbo": "2.9.14"
     }
 }
