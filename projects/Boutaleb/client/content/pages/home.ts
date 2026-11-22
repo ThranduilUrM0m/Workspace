@@ -8,13 +8,15 @@ type Card = { eyebrow: string; title: string; text: string };
 
 export type HomeBlocks = {
     hero: { built: string; alt: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
-    approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; image: string };
+    approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; mock: MockCopy };
     about: { eyebrow: string; image: string; heading: string; text: string; cta: string };
     process: { eyebrow: string; heading: string; sub: string; cards: Card[]; link: string; image: string };
     work: { eyebrow: string; all: string; image: string };
     trust: { eyebrow: string; clientsLabel: string };
     blog: { eyebrow: string; slide: string };
 };
+
+import type { MockCopy } from '@/components/public/home/ApproachMock';
 
 /** Which faded icon sits behind each Approach promise (mapped to lucide icons in the page). */
 export type ApproachIcon = 'drawn' | 'language' | 'keys';
@@ -60,7 +62,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'Domain, hosting and accounts are opened in your name. Access is shared, never held back.',
                         },
                     ],
-                    image: 'image, PNG',
+                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', title: 'A courtyard, a fountain, quiet.', cta: 'Book a room', active: 'en' },
                 },
                 about: {
                     eyebrow: '004 · how boutaleb builds',
@@ -134,7 +136,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'Nom de domaine, hébergement et comptes sont ouverts à votre nom. L’accès est partagé, jamais retenu.',
                         },
                     ],
-                    image: 'image, PNG',
+                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', title: 'Un patio, une fontaine, le calme.', cta: 'Réserver', active: 'fr' },
                 },
                 about: {
                     eyebrow: '004 · la méthode boutaleb',
@@ -208,7 +210,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'النطاق والاستضافة والحسابات تُفتح باسمك. الوصول مشترك، ولا يُحجَب عنك أبدًا.',
                         },
                     ],
-                    image: 'image, PNG',
+                    mock: { site: 'رياض نزهة', domain: 'riadnozha.ma', title: 'فناء ونافورة وهدوء.', cta: 'احجز غرفة', active: 'ar' },
                 },
                 about: {
                     eyebrow: '004 · كيف يبني بوطالب',

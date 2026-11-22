@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
+import { ApproachMock } from '@/components/public/home/ApproachMock';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
 import { HeroFit } from '@/components/public/home/HeroFit';
 import { pickLocale, type Locale } from '@/content/page-record';
@@ -12,6 +13,7 @@ import { featuredProjects, workCategoryLabel } from '@/content/work';
 import { Link } from '@/i18n/navigation';
 import { KeyRound, Languages, type LucideIcon, PencilRuler } from 'lucide-react';
 import { seoFor } from '@/lib/seo';
+import aboutWall from '@/public/images/home/about-wall-test.jpg';
 import heroFigure from '@/public/images/hero/wall-figure.png';
 import heroScene from '@/public/images/hero/wall-scene.jpg';
 import '@/styles/home.css';
@@ -112,9 +114,7 @@ export default async function HomePage({ params }: Props) {
                                 })}
                             </div>
                             <div className="ap-right">
-                                <div className="ap-img ph" aria-hidden="true">
-                                    {approach.image}
-                                </div>
+                                <ApproachMock copy={approach.mock} />
                             </div>
                         </div>
                     </div>
@@ -126,8 +126,9 @@ export default async function HomePage({ params }: Props) {
                         <div className="split-row">
                             <div className="split-left">
                                 <div className="eyebrow">{about.eyebrow}</div>
-                                <div className="split-img ph" aria-hidden="true">
-                                    {about.image}
+                                {/* TEST 2026-11-22: Perchance sketch for the developer to judge, not final. */}
+                                <div className="split-img">
+                                    <Image src={aboutWall} alt="" fill sizes="(min-width: 48rem) 40vw, 90vw" className="split-photo" />
                                 </div>
                             </div>
                             <div className="split-right">

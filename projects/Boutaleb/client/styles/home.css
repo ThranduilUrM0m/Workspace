@@ -52,7 +52,7 @@
 
 /* ===== APPROACH ===== */
 .home-v1 #sec-approach .eyebrow{text-align:center;}
-.home-v1 .ap-head{font:clamp(1.75rem,1rem + 3vw,2.5rem)/1.1 var(--f-head);max-width:14ch;margin:0 auto 1rem;text-align:center;}
+.home-v1 .ap-head{font:clamp(1.75rem,1rem + 3vw,2.5rem)/1.1 var(--f-head);max-width:24ch;text-wrap:balance;margin:0 auto 1rem;text-align:center;}
 .home-v1 .ap-sub{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.62);max-width:48ch;margin:0 auto 3rem;text-align:center;}
 .home-v1 .ap-row{display:flex;flex-direction:column;gap:2.5rem;}
 /* Items: inset rules at both ends (never the column edge); a large faded line icon
@@ -65,11 +65,66 @@
 .home-v1 .ap-item-title{font:1.25rem/1.25 var(--f-head);margin:0 0 .5rem;}
 .home-v1 .ap-item-body{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.72);max-width:42ch;margin:0;}
 .home-v1 .ap-img{width:100%;aspect-ratio:4/3;}
+/* Approach picture: a sample client site, wireframe cut diagonally into the built page
+   (components/public/home/ApproachMock.tsx). Sizes run on the window's own width (cqi),
+   so the drawing scales as one picture at any column width. Square everywhere. */
+.home-v1 .am{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/3;padding:8% 7%;background:linear-gradient(160deg,#E7C3A4,#D9A483);overflow:hidden;}
+.home-v1 .am-window{position:relative;width:100%;container-type:inline-size;background:#fff;box-shadow:0 1.25rem 2.5rem -1rem rgba(70,35,20,.35),0 .25rem .75rem rgba(70,35,20,.12);}
+.home-v1 .am-bar{display:flex;align-items:center;gap:3cqi;padding:1.6cqi 2.4cqi;background:#F1EEEA;border-bottom:var(--hair) solid rgba(27,27,31,.08);}
+.home-v1 .am-dots{display:flex;gap:1cqi;}
+.home-v1 .am-dots i{width:1.4cqi;height:1.4cqi;background:rgba(27,27,31,.18);}
+.home-v1 .am-url{flex:1;display:flex;align-items:center;gap:1cqi;padding:.8cqi 1.6cqi;background:#fff;font:400 2.2cqi/1 var(--f-body);color:rgba(27,27,31,.7);}
+.home-v1 .am-lock{width:2.4cqi;height:2.4cqi;color:rgba(27,27,31,.55);}
+.home-v1 .am-key{width:2.8cqi;height:2.8cqi;margin-inline-start:auto;color:var(--clay);}
+.home-v1 .am-body{position:relative;aspect-ratio:16/10;overflow:hidden;}
+.home-v1 .am-page{position:absolute;inset:0;isolation:isolate;z-index:0;display:grid;grid-template-rows:auto 1fr auto;gap:2.4cqi;padding:2.4cqi 3cqi 3cqi;background:#FBF8F4;}
+.home-v1 .am-nav{display:flex;align-items:center;gap:3cqi;}
+.home-v1 .am-logo{font:700 2.6cqi/1 var(--f-head);color:var(--ink);min-width:12cqi;min-height:2.6cqi;}
+.home-v1 .am-logo:lang(ar){font-family:var(--f-ar);}
+.home-v1 .am-links{display:flex;gap:2cqi;margin-inline-start:auto;}
+.home-v1 .am-links i{width:6cqi;height:.6cqi;background:rgba(27,27,31,.3);}
+.home-v1 .am-langs{display:flex;gap:1.4cqi;font:400 1.9cqi/1 var(--f-body);color:rgba(27,27,31,.5);}
+.home-v1 .am-langs span{min-width:2.4cqi;padding-bottom:.5cqi;text-align:center;border-bottom:.25cqi solid transparent;}
+.home-v1 .am-langs .on{color:var(--ink);border-color:var(--ink);}
+.home-v1 .am-hero{position:relative;overflow:hidden;}
+.home-v1 .am-photo{object-fit:cover;object-position:50% 70%;}
+.home-v1 .am-built .am-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(28,18,12,.6));}
+/* Finished headline on the photo side (inline end), the sketched one on the paper side: both halves read. */
+.home-v1 .am-built .am-copy{inset-inline:auto 3cqi;max-width:34%;justify-items:end;text-align:end;}
+.home-v1 .am-copy{position:absolute;inset-inline-start:3cqi;bottom:3cqi;z-index:1;display:grid;justify-items:start;gap:1.8cqi;max-width:60%;}
+.home-v1 .am-title{font:400 4.4cqi/1.05 var(--f-head);color:#fff;}
+.home-v1 .am-title:lang(ar){font-family:var(--f-ar);line-height:1.3;}
+.home-v1 .am-cta{padding:1.2cqi 2.4cqi;background:var(--clay);color:#fff;font:400 1.9cqi/1 var(--f-body);}
+.home-v1 .am-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.4cqi;}
+.home-v1 .am-card{display:grid;grid-template-columns:7cqi 1fr;grid-template-rows:auto auto;column-gap:1.6cqi;row-gap:1cqi;align-items:center;}
+.home-v1 .am-card i{grid-row:span 2;height:5.5cqi;background:#EBD9C8;}
+.home-v1 .am-card b{height:.7cqi;background:rgba(27,27,31,.28);}
+.home-v1 .am-card b + b{width:65%;background:rgba(27,27,31,.14);}
+/* The wireframe: same layout, pencil lines on paper, clipped to the inline-start side. */
+.home-v1 .am-sketch{z-index:1;background:#fff;clip-path:polygon(0 0,62% 0,38% 100%,0 100%);--pen:rgba(45,45,50,.75);}
+.home-v1 .am-sketch:dir(rtl){clip-path:polygon(100% 0,38% 0,62% 100%,100% 100%);}
+.home-v1 .am-sketch .am-logo{min-height:2.6cqi;outline:.25cqi solid var(--pen);}
+.home-v1 .am-sketch .am-links i{background:var(--pen);height:.3cqi;}
+.home-v1 .am-sketch .am-langs span{height:2.2cqi;outline:.25cqi solid var(--pen);border:0;padding:0;}
+.home-v1 .am-sketch .am-hero{outline:.3cqi solid var(--pen);outline-offset:-.3cqi;}
+.home-v1 .am-x{position:absolute;inset:0;width:100%;height:100%;}
+.home-v1 .am-x line{stroke:var(--pen);stroke-width:1;vector-effect:non-scaling-stroke;}
+.home-v1 .am-sketch .am-title{display:block;width:30cqi;height:1.2cqi;background:var(--pen);box-shadow:0 2.4cqi 0 -.2cqi var(--pen);margin-bottom:2.4cqi;}
+.home-v1 .am-sketch .am-cta{width:14cqi;height:4.2cqi;padding:0;background:none;outline:.3cqi solid var(--pen);}
+.home-v1 .am-sketch .am-card i{background:none;outline:.25cqi solid var(--pen);}
+.home-v1 .am-sketch .am-card b{background:var(--pen);height:.3cqi;}
+.home-v1 .am-cut{position:absolute;inset:0;z-index:2;width:100%;height:100%;pointer-events:none;}
+.home-v1 .am-cut:dir(rtl){scale:-1 1;}
+.home-v1 .am-cut line{stroke:var(--clay);stroke-width:1.5;vector-effect:non-scaling-stroke;}
+.home-v1 .am-pencil{position:absolute;z-index:3;inset-inline-start:6%;bottom:9%;width:20%;rotate:-24deg;fill:#E8A33C;}
+.home-v1 .am-pencil polygon{fill:#F2D5A9;}
+.home-v1 .am-pencil .lead{fill:#3A3A3E;}
 @media (min-width:48rem){
 .home-v1 .ap-row{flex-direction:row;gap:3rem;}
 .home-v1 .ap-left{flex:1 1 46%;display:flex;flex-direction:column;}
 .home-v1 .ap-right{flex:1 1 54%;}
-.home-v1 .ap-img{height:100%;min-height:22.5rem;aspect-ratio:auto;}
+.home-v1 .ap-right{display:flex;}
+.home-v1 .am{aspect-ratio:auto;min-height:22.5rem;}
 .home-v1 .ap-item-icon{width:4.5rem;height:4.5rem;}
 }
 
@@ -83,7 +138,8 @@ mask-composite:intersect;}
 /* Squared 2026-10-01 (nothing round): two linear fades intersected give a
  soft-edged square at every width; the class keeps its old name. */
 .home-v1 .split-row{position:relative;z-index:1;display:flex;flex-direction:column;gap:2rem;}
-.home-v1 .split-img{width:100%;aspect-ratio:4/3;}
+.home-v1 .split-img{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;}
+.home-v1 .split-photo{object-fit:cover;}
 .home-v1 .frag-title{font:clamp(3rem,14vw,6.25rem)/.92 var(--f-head);margin:0 0 1.25rem;}
 .home-v1 .frag-body{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.65);max-width:38ch;}
 .home-v1 .split-cta{position:relative;z-index:1;margin-top:1.5rem;}
