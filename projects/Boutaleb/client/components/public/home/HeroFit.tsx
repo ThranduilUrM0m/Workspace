@@ -5,7 +5,8 @@ import { useEffect } from 'react';
 // Layout the home hero needs from JS, all measured from the real DOM:
 // 1. BESPOKE is sized to the exact width of "made with care" (two fonts); in Arabic it
 //    is 70% of the hero width instead (Reem Kufi, locked 2026-11-22).
-// 2. Both words sit across the chest, just under the taped patch (stacked: fixed share of the photo).
+// 2. Both words are centred in the first screen, page top (header included) to the
+//    hero's bottom edge (developer, 2026-11-22; replaces the under-the-patch anchor).
 // 3. When the pitch would cover the figure (portrait screens), the image stage
 //    stops above the pitch ([data-stack]); CSS guesses by aspect ratio until this runs.
 // 4. BUILT reads bottom-up: the ink of its B lands exactly on the CTA's bottom edge.
@@ -17,11 +18,10 @@ const IMG_H = 1224;
 const FIG_HALF = 145; // figure's half-width in image px (bbox x 815-1100, centre ~960)
 const BUILT_INK = 0.9; // share of BUILT's line box its letters actually cover
 const PITCH_GAP = 16; // big screens: pitch hugs the BUILT ghost
-const STACK_Y = 0.64; // stacked layout: words' centre as a fraction of the visible photo
-const PATCH_BOTTOM = 600; // lowest row of the taped patch in image px (measured, rows 496-600)
 const AR_WORD_SHARE = 0.7; // Arabic white word: share of the hero width
-const WORDS_GAP = 12; // px between the patch and the top of the white word
-const WORDS_MAX_Y = 0.78; // side-by-side safety: words' centre never below this share of the hero
+const PATCH_BOTTOM = 600; // lowest row of the taped patch in image px (measured, rows 496-600)
+const WORDS_GAP = 12; // px kept between the patch and the top of the words
+const ZOOM_MAX = 1.35; // photo zoom cap when lifting the patch clear of the words
 
 export function HeroFit() {
     useEffect(() => {
@@ -86,23 +86,25 @@ export function HeroFit() {
             }
             bespoke.style.fontSize = `${size}px`;
 
-            // 2. words across the chest, clear of the patch and its later animation.
-            //    Stacked (phones): a fraction of the visible photo (approved, unchanged).
-            //    Side by side: anchored to the figure itself, so short laptops and tall
-            //    monitors both put the words' top edge just under the patch.
+            // 2. words centred between the page top (above the header) and the hero's
+            //    bottom edge, in viewport coordinates so a scrolled page measures the same.
+            //    The stage shrinks when stacked, so the result is relative to its top.
             const st = stage.getBoundingClientRect();
-            const m = main.getBoundingClientRect();
-            const bottom = Math.min(st.bottom, m.bottom);
-            let y = m.top + (bottom - m.top) * STACK_Y - st.top;
-            if (!covers) {
-                // image is cover-fitted and bottom-aligned (object-position 50% 100%)
-                const s = Math.max(st.width / IMG_W, st.height / IMG_H);
-                const patchBottom = st.height - (IMG_H - PATCH_BOTTOM) * s;
-                const half = bespoke.getBoundingClientRect().height / 2;
-                const floor = m.top - st.top + (bottom - m.top) * WORDS_MAX_Y;
-                y = Math.min(patchBottom + WORDS_GAP + half, floor);
-            }
+            const y = (h.bottom - window.scrollY) / 2 - st.top;
             stage.style.setProperty('--anchor-y', `${y}px`);
+
+            //    The words no longer follow the figure, so the photo follows the words:
+            //    when the taped patch would reach down into them, zoom the photo from
+            //    its bottom edge (feet stay put, the patch rises, only wall is cropped).
+            let zoom = 1;
+            if (!covers) {
+                const s = Math.max(st.width / IMG_W, st.height / IMG_H);
+                const half = Math.max(care.getBoundingClientRect().height, bespoke.getBoundingClientRect().height) / 2;
+                const wordsTop = y - half;
+                const need = (st.height - wordsTop + WORDS_GAP) / (IMG_H - PATCH_BOTTOM);
+                if (need > s) zoom = Math.min(need / s, ZOOM_MAX);
+            }
+            stage.style.setProperty('--img-zoom', `${zoom}`);
 
             // 4. BUILT on the CTA baseline
             const cs = getComputedStyle(built);
