@@ -323,6 +323,9 @@ button.ff-go{border:0;background:none;padding:0;cursor:pointer;}
 .ft-base nav{display:none;grid-area:legal;flex-wrap:wrap;column-gap:1.5rem;}
 .ft-base nav a,.ft-top-link{color:var(--ink);display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);text-decoration:underline;}
 .ft-top-link{grid-area:top;white-space:nowrap;}
+/* Footer wordmark follows the header one: lowercase, accent full stop (filled, not outlined). */
+.ft-brand{text-transform:lowercase;}
+.ft-brand .dot{color:var(--clay);-webkit-text-stroke:0;}
 .cr-brand{font-family:var(--f-head);font-weight:700;}
 /* phone: the copyright keeps only "© 2026 Boutaleb." so it fits one line */
 .cr-long{display:none;}

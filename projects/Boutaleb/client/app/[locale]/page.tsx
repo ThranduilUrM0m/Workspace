@@ -56,13 +56,15 @@ export default async function HomePage({ params }: Props) {
         <div className={`home-v1 ${cookie.variable} ${ruqaa.variable}`} id="page-wrap">
             <main id="main" lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <section id="sec-hero">
-                    {/* Layers, back to front: wall, BESPOKE, figure, "made with care". The h1
-                        creates no stacking context, so the figure can sit between its two words. */}
+                    {/* Layers, back to front: wall, BESPOKE, figure, "made with care". The words'
+                        wrapper creates no stacking context, so the figure can sit between them.
+                        The page heading is the pitch line below (it names the offer); these two
+                        words are the visual slogan. */}
                     <div className="h-stage">
                         <Image className="h-img" src={heroScene} alt={hero.alt} fill preload sizes="100vw" placeholder="blur" />
-                        <h1 className="h-word">
+                        <p className="h-word">
                             <span className="h-care">{hero.script}</span> <span className="h-bespoke">{hero.word}</span>
-                        </h1>
+                        </p>
                         <Image className="h-img h-fig" src={heroFigure} alt="" fill preload sizes="100vw" />
                     </div>
                     <HeroFit />
@@ -72,11 +74,11 @@ export default async function HomePage({ params }: Props) {
                         </div>
                         <div className="h-pitch">
                             <div className="eyebrow">{hero.eyebrow}</div>
-                            <div className="h-line">
+                            <h1 className="h-line">
                                 {hero.line[0]}
                                 <br />
                                 {hero.line[1]}
-                            </div>
+                            </h1>
                             <Link className="h-cta" href="/contact">
                                 {hero.cta}
                             </Link>

@@ -60,7 +60,10 @@ export function SiteFooter() {
                 <div className="ft-rule" />
                 <div className="ft-links">
                     <div className="ft-id">
-                        <div className="ft-brand" lang="en" translate="no">{business.brand}</div>
+                        <div className="ft-brand" lang="en" translate="no">
+                            {business.brand}
+                            <span className="dot">.</span>
+                        </div>
                         <p className="ft-about">{t('about')}</p>
                     </div>
                     <div className="ft-cols">
