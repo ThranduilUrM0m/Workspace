@@ -5,11 +5,12 @@ import { cookie, reemKufi, ruqaa } from '@/app/fonts';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
 import { HeroFit } from '@/components/public/home/HeroFit';
 import { pickLocale, type Locale } from '@/content/page-record';
-import { homePage } from '@/content/pages/home';
+import { type ApproachIcon, homePage } from '@/content/pages/home';
 import { newestPosts, postCategoryLabel } from '@/content/posts';
 import { clientNames, stats, testimonials } from '@/content/proof';
 import { featuredProjects, workCategoryLabel } from '@/content/work';
 import { Link } from '@/i18n/navigation';
+import { KeyRound, Languages, type LucideIcon, PencilRuler } from 'lucide-react';
 import { seoFor } from '@/lib/seo';
 import heroFigure from '@/public/images/hero/wall-figure.png';
 import heroScene from '@/public/images/hero/wall-scene.jpg';
@@ -19,6 +20,9 @@ import '@/styles/home.css';
 // posts and proof come from content/; all of it is placeholder until launch.
 
 type Props = { params: Promise<{ locale: string }> };
+
+// Faded icon behind each Approach promise: drawn first, your language, your keys.
+const approachIcons: Record<ApproachIcon, LucideIcon> = { drawn: PencilRuler, language: Languages, keys: KeyRound };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { locale } = await params;
@@ -96,12 +100,16 @@ export default async function HomePage({ params }: Props) {
                         <p className="ap-sub">{approach.sub}</p>
                         <div className="ap-row">
                             <div className="ap-left">
-                                {approach.items.map((item) => (
-                                    <div key={item.title} className="ap-item">
-                                        <h3 className="ap-item-title">{item.title}</h3>
-                                        <div className="ap-item-body">{item.text}</div>
-                                    </div>
-                                ))}
+                                {approach.items.map((item) => {
+                                    const Icon = approachIcons[item.icon];
+                                    return (
+                                        <div key={item.icon} className="ap-item">
+                                            <Icon className="ap-item-icon" aria-hidden="true" strokeWidth={1} />
+                                            <h3 className="ap-item-title">{item.title}</h3>
+                                            <p className="ap-item-body">{item.text}</p>
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <div className="ap-right">
                                 <div className="ap-img ph" aria-hidden="true">

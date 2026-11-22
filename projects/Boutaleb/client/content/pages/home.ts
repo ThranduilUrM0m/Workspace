@@ -8,13 +8,16 @@ type Card = { eyebrow: string; title: string; text: string };
 
 export type HomeBlocks = {
     hero: { built: string; alt: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
-    approach: { eyebrow: string; heading: string; sub: string; items: { title: string; text: string }[]; image: string };
+    approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; image: string };
     about: { eyebrow: string; image: string; heading: string; text: string; cta: string };
     process: { eyebrow: string; heading: string; sub: string; cards: Card[]; link: string; image: string };
     work: { eyebrow: string; all: string; image: string };
     trust: { eyebrow: string; clientsLabel: string };
     blog: { eyebrow: string; slide: string };
 };
+
+/** Which faded icon sits behind each Approach promise (mapped to lucide icons in the page). */
+export type ApproachIcon = 'drawn' | 'language' | 'keys';
 
 export const homePage: PageRecord<HomeBlocks> = {
     id: 'home',
@@ -38,20 +41,23 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 approach: {
                     eyebrow: '003 · approach',
-                    heading: 'One person, no assembly line.',
-                    sub: 'Every project is scoped, designed, and shipped by the same person who talks to you at the start — no handoffs, no account manager relaying messages between departments.',
+                    heading: 'No surprises, from first message to the keys.',
+                    sub: 'What usually goes wrong with a web project is ruled out before the work begins.',
                     items: [
                         {
-                            title: 'Direct collaboration',
-                            text: 'You talk directly to the person building it — no relay through project managers or support tickets.',
+                            icon: 'drawn',
+                            title: 'See it before it is built',
+                            text: 'Every screen is drawn and approved by you before any code is written.',
                         },
                         {
-                            title: 'Full ownership',
-                            text: 'One person accountable for the whole build, start to finish — no dropped threads between teams.',
+                            icon: 'language',
+                            title: 'Every step in your language',
+                            text: 'Questions, plans and updates in French, Arabic or English, in plain words.',
                         },
                         {
-                            title: 'No overhead tax',
-                            text: 'Solo means no agency margin stacked on top of the work. You pay for the build, not the org chart.',
+                            icon: 'keys',
+                            title: 'The keys are yours from day one',
+                            text: 'Domain, hosting and accounts are opened in your name. Access is shared, never held back.',
                         },
                     ],
                     image: 'image, PNG',
@@ -109,20 +115,23 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 approach: {
                     eyebrow: '003 · approche',
-                    heading: 'Une seule personne, pas de chaîne de montage.',
-                    sub: 'Chaque projet est cadré, conçu et livré par la personne qui vous parle dès le départ — sans relais, sans chargé de compte qui fait passer les messages d’un service à l’autre.',
+                    heading: 'Aucune surprise, du premier message à la remise des clés.',
+                    sub: 'Ce qui tourne mal d’habitude dans un projet web est écarté avant même le début du travail.',
                     items: [
                         {
-                            title: 'Collaboration directe',
-                            text: 'Vous parlez directement à la personne qui construit — sans passer par un chef de projet ni par des tickets de support.',
+                            icon: 'drawn',
+                            title: 'Vous le voyez avant qu’il soit construit',
+                            text: 'Chaque écran est dessiné et validé par vous avant la moindre ligne de code.',
                         },
                         {
-                            title: 'Responsabilité entière',
-                            text: 'Une seule personne responsable de tout le projet, du début à la fin — aucun fil perdu entre deux équipes.',
+                            icon: 'language',
+                            title: 'Chaque étape dans votre langue',
+                            text: 'Questions, plans et points d’avancement en français, en arabe ou en anglais, en mots simples.',
                         },
                         {
-                            title: 'Pas de frais de structure',
-                            text: 'En solo, aucune marge d’agence ne s’ajoute au travail. Vous payez la réalisation, pas l’organigramme.',
+                            icon: 'keys',
+                            title: 'Les clés sont à vous dès le premier jour',
+                            text: 'Nom de domaine, hébergement et comptes sont ouverts à votre nom. L’accès est partagé, jamais retenu.',
                         },
                     ],
                     image: 'image, PNG',
@@ -180,20 +189,23 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 approach: {
                     eyebrow: '003 · المنهج',
-                    heading: 'شخص واحد، لا خطّ إنتاج.',
-                    sub: 'كل مشروع يحدّد نطاقه ويصمّمه ويسلّمه الشخص نفسه الذي يتحدّث إليك منذ البداية — بلا وسطاء، وبلا مسؤول حسابات ينقل الرسائل بين الأقسام.',
+                    heading: 'بلا مفاجآت، من أول رسالة حتى تسليم المفاتيح.',
+                    sub: 'ما يسوء عادةً في مشاريع المواقع يُستبعَد قبل أن يبدأ العمل.',
                     items: [
                         {
-                            title: 'تواصل مباشر',
-                            text: 'تتحدّث مباشرة مع من يبني المشروع — بلا مدير مشروع يتوسّط، ولا تذاكر دعم.',
+                            icon: 'drawn',
+                            title: 'تراه قبل أن يُبنى',
+                            text: 'كل شاشة تُرسَم وتوافق عليها قبل كتابة أي سطر من الشيفرة.',
                         },
                         {
-                            title: 'مسؤولية كاملة',
-                            text: 'شخص واحد مسؤول عن المشروع كلّه من أوّله إلى آخره — لا خيوط تضيع بين الفرق.',
+                            icon: 'language',
+                            title: 'كل خطوة بلغتك',
+                            text: 'الأسئلة والخطط والمستجدّات بالعربية أو الفرنسية أو الإنجليزية، بكلمات واضحة.',
                         },
                         {
-                            title: 'بلا تكاليف زائدة',
-                            text: 'العمل الفردي يعني ألّا يُضاف هامش وكالة فوق العمل. تدفع ثمن البناء، لا ثمن الهيكل الإداري.',
+                            icon: 'keys',
+                            title: 'المفاتيح لك منذ اليوم الأول',
+                            text: 'النطاق والاستضافة والحسابات تُفتح باسمك. الوصول مشترك، ولا يُحجَب عنك أبدًا.',
                         },
                     ],
                     image: 'image, PNG',
