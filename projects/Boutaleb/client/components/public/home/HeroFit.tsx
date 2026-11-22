@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 
 // Layout the home hero needs from JS, all measured from the real DOM:
-// 1. BESPOKE is sized to the exact width of "made with care" (two fonts, any locale).
+// 1. BESPOKE is sized to the exact width of "made with care" (two fonts); in Arabic it
+//    is 70% of the hero width instead (Reem Kufi, locked 2026-11-22).
 // 2. Both words sit across the chest, just under the taped patch (stacked: fixed share of the photo).
 // 3. When the pitch would cover the figure (portrait screens), the image stage
 //    stops above the pitch ([data-stack]); CSS guesses by aspect ratio until this runs.
@@ -18,6 +19,7 @@ const BUILT_INK = 0.9; // share of BUILT's line box its letters actually cover
 const PITCH_GAP = 16; // big screens: pitch hugs the BUILT ghost
 const STACK_Y = 0.64; // stacked layout: words' centre as a fraction of the visible photo
 const PATCH_BOTTOM = 600; // lowest row of the taped patch in image px (measured, rows 496-600)
+const AR_WORD_SHARE = 0.7; // Arabic white word: share of the hero width
 const WORDS_GAP = 12; // px between the patch and the top of the white word
 const WORDS_MAX_Y = 0.78; // side-by-side safety: words' centre never below this share of the hero
 
@@ -74,7 +76,7 @@ export function HeroFit() {
 
             // 1. width match. Bricolage has an optical-size axis, so its width is not
             //    linear in font-size: refine a few times (converges to < 1px).
-            const target = care.getBoundingClientRect().width;
+            const target = rtl ? W * AR_WORD_SHARE : care.getBoundingClientRect().width;
             // Hidden or not laid out yet: dividing by a 0 width would pin BESPOKE at 0px.
             if (target <= 0) return;
             let size = 100;

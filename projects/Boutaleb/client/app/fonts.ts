@@ -1,4 +1,4 @@
-import { Aref_Ruqaa, Bricolage_Grotesque, Cookie, IBM_Plex_Sans_Arabic, Questrial } from 'next/font/google';
+import { Aref_Ruqaa, Bricolage_Grotesque, Cookie, IBM_Plex_Sans_Arabic, Questrial, Reem_Kufi } from 'next/font/google';
 
 // Downloaded at build and served from this origin: no request to Google
 // from a visitor's browser. Questrial ships one weight (400) — never ask it
@@ -40,6 +40,16 @@ export const ruqaa = Aref_Ruqaa({
     subsets: ['arabic'],
     weight: '700',
     variable: '--font-ruqaa',
+    display: 'swap',
+    preload: false,
+});
+
+// The homepage hero's white Arabic word («على مقاسك»), picked 2026-11-22 (round 3,
+// 70% of the screen width). Arabic only, so not preloaded.
+export const reemKufi = Reem_Kufi({
+    subsets: ['arabic'],
+    weight: '700',
+    variable: '--font-reem',
     display: 'swap',
     preload: false,
 });

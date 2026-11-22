@@ -26,6 +26,7 @@
 .home-v1 #sec-hero .hero-main{position:relative;flex:1;min-height:0;}
 .home-v1 .h-care,.home-v1 .h-bespoke{position:absolute;left:50%;top:var(--anchor-y,calc(50% - 1.1rem));width:max-content;translate:-50% -50%;white-space:nowrap;pointer-events:none;}
 .home-v1 .h-bespoke{z-index:1;font:700 5rem/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;text-shadow:0 .1rem 1.5rem rgba(28,26,23,.34),0 0 .5rem rgba(28,26,23,.2),0 0 .1rem rgba(28,26,23,.26);opacity:0;transition:opacity .3s;}
+.home-v1 .h-bespoke:lang(ar){font-family:var(--font-reem),var(--f-ar) !important;font-weight:700;letter-spacing:0;}
 .home-v1 #sec-hero[data-fit] .h-bespoke{opacity:1;}
 .home-v1 .h-care{z-index:3;font:400 clamp(3.5rem,18vw,max(6.75rem,min(6.75rem + max(0rem,(100vw - 90rem) * .11),21dvh))) var(--font-cookie),cursive;color:var(--clay-deep);}
 /* Arabic script line: Aref Ruqaa 700. !important + higher specificity beat the
