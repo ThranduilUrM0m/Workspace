@@ -1,4 +1,4 @@
-import { Bricolage_Grotesque, Cookie, IBM_Plex_Sans_Arabic, Questrial } from 'next/font/google';
+import { Aref_Ruqaa, Bricolage_Grotesque, Cookie, IBM_Plex_Sans_Arabic, Questrial } from 'next/font/google';
 
 // Downloaded at build and served from this origin: no request to Google
 // from a visitor's browser. Questrial ships one weight (400) — never ask it
@@ -31,6 +31,17 @@ export const cookie = Cookie({
     weight: '400',
     variable: '--font-cookie',
     display: 'swap',
+});
+
+// The homepage hero's script line in Arabic only («صُنع بكل عناية»), picked
+// 2026-11-22. Not preloaded: French and English visitors never render it, and
+// the browser only fetches a face whose glyphs are actually drawn.
+export const ruqaa = Aref_Ruqaa({
+    subsets: ['arabic'],
+    weight: '700',
+    variable: '--font-ruqaa',
+    display: 'swap',
+    preload: false,
 });
 
 export const fontVariables = [bricolage.variable, questrial.variable, plexArabic.variable].join(' ');

@@ -28,6 +28,9 @@
 .home-v1 .h-bespoke{z-index:1;font:700 5rem/.85 var(--f-head);letter-spacing:-.01em;color:#fff;text-transform:uppercase;text-shadow:0 .1rem 1.5rem rgba(28,26,23,.22),0 0 .1rem rgba(28,26,23,.18);opacity:0;transition:opacity .3s;}
 .home-v1 #sec-hero[data-fit] .h-bespoke{opacity:1;}
 .home-v1 .h-care{z-index:3;font:400 clamp(3.5rem,18vw,max(6.75rem,min(6.75rem + max(0rem,(100vw - 90rem) * .11),21dvh))) var(--font-cookie),cursive;color:var(--clay-deep);}
+/* Arabic script line: Aref Ruqaa 700. !important + higher specificity beat the
+   global :lang(ar) script rule in public.css, which forces Plex everywhere. */
+.home-v1 .h-care:lang(ar){font-family:var(--font-ruqaa),var(--f-ar) !important;font-weight:700;}
 /* Physical left/right: on a vertical-rl element inset-inline-start would map to top. */
 .home-v1 .h-built{position:absolute;left:0;bottom:1.75rem;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:var(--ink);opacity:.14;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:4;height:max-content;}
 .home-v1 .h-built:dir(rtl){left:auto;right:0;}

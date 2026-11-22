@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
-import { cookie } from '@/app/fonts';
+import { cookie, ruqaa } from '@/app/fonts';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
 import { HeroFit } from '@/components/public/home/HeroFit';
 import { pickLocale, type Locale } from '@/content/page-record';
@@ -53,7 +53,7 @@ export default async function HomePage({ params }: Props) {
     const logoRows = [clientNames.slice(0, 4), clientNames.slice(4)];
 
     return (
-        <div className={`home-v1 ${cookie.variable}`} id="page-wrap">
+        <div className={`home-v1 ${cookie.variable} ${ruqaa.variable}`} id="page-wrap">
             <main id="main" lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <section id="sec-hero">
                     {/* Layers, back to front: wall, BESPOKE, figure, "made with care". The h1
