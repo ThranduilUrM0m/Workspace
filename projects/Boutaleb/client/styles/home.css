@@ -61,14 +61,17 @@
 .home-v1 .ap-item::before,.home-v1 .ap-item:last-child::after{content:"";position:absolute;inset-inline:1rem;height:var(--hair);background:var(--line);}
 .home-v1 .ap-item::before{inset-block-start:0;}
 .home-v1 .ap-item:last-child::after{inset-block-end:0;}
-.home-v1 .ap-item-icon{position:absolute;inset-inline-end:1rem;top:50%;translate:0 -50%;width:3.5rem;height:3.5rem;color:var(--clay-ink);opacity:.32;}
+.home-v1 .ap-item-icon{position:absolute;inset-inline-end:.5rem;top:50%;translate:0 -50%;width:4.5rem;height:4rem;color:var(--clay-ink);opacity:.5;}
+.home-v1 .ap-glyph{fill:currentColor;font:400 13px var(--f-head);}
+.home-v1 .ap-glyph-ar{font-family:var(--f-ar);font-size:16px;}
 .home-v1 .ap-item-title{font:1.25rem/1.25 var(--f-head);margin:0 0 .5rem;}
 .home-v1 .ap-item-body{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.72);max-width:42ch;margin:0;}
 .home-v1 .ap-img{width:100%;aspect-ratio:4/3;}
-/* Approach picture: a sample client site, wireframe cut diagonally into the built page
-   (components/public/home/ApproachMock.tsx). Sizes run on the window's own width (cqi),
-   so the drawing scales as one picture at any column width. Square everywhere. */
-.home-v1 .am{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/3;padding:8% 7%;background:linear-gradient(160deg,#E7C3A4,#D9A483);overflow:hidden;}
+/* Approach picture: a sample client site, pencil wireframe cut diagonally into the
+   built page (components/public/home/ApproachMock.tsx). Both layers share one 640x400
+   drawing: built parts are placed in % of it, the sketch is one SVG of the same box.
+   Sizes inside the window run on its width (cqi). Square everywhere. */
+.home-v1 .am{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/3;padding:7% 7% 9%;background:linear-gradient(160deg,#E7C3A4,#D9A483);overflow:hidden;}
 .home-v1 .am-window{position:relative;width:100%;container-type:inline-size;background:#fff;box-shadow:0 1.25rem 2.5rem -1rem rgba(70,35,20,.35),0 .25rem .75rem rgba(70,35,20,.12);}
 .home-v1 .am-bar{display:flex;align-items:center;gap:3cqi;padding:1.6cqi 2.4cqi;background:#F1EEEA;border-bottom:var(--hair) solid rgba(27,27,31,.08);}
 .home-v1 .am-dots{display:flex;gap:1cqi;}
@@ -76,56 +79,45 @@
 .home-v1 .am-url{flex:1;display:flex;align-items:center;gap:1cqi;padding:.8cqi 1.6cqi;background:#fff;font:400 2.2cqi/1 var(--f-body);color:rgba(27,27,31,.7);}
 .home-v1 .am-lock{width:2.4cqi;height:2.4cqi;color:rgba(27,27,31,.55);}
 .home-v1 .am-key{width:2.8cqi;height:2.8cqi;margin-inline-start:auto;color:var(--clay);}
-.home-v1 .am-body{position:relative;aspect-ratio:16/10;overflow:hidden;}
-.home-v1 .am-page{position:absolute;inset:0;isolation:isolate;z-index:0;display:grid;grid-template-rows:auto 1fr auto;gap:2.4cqi;padding:2.4cqi 3cqi 3cqi;background:#FBF8F4;}
-.home-v1 .am-nav{display:flex;align-items:center;gap:3cqi;}
-.home-v1 .am-logo{font:700 2.6cqi/1 var(--f-head);color:var(--ink);min-width:12cqi;min-height:2.6cqi;}
+.home-v1 .am-body{position:relative;aspect-ratio:16/10;overflow:hidden;direction:ltr;}
+.home-v1 .am-page{position:absolute;inset:0;}
+.home-v1 .am-built{z-index:0;background:#FBF8F4;}
+.home-v1 .am-built > *{position:absolute;}
+.home-v1 .am-logo{display:flex;align-items:center;font:700 2.4cqi/1 var(--f-head);color:var(--ink);white-space:nowrap;}
 .home-v1 .am-logo:lang(ar){font-family:var(--f-ar);}
-.home-v1 .am-links{display:flex;gap:2cqi;margin-inline-start:auto;}
-.home-v1 .am-links i{width:6cqi;height:.6cqi;background:rgba(27,27,31,.3);}
-.home-v1 .am-langs{display:flex;gap:1.4cqi;font:400 1.9cqi/1 var(--f-body);color:rgba(27,27,31,.5);}
-.home-v1 .am-langs span{min-width:2.4cqi;padding-bottom:.5cqi;text-align:center;border-bottom:.25cqi solid transparent;}
+.home-v1 .am-bar-line{background:rgba(27,27,31,.28);}
+.home-v1 .am-langs{display:flex;justify-content:flex-end;align-items:center;gap:1.4cqi;font:400 1.8cqi/1 var(--f-body);color:rgba(27,27,31,.5);}
+.home-v1 .am-langs span{padding-bottom:.4cqi;border-bottom:.25cqi solid transparent;}
 .home-v1 .am-langs .on{color:var(--ink);border-color:var(--ink);}
-.home-v1 .am-hero{position:relative;overflow:hidden;}
-.home-v1 .am-photo{object-fit:cover;object-position:50% 70%;}
-.home-v1 .am-built .am-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(28,18,12,.6));}
-/* Finished headline on the photo side (inline end), the sketched one on the paper side: both halves read. */
-.home-v1 .am-built .am-copy{inset-inline:auto 3cqi;max-width:34%;justify-items:end;text-align:end;}
-.home-v1 .am-copy{position:absolute;inset-inline-start:3cqi;bottom:3cqi;z-index:1;display:grid;justify-items:start;gap:1.8cqi;max-width:60%;}
-.home-v1 .am-title{font:400 4.4cqi/1.05 var(--f-head);color:#fff;}
-.home-v1 .am-title:lang(ar){font-family:var(--f-ar);line-height:1.3;}
-.home-v1 .am-cta{padding:1.2cqi 2.4cqi;background:var(--clay);color:#fff;font:400 1.9cqi/1 var(--f-body);}
-.home-v1 .am-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.4cqi;}
-.home-v1 .am-card{display:grid;grid-template-columns:7cqi 1fr;grid-template-rows:auto auto;column-gap:1.6cqi;row-gap:1cqi;align-items:center;}
-.home-v1 .am-card i{grid-row:span 2;height:5.5cqi;background:#EBD9C8;}
-.home-v1 .am-card b{height:.7cqi;background:rgba(27,27,31,.28);}
-.home-v1 .am-card b + b{width:65%;background:rgba(27,27,31,.14);}
-/* The wireframe: same layout, pencil lines on paper, clipped to the inline-start side. */
-.home-v1 .am-sketch{z-index:1;background:#fff;clip-path:polygon(0 0,62% 0,38% 100%,0 100%);--pen:rgba(45,45,50,.75);}
-.home-v1 .am-sketch:dir(rtl){clip-path:polygon(100% 0,38% 0,62% 100%,100% 100%);}
-.home-v1 .am-sketch .am-logo{min-height:2.6cqi;outline:.25cqi solid var(--pen);}
-.home-v1 .am-sketch .am-links i{background:var(--pen);height:.3cqi;}
-.home-v1 .am-sketch .am-langs span{height:2.2cqi;outline:.25cqi solid var(--pen);border:0;padding:0;}
-.home-v1 .am-sketch .am-hero{outline:.3cqi solid var(--pen);outline-offset:-.3cqi;}
-.home-v1 .am-x{position:absolute;inset:0;width:100%;height:100%;}
-.home-v1 .am-x line{stroke:var(--pen);stroke-width:1;vector-effect:non-scaling-stroke;}
-.home-v1 .am-sketch .am-title{display:block;width:30cqi;height:1.2cqi;background:var(--pen);box-shadow:0 2.4cqi 0 -.2cqi var(--pen);margin-bottom:2.4cqi;}
-.home-v1 .am-sketch .am-cta{width:14cqi;height:4.2cqi;padding:0;background:none;outline:.3cqi solid var(--pen);}
-.home-v1 .am-sketch .am-card i{background:none;outline:.25cqi solid var(--pen);}
-.home-v1 .am-sketch .am-card b{background:var(--pen);height:.3cqi;}
+.home-v1 .am-langs span:nth-child(2){font-family:var(--f-ar);font-size:2.4cqi;}
+.home-v1 .am-rule{background:rgba(27,27,31,.1);}
+.home-v1 .am-title-bar{background:rgba(27,27,31,.82);}
+.home-v1 .am-text-bar{background:rgba(27,27,31,.22);}
+.home-v1 .am-cta{display:grid;place-items:center;background:var(--clay);}
+.home-v1 .am-cta i{width:55%;height:12%;background:rgba(255,255,255,.85);}
+.home-v1 .am-photo{overflow:hidden;}
+.home-v1 .am-photo img{object-fit:cover;object-position:50% 70%;}
+.home-v1 .am-card{display:grid;grid-template-columns:26% 1fr;grid-template-rows:1fr 1fr;column-gap:6%;align-items:center;}
+.home-v1 .am-card i{grid-row:span 2;align-self:stretch;background:#EBD9C8;}
+.home-v1 .am-card b{height:14%;min-height:2px;background:rgba(27,27,31,.25);align-self:end;}
+.home-v1 .am-card b + b{width:75%;align-self:start;margin-top:8%;background:rgba(27,27,31,.13);}
+/* The wireframe: the same page in pencil on white paper, clipped to the left part. */
+.home-v1 .am-sketch{z-index:1;background:#fff;color:rgba(40,40,46,.82);clip-path:polygon(0 0,62% 0,38% 100%,0 100%);}
+.home-v1 .am-sketch svg{position:absolute;inset:0;width:100%;height:100%;}
 .home-v1 .am-cut{position:absolute;inset:0;z-index:2;width:100%;height:100%;pointer-events:none;}
-.home-v1 .am-cut:dir(rtl){scale:-1 1;}
 .home-v1 .am-cut line{stroke:var(--clay);stroke-width:1.5;vector-effect:non-scaling-stroke;}
-.home-v1 .am-pencil{position:absolute;z-index:3;inset-inline-start:6%;bottom:9%;width:20%;rotate:-24deg;fill:#E8A33C;}
-.home-v1 .am-pencil polygon{fill:#F2D5A9;}
-.home-v1 .am-pencil .lead{fill:#3A3A3E;}
+/* The pencil rests on the panel by the window's lower corner, pointing at the cut. */
+.home-v1 .am-pencil{position:absolute;z-index:3;inset-inline-start:3%;bottom:6%;width:34%;rotate:-22deg;filter:drop-shadow(.15rem .35rem .25rem rgba(70,35,20,.35));}
+.home-v1 .am-pencil:dir(rtl){scale:-1 1;rotate:22deg;}
 @media (min-width:48rem){
 .home-v1 .ap-row{flex-direction:row;gap:3rem;}
 .home-v1 .ap-left{flex:1 1 46%;display:flex;flex-direction:column;}
 .home-v1 .ap-right{flex:1 1 54%;}
 .home-v1 .ap-right{display:flex;}
-.home-v1 .am{aspect-ratio:auto;min-height:22.5rem;}
-.home-v1 .ap-item-icon{width:4.5rem;height:4.5rem;}
+/* the panel takes the items' height; the window fits inside it by height or width */
+.home-v1 .am{aspect-ratio:auto;height:100%;min-height:18rem;padding:1.75rem 1.75rem 2.25rem;container-type:size;}
+.home-v1 .am-window{width:min(100%,144cqh);}
+.home-v1 .ap-item-icon{width:5.5rem;height:4.9rem;}
 }
 
 /* ===== ABOUT ===== */

@@ -62,7 +62,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'Domain, hosting and accounts are opened in your name. Access is shared, never held back.',
                         },
                     ],
-                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', title: 'A courtyard, a fountain, quiet.', cta: 'Book a room', active: 'en' },
+                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', active: 'en' },
                 },
                 about: {
                     eyebrow: '004 · how boutaleb builds',
@@ -136,7 +136,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'Nom de domaine, hébergement et comptes sont ouverts à votre nom. L’accès est partagé, jamais retenu.',
                         },
                     ],
-                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', title: 'Un patio, une fontaine, le calme.', cta: 'Réserver', active: 'fr' },
+                    mock: { site: 'Riad Nozha', domain: 'riadnozha.ma', active: 'fr' },
                 },
                 about: {
                     eyebrow: '004 · la méthode boutaleb',
@@ -210,7 +210,7 @@ export const homePage: PageRecord<HomeBlocks> = {
                             text: 'النطاق والاستضافة والحسابات تُفتح باسمك. الوصول مشترك، ولا يُحجَب عنك أبدًا.',
                         },
                     ],
-                    mock: { site: 'رياض نزهة', domain: 'riadnozha.ma', title: 'فناء ونافورة وهدوء.', cta: 'احجز غرفة', active: 'ar' },
+                    mock: { site: 'رياض نزهة', domain: 'riadnozha.ma', active: 'ar' },
                 },
                 about: {
                     eyebrow: '004 · كيف يبني بوطالب',
