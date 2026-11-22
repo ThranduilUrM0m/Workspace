@@ -61,8 +61,10 @@ export function SiteFooter() {
                 <div className="ft-links">
                     <div className="ft-id">
                         <div className="ft-brand" lang="en" translate="no">
-                            {business.brand}
-                            <span className="dot">.</span>
+                            <bdi dir="ltr">
+                                {business.brand}
+                                <span className="dot">.</span>
+                            </bdi>
                         </div>
                         <p className="ft-about">{t('about')}</p>
                     </div>
@@ -109,7 +111,10 @@ export function SiteFooter() {
                     <span>
                         <span className="cr-long">{t('copyright')} </span>&copy; {year}{' '}
                         <span className="cr-long">{t('withLove')} </span>
-                        <bdi className="cr-brand" lang="en" translate="no">{business.brand}</bdi>.
+                        <bdi className="cr-brand" dir="ltr" lang="en" translate="no">
+                            {business.brand}
+                            <span className="dot">.</span>
+                        </bdi>
                     </span>
                     <a className="ft-top-link" href="#top">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1B1B1F" strokeWidth="2" aria-hidden="true">

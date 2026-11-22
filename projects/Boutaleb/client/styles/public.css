@@ -326,7 +326,8 @@ button.ff-go{border:0;background:none;padding:0;cursor:pointer;}
 /* Footer wordmark follows the header one: lowercase, accent full stop (filled, not outlined). */
 .ft-brand{text-transform:lowercase;}
 .ft-brand .dot{color:var(--clay);-webkit-text-stroke:0;}
-.cr-brand{font-family:var(--f-head);font-weight:700;}
+.cr-brand{font-family:var(--f-head);font-weight:700;text-transform:lowercase;letter-spacing:.02em;}
+.cr-brand .dot{color:var(--clay);}
 /* phone: the copyright keeps only "© 2026 Boutaleb." so it fits one line */
 .cr-long{display:none;}
 
