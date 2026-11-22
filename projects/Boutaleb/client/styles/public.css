@@ -20,9 +20,11 @@
       Anything else here needs zero breakpoints (auto-fit, clamp, container
       query).
    3. HIT TARGETS. Links and buttons are 44px tall by default (a thumb).
-      They shrink back to the locked desktop size only on
+      TEXT LINKS shrink back to the locked desktop size only on
       (min-width:48rem) and (pointer:fine) — wide AND a mouse. A tablet is
-      wide but touched, so it keeps the big targets.
+      wide but touched, so it keeps the big targets. SOLID BUTTONS (a filled
+      background: hero CTA, form submits) never shrink: 44px on
+      every device, or they look cramped (developer, 2026-11-22).
    4. LOGICAL PROPERTIES (inline-start/end, not left/right) on everything
       shared, so /ar flips with dir="rtl" and no second stylesheet.
    5. Units: rem type/spacing, clamp() fluid, fr/minmax tracks, ch measure,

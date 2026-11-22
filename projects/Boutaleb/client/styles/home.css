@@ -48,7 +48,6 @@
 .home-v1 #sec-hero:not([data-fit]) .h-stage{bottom:13rem;-webkit-mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);mask-image:linear-gradient(#000 calc(100% - 3rem),transparent);}
 @media (min-aspect-ratio:1/1){.home-v1 #sec-hero:not([data-fit]) .h-stage{bottom:0;-webkit-mask-image:none;mask-image:none;}}
 @media (min-width:48rem){.home-v1 #sec-hero{height:calc(100dvh - 3.6875rem);}}
-@media (min-width:48rem) and (pointer:fine){.home-v1 .h-cta{min-height:0;}}
 
 /* ===== APPROACH ===== */
 .home-v1 #sec-approach .eyebrow{text-align:center;}
