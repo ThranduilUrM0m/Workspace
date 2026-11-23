@@ -119,7 +119,6 @@ export default async function HomePage({ params }: Props) {
 
                 <section id="sec-about">
                     <div className="sec">
-                        <div className="circle-base" aria-hidden="true" />
                         <div className="split-row">
                             <div className="split-left">
                                 <div className="eyebrow">{about.eyebrow}</div>
@@ -129,6 +128,8 @@ export default async function HomePage({ params }: Props) {
                                 </div>
                             </div>
                             <div className="split-right">
+                                {/* the ink: anchored to the heading, drifts on scroll (home.css) */}
+                                <div className="circle-base" aria-hidden="true" />
                                 <h2 className="frag-title">{about.heading}</h2>
                                 <div className="frag-body">{about.text}</div>
                             </div>
