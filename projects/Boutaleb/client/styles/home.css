@@ -145,15 +145,20 @@
 .home-v1 .ab-text{margin-inline-start:50%;margin-top:2.5rem;}
 }
 @media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
-/* TEMPORARY direction B (?v=b, AboutVariant.tsx): tall photo at the inline
- end, heading on paper whose lines cross onto the wall. Phone = A. */
+/* TEMPORARY direction B (?v=b, AboutVariant.tsx), revised 2026-11-23 evening:
+ MIRRORED against Approach (which has text at the start, picture at the end),
+ so the two sections zig-zag instead of repeating one split. Tall photo at the
+ inline start (7fr), heading + body at the end (5fr). The heading stays inside
+ its column (no crossing onto the photo: in FR it only happened by overflow)
+ and is sized from the section width (cqi), so the longest word of every
+ language fits without per-language tuning. Phone = A. */
 @media (min-width:48rem){
-.home-v1 #sec-about[data-v="b"] .ab{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:3rem;}
-.home-v1 #sec-about[data-v="b"] .ab-eyebrow{grid-area:2/1;}
-.home-v1 #sec-about[data-v="b"] .ab-head{grid-area:3/1/4/3;max-width:62%;margin:0 0 2rem;}
-.home-v1 #sec-about[data-v="b"] .ab-img{grid-area:1/2/6/3;aspect-ratio:auto;height:clamp(32rem,80dvh,46rem);}
+.home-v1 #sec-about[data-v="b"] .ab{container-type:inline-size;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:clamp(2.5rem,5vw,5rem);}
+.home-v1 #sec-about[data-v="b"] .ab-eyebrow{grid-area:2/2;}
+.home-v1 #sec-about[data-v="b"] .ab-head{grid-area:3/2;font-size:min(8rem,7.6cqi);margin:0 0 2rem;}
+.home-v1 #sec-about[data-v="b"] .ab-img{grid-area:1/1/6/2;aspect-ratio:auto;height:clamp(32rem,80dvh,46rem);}
 .home-v1 #sec-about[data-v="b"] .ab-photo{object-position:52% 50%;}
-.home-v1 #sec-about[data-v="b"] .ab-text{grid-area:4/1;margin:0;}
+.home-v1 #sec-about[data-v="b"] .ab-text{grid-area:4/2;margin:0;}
 }
 /* PARKED for the motion phase (developer 2026-11-23): the ink square's
  scroll drift. Its element left the markup in r2; keep until motion decides. */
