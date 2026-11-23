@@ -120,53 +120,46 @@
 }
 
 /* ===== ABOUT ===== */
-.home-v1 #sec-about .sec{position:relative;}
-/* The ink (developer 2026-11-23): lives in the heading column, behind the
- title. Phone: centred on the title's top edge, so it bleeds up toward the
- image's bottom edge and stays clear of the grey body. left:50% centres in
- both directions, so RTL needs nothing. */
-.home-v1 .split-right{position:relative;isolation:isolate;}
-/* the photo column stacks above the heading column, so on phone the ink
- slides UNDER the photo's bottom edge instead of tinting it */
-.home-v1 .split-left{position:relative;z-index:1;}
-.home-v1 .circle-base{position:absolute;top:1rem;left:50%;translate:-50% -50%;width:min(26.25rem,100%);aspect-ratio:1;background:radial-gradient(circle,#E3A98A,var(--clay));opacity:.9;z-index:-1;pointer-events:none;
-mask-image:linear-gradient(to right,transparent,#000 22%,#000 78%,transparent),linear-gradient(to bottom,transparent,#000 22%,#000 78%,transparent);
-mask-composite:intersect;}
-/* Squared 2026-10-01 (nothing round): two linear fades intersected give a
- soft-edged square at every width; the class keeps its old name. */
-.home-v1 .split-row{position:relative;z-index:1;display:flex;flex-direction:column;gap:2rem;}
-.home-v1 .split-img{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;}
-.home-v1 .split-photo{object-fit:cover;}
-.home-v1 .frag-title{font:clamp(3rem,14vw,6.25rem)/.92 var(--f-head);margin:0 0 1.25rem;}
-.home-v1 .frag-body{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.65);max-width:38ch;}
-.home-v1 .split-cta{position:relative;z-index:1;margin-top:1.5rem;}
+/* Round r2 (2026-11-23), "headline then wall": the heading is the section's
+ full-width element, on paper; the photo is a band under it, inside the page
+ margins, with no type on it except the heading's last line sitting on its
+ top edge (written on the wall). Opposite of the hero (photo full-bleed, type
+ over it), so the page never reads as two heroes. The only clay is the
+ heading's full stop, drawn as a square like the wordmark's accent dot. */
+.home-v1 .ab{padding-block:clamp(4rem,9vw,9rem);}
+.home-v1 .ab-head{position:relative;z-index:1;font:clamp(3rem,1rem + 8.4vw,9rem)/.92 var(--f-head);letter-spacing:-.03em;text-wrap:balance;margin:0 0 -.15em;}
+.home-v1 .ab-head:lang(ar){line-height:1.15;letter-spacing:0;margin-bottom:1rem;} /* descenders would land on the drawing */
+/* the "." stays in the text for screen readers, painted as a square on the baseline */
+.home-v1 .ab-dot{display:inline-block;width:.16em;height:.16em;margin-inline-start:.05em;overflow:hidden;color:transparent;background:var(--clay);}
+/* phone: the band bleeds to the screen edges (no type over it, so no second hero) */
+.home-v1 .ab-img{position:relative;aspect-ratio:4/5;margin-inline:calc(var(--site-gutter) * -1);overflow:hidden;}
+.home-v1 .ab-photo{object-fit:cover;object-position:56% 50%;}
+.home-v1 .ab-text{margin-top:2rem;}
+.home-v1 .ab-body{font:.9375rem/1.6 var(--f-body);color:var(--ink);max-width:34ch;margin:0 0 1rem;}
 .home-v1 .ct-cta{font:.8125rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);}
 @media (min-width:48rem){
-/* the edge the design always meant: soft, via mask. Body text goes full
-   ink because ink .65 on terracotta was ~3:1, under AA's 4.5:1. */
-.home-v1 .circle-base{top:50%;width:min(30rem,90%);opacity:1;}
-.home-v1 .frag-body{color:var(--ink);}
-.home-v1 .split-row{flex-direction:row;gap:3rem;}
-.home-v1 .split-left{flex:1 1 46%;}
-.home-v1 .split-right{flex:1 1 54%;padding-top:1.5rem;}
-.home-v1 .split-img{width:82%;height:20.625rem;aspect-ratio:auto;}
-.home-v1 .split-cta{position:absolute;inset-inline-end:1.5rem;bottom:1.5rem;margin:0;}
+.home-v1 .ab-head{margin-bottom:-.3em;}
+.home-v1 .ab-img{margin-inline:0;aspect-ratio:12/5;}
+.home-v1 .ab-photo{object-position:45% 55%;}
+/* the empty half under the photo is part of the effect: text starts at the midline */
+.home-v1 .ab-text{margin-inline-start:50%;margin-top:2.5rem;}
 }
 @media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
-/* Parallax (developer 2026-11-23): while About is on screen the ink drifts
- down against the scroll, so it reads as a layer behind the text. Native
- scroll-driven animation: no JS, no RAM. Browsers without it (Firefox today)
- and reduced-motion visitors get the still square. The ink-drop bloom joins
- in the motion phase (it needs a timed trigger, not a scrub). `animation`
- resets animation-timeline, so the timeline comes after it. */
+/* TEMPORARY direction B (?v=b, AboutVariant.tsx): tall photo at the inline
+ end, heading on paper whose lines cross onto the wall. Phone = A. */
+@media (min-width:48rem){
+.home-v1 #sec-about[data-v="b"] .ab{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:3rem;}
+.home-v1 #sec-about[data-v="b"] .ab-eyebrow{grid-area:2/1;}
+.home-v1 #sec-about[data-v="b"] .ab-head{grid-area:3/1/4/3;max-width:62%;margin:0 0 2rem;}
+.home-v1 #sec-about[data-v="b"] .ab-img{grid-area:1/2/6/3;aspect-ratio:auto;height:clamp(32rem,80dvh,46rem);}
+.home-v1 #sec-about[data-v="b"] .ab-photo{object-position:52% 50%;}
+.home-v1 #sec-about[data-v="b"] .ab-text{grid-area:4/1;margin:0;}
+}
+/* PARKED for the motion phase (developer 2026-11-23): the ink square's
+ scroll drift. Its element left the markup in r2; keep until motion decides. */
 @keyframes about-ink-drift{
 from{translate:-50% calc(-50% - 10rem);}
 to{translate:-50% calc(-50% + 10rem);}
-}
-@supports (animation-timeline:view()){
-@media (prefers-reduced-motion:no-preference){
-.home-v1 .circle-base{animation:about-ink-drift linear both;animation-timeline:view();animation-range:cover;}
-}
 }
 
 /* ===== PROCESS — no auto-fit: at mid widths it leaves a 2+1 orphan ===== */

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
+import { AboutVariant } from '@/components/public/home/AboutVariant';
 import { ApproachDrawing } from '@/components/public/home/ApproachIcons';
 import { ApproachMock } from '@/components/public/home/ApproachMock';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
@@ -55,6 +56,9 @@ export default async function HomePage({ params }: Props) {
         views: p.views,
     }));
     const logoRows = [clientNames.slice(0, 4), clientNames.slice(4)];
+    // The heading's final full stop is drawn as a clay square (the wordmark's accent dot).
+    const aboutDot = about.heading.endsWith('.');
+    const aboutHead = aboutDot ? about.heading.slice(0, -1) : about.heading;
 
     return (
         <div className={`home-v1 ${cookie.variable} ${ruqaa.variable} ${reemKufi.variable}`} id="page-wrap">
@@ -118,23 +122,21 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-about">
-                    <div className="sec">
-                        <div className="split-row">
-                            <div className="split-left">
-                                <div className="eyebrow">{about.eyebrow}</div>
-                                {/* TEST 2026-11-22: Perchance sketch for the developer to judge, not final. */}
-                                <div className="split-img">
-                                    <Image src={aboutWall} alt="" fill sizes="(min-width: 48rem) 40vw, 90vw" className="split-photo" />
-                                </div>
-                            </div>
-                            <div className="split-right">
-                                {/* the ink: anchored to the heading, drifts on scroll (home.css) */}
-                                <div className="circle-base" aria-hidden="true" />
-                                <h2 className="frag-title">{about.heading}</h2>
-                                <div className="frag-body">{about.text}</div>
-                            </div>
+                    {/* Headline then wall (r2, 2026-11-23): the heading spans the page on
+                        paper, the photo runs as a band under it; the heading's full stop is
+                        a clay square (home.css). ?v=b = direction B, see AboutVariant. */}
+                    <div className="sec ab">
+                        <div className="eyebrow ab-eyebrow">{about.eyebrow}</div>
+                        <h2 className="ab-head">
+                            {aboutHead}
+                            {aboutDot && <span className="ab-dot">.</span>}
+                        </h2>
+                        {/* TEST 2026-11-22: Perchance sketch for the developer to judge, not final. */}
+                        <div className="ab-img">
+                            <Image src={aboutWall} alt="" fill sizes="(min-width: 48rem) 92vw, 100vw" className="ab-photo" />
                         </div>
-                        <div className="split-cta">
+                        <div className="ab-text">
+                            <p className="ab-body">{about.text}</p>
                             <Link className="ct-cta" href="/blog">
                                 {about.cta}
                                 <span className="flip-rtl" aria-hidden="true">
@@ -143,6 +145,7 @@ export default async function HomePage({ params }: Props) {
                             </Link>
                         </div>
                     </div>
+                    <AboutVariant />
                 </section>
 
                 <section id="sec-process">
