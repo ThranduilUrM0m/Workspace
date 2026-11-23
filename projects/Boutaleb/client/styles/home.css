@@ -160,8 +160,8 @@ mask-composite:intersect;}
  in the motion phase (it needs a timed trigger, not a scrub). `animation`
  resets animation-timeline, so the timeline comes after it. */
 @keyframes about-ink-drift{
-from{translate:-50% calc(-50% - 4rem);}
-to{translate:-50% calc(-50% + 4rem);}
+from{translate:-50% calc(-50% - 10rem);}
+to{translate:-50% calc(-50% + 10rem);}
 }
 @supports (animation-timeline:view()){
 @media (prefers-reduced-motion:no-preference){
