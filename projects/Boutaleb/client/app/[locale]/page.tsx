@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
+import { AboutInspector, AboutMetrics } from '@/components/public/home/AboutInspector';
 import { AboutVariant } from '@/components/public/home/AboutVariant';
 import { ApproachDrawing } from '@/components/public/home/ApproachIcons';
 import { ApproachMock } from '@/components/public/home/ApproachMock';
@@ -122,9 +123,10 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-about">
-                    {/* Headline then wall (r2, 2026-11-23): the heading spans the page on
-                        paper, the photo runs as a band under it; the heading's full stop is
-                        a clay square (home.css). ?v=b = direction B, see AboutVariant. */}
+                    {/* r3 "The Inspector" (2026-11-23): r2's headline-then-wall (heading
+                        across the page, photo band under it, clay-square full stop) under a
+                        live designer's inspection layer (AboutInspector), plus a proof strip
+                        of this visitor's own load. ?v=b = r2 direction B, see AboutVariant. */}
                     <div className="sec ab">
                         <div className="eyebrow ab-eyebrow">{about.eyebrow}</div>
                         <h2 className="ab-head">
@@ -135,15 +137,19 @@ export default async function HomePage({ params }: Props) {
                         <div className="ab-img">
                             <Image src={aboutWall} alt="" fill sizes="(min-width: 48rem) 92vw, 100vw" className="ab-photo" />
                         </div>
-                        <div className="ab-text">
-                            <p className="ab-body">{about.text}</p>
-                            <Link className="ct-cta" href="/blog">
-                                {about.cta}
-                                <span className="flip-rtl" aria-hidden="true">
-                                    &rarr;
-                                </span>
-                            </Link>
+                        <div className="ab-foot">
+                            <AboutMetrics copy={about.inspector} locale={locale} />
+                            <div className="ab-text">
+                                <p className="ab-body">{about.text}</p>
+                                <Link className="ct-cta" href="/blog">
+                                    {about.cta}
+                                    <span className="flip-rtl" aria-hidden="true">
+                                        &rarr;
+                                    </span>
+                                </Link>
+                            </div>
                         </div>
+                        <AboutInspector copy={about.inspector} />
                     </div>
                     <AboutVariant />
                 </section>

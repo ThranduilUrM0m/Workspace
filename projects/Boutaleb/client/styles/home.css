@@ -141,8 +141,47 @@
 .home-v1 .ab-head{margin-bottom:-.3em;}
 .home-v1 .ab-img{margin-inline:0;aspect-ratio:12/5;}
 .home-v1 .ab-photo{object-position:45% 55%;}
-/* the empty half under the photo is part of the effect: text starts at the midline */
-.home-v1 .ab-text{margin-inline-start:50%;margin-top:2.5rem;}
+/* r3: the proof strip fills the start half under the photo, the text keeps the midline */
+.home-v1 .ab-foot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;}
+.home-v1 .ab-text{margin-top:2.5rem;}
+}
+/* ---- r3 "The Inspector" (AboutInspector.tsx): every mark is measured live ---- */
+.home-v1 .ab{position:relative;isolation:isolate;overflow-x:clip;}
+.home-v1 .ab > :not(.ins){position:relative;z-index:1;}
+.home-v1 .ab .ab-head{z-index:2;}
+.home-v1 .ins{position:absolute;inset:0;pointer-events:none;}
+.home-v1 .ins-cols{position:absolute;inset-block:1.5rem;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:1.5rem;z-index:0;}
+.home-v1 .ins > :not(.ins-cols){z-index:3;}
+.home-v1 .ins-col{background:color-mix(in srgb,var(--clay) 4%,transparent);transform-origin:top;}
+.home-v1 .ins-col:nth-child(n+5){display:none;}
+.home-v1 .ins-base{position:absolute;height:1px;background:var(--clay-ink);box-shadow:0 0 0 1px rgba(247,245,242,.55);}
+.home-v1 .ins-lead{position:absolute;width:1px;background:var(--clay);transform-origin:bottom;}
+.home-v1 .ins-meas{position:absolute;height:1px;background:var(--clay);display:flex;justify-content:center;align-items:center;}
+.home-v1 .ins-meas::before,.home-v1 .ins-meas::after{content:"";position:absolute;top:-4px;width:1px;height:9px;background:var(--clay);}
+.home-v1 .ins-meas::before{inset-inline-start:0;}
+.home-v1 .ins-meas::after{inset-inline-end:0;}
+.home-v1 .ins-sketch{position:absolute;outline:1px dashed var(--ground);outline-offset:-1px;display:none;}
+.home-v1 .ins-chip{position:absolute;white-space:nowrap;background:var(--ground);border:1px solid var(--clay);color:var(--clay-ink);font:.6875rem/1 var(--f-body);padding:.25rem .4rem;}
+.home-v1 .ins-chip b{font-weight:400;}
+.home-v1 .ins-chip-mid{position:relative;}
+.home-v1 .ins-chip-tag{top:0;inset-inline-start:0;translate:0 -100%;}
+.home-v1 .ins .ins-dot{display:none;}
+/* proof strip: number first (Bricolage), label under it (Questrial) */
+.home-v1 .ab-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:1.5rem 0 0;padding:0;}
+.home-v1 .ab-metric[data-off]{visibility:hidden;}
+.home-v1 .ab-metric{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:.375rem;padding:.75rem clamp(.75rem,2vw,1.25rem);position:relative;}
+.home-v1 .ab-metric:first-child{padding-inline-start:0;}
+.home-v1 .ab-metric + .ab-metric::before{content:"";position:absolute;inset-block:1rem;inset-inline-start:0;width:1px;background:var(--line);}
+.home-v1 .ab-metric dt{font:.6875rem/1.35 var(--f-body);color:var(--muted);max-width:18ch;}
+.home-v1 .ab-metric dd{margin:0;font:500 clamp(1.75rem,1.4rem + 1.2vw,2.5rem)/1 var(--f-head);color:var(--ink);letter-spacing:-.02em;}
+.home-v1 .ab-mirror{color:var(--clay-ink);text-decoration:none;display:inline-flex;min-height:var(--hit);align-items:center;}
+@media (min-width:48rem){
+.home-v1 .ins-cols{grid-template-columns:repeat(12,minmax(0,1fr));}
+.home-v1 .ins-col:nth-child(n+5){display:block;}
+.home-v1 .ins .ins-dot{display:block;}
+.home-v1 .ins-sketch{display:block;}
+.home-v1 .ab-metrics{margin-top:2.5rem;}
+.home-v1 .ab-metric dt{font-size:.75rem;}
 }
 @media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
 /* TEMPORARY direction B (?v=b, AboutVariant.tsx), revised 2026-11-23 evening:

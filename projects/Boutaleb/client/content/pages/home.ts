@@ -9,13 +9,14 @@ type Card = { eyebrow: string; title: string; text: string };
 export type HomeBlocks = {
     hero: { built: string; alt: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
     approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; mock: MockCopy };
-    about: { eyebrow: string; image: string; heading: string; text: string; cta: string };
+    about: { eyebrow: string; image: string; heading: string; text: string; cta: string; inspector: InspectorCopy };
     process: { eyebrow: string; heading: string; sub: string; cards: Card[]; link: string; image: string };
     work: { eyebrow: string; all: string; image: string };
     trust: { eyebrow: string; clientsLabel: string };
     blog: { eyebrow: string; slide: string };
 };
 
+import type { InspectorCopy } from '@/components/public/home/AboutInspector';
 import type { MockCopy } from '@/components/public/home/ApproachMock';
 
 /** Which faded icon sits behind each Approach promise (mapped to lucide icons in the page). */
@@ -70,6 +71,14 @@ export const homePage: PageRecord<HomeBlocks> = {
                     heading: 'Built to just work.',
                     text: 'Every decision explained in plain language, shipped early, refined in the open, and handed off clean enough that any developer could pick it up tomorrow.',
                     cta: 'Read the full story',
+                    inspector: {
+                        dot: 'same square as the logo dot',
+                        sketch: 'sketch',
+                        lcp: 'seconds to load, on your connection',
+                        cls: 'page movement while you read, 0 is none',
+                        mirror: 'the same page, right to left',
+                        mirrorMark: 'ع',
+                    },
                 },
                 process: {
                     eyebrow: '005 · process',
@@ -144,6 +153,14 @@ export const homePage: PageRecord<HomeBlocks> = {
                     heading: 'Fait pour fonctionner, tout simplement.',
                     text: 'Chaque décision expliquée en langage clair, livrée tôt, affinée au grand jour, et remise assez propre pour que n’importe quel développeur puisse la reprendre demain.',
                     cta: 'Lire toute l’histoire',
+                    inspector: {
+                        dot: 'le même carré que le point du logo',
+                        sketch: 'croquis',
+                        lcp: 'secondes de chargement, sur votre connexion',
+                        cls: 'mouvement de la page pendant la lecture, 0 = aucun',
+                        mirror: 'la même page, de droite à gauche',
+                        mirrorMark: 'ع',
+                    },
                 },
                 process: {
                     eyebrow: '005 · méthode',
@@ -218,6 +235,14 @@ export const homePage: PageRecord<HomeBlocks> = {
                     heading: 'مبنيّ ليعمل، ببساطة.',
                     text: 'كل قرار يُشرح بلغة واضحة، ويُسلَّم مبكرًا، ويُحسَّن على مرأى منك، ثم يُسلَّم نظيفًا بما يكفي ليتسلّمه أي مطوّر غدًا.',
                     cta: 'اقرأ القصة كاملة',
+                    inspector: {
+                        dot: 'المربّع نفسه في نقطة الشعار',
+                        sketch: 'رسم أولي',
+                        lcp: 'ثوانٍ للتحميل، على اتصالك',
+                        cls: 'حركة الصفحة أثناء قراءتك، 0 = لا شيء',
+                        mirror: 'الصفحة نفسها، من اليسار إلى اليمين',
+                        mirrorMark: 'Fr',
+                    },
                 },
                 process: {
                     eyebrow: '005 · طريقة العمل',
