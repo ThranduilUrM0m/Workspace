@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
-import { AboutInspector, AboutMetrics } from '@/components/public/home/AboutInspector';
-import { AboutVariant } from '@/components/public/home/AboutVariant';
+import { AboutGuidesToggle, AboutInspector } from '@/components/public/home/AboutInspector';
 import { ApproachDrawing } from '@/components/public/home/ApproachIcons';
 import { ApproachMock } from '@/components/public/home/ApproachMock';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
@@ -123,10 +122,10 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-about">
-                    {/* r3 "The Inspector" (2026-11-23): r2's headline-then-wall (heading
-                        across the page, photo band under it, clay-square full stop) under a
-                        live designer's inspection layer (AboutInspector), plus a proof strip
-                        of this visitor's own load. ?v=b = r2 direction B, see AboutVariant. */}
+                    {/* r4 "The Inspector" (2026-11-24): big heading across the page landing on
+                        a square photo (columns 1-6), text in 8-12; a live designer's inspection
+                        layer gives each detail its reason (AboutInspector), and the visitor can
+                        switch the notes off. */}
                     <div className="sec ab">
                         <div className="eyebrow ab-eyebrow">{about.eyebrow}</div>
                         <h2 className="ab-head">
@@ -137,21 +136,18 @@ export default async function HomePage({ params }: Props) {
                         <div className="ab-img">
                             <Image src={aboutWall} alt="" fill sizes="(min-width: 48rem) 92vw, 100vw" className="ab-photo" />
                         </div>
-                        <div className="ab-foot">
-                            <AboutMetrics copy={about.inspector} locale={locale} />
-                            <div className="ab-text">
-                                <p className="ab-body">{about.text}</p>
-                                <Link className="ct-cta" href="/blog">
-                                    {about.cta}
-                                    <span className="flip-rtl" aria-hidden="true">
-                                        &rarr;
-                                    </span>
-                                </Link>
-                            </div>
+                        <div className="ab-text">
+                            <p className="ab-body">{about.text}</p>
+                            <Link className="ct-cta" href="/blog">
+                                {about.cta}
+                                <span className="flip-rtl" aria-hidden="true">
+                                    &rarr;
+                                </span>
+                            </Link>
+                            <AboutGuidesToggle copy={about.inspector} />
                         </div>
                         <AboutInspector copy={about.inspector} />
                     </div>
-                    <AboutVariant />
                 </section>
 
                 <section id="sec-process">

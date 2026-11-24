@@ -120,84 +120,63 @@
 }
 
 /* ===== ABOUT ===== */
-/* Round r2 (2026-11-23), "headline then wall": the heading is the section's
- full-width element, on paper; the photo is a band under it, inside the page
- margins, with no type on it except the heading's last line sitting on its
- top edge (written on the wall). Opposite of the hero (photo full-bleed, type
- over it), so the page never reads as two heroes. The only clay is the
- heading's full stop, drawn as a square like the wordmark's accent dot. */
-.home-v1 .ab{padding-block:clamp(4rem,9vw,9rem);}
-.home-v1 .ab-head{position:relative;z-index:1;font:clamp(3rem,1rem + 8.4vw,9rem)/.92 var(--f-head);letter-spacing:-.03em;text-wrap:balance;margin:0 0 -.15em;}
+/* r4 (2026-11-24), "The Inspector", message: every detail is decided for a
+ reason, and the visitor can check it. Desktop: the heading runs the full width
+ (big, as in r2 A) and its last line lands on the top edge of a SQUARE photo set
+ in columns 1-6, so the type crosses from the wall onto the paper; body text sits
+ in columns 8-12, bottom-aligned with the photo. The section's real grid is the
+ same 12 columns the inspector draws, so the "one grid" note is literally true.
+ Phone: heading, photo bleeding to the edges, text. The only clay outside the
+ notes is the heading's full stop, drawn as a square like the wordmark's dot. */
+.home-v1 .ab{position:relative;isolation:isolate;overflow-x:clip;padding-block:clamp(4rem,9vw,9rem);}
+.home-v1 .ab > :not(.ins){position:relative;z-index:1;}
+.home-v1 .ab > .ab-head{z-index:2;} /* the last line lands ON the photo */
+.home-v1 .ab-head{position:relative;z-index:2;font:clamp(3rem,1rem + 8.4vw,9rem)/.92 var(--f-head);letter-spacing:-.03em;text-wrap:balance;margin:0 0 -.15em;}
 .home-v1 .ab-head:lang(ar){line-height:1.15;letter-spacing:0;margin-bottom:1rem;} /* descenders would land on the drawing */
 /* the "." stays in the text for screen readers, painted as a square on the baseline */
 .home-v1 .ab-dot{display:inline-block;width:.16em;height:.16em;margin-inline-start:.05em;overflow:hidden;color:transparent;background:var(--clay);}
-/* phone: the band bleeds to the screen edges (no type over it, so no second hero) */
 .home-v1 .ab-img{position:relative;aspect-ratio:4/5;margin-inline:calc(var(--site-gutter) * -1);overflow:hidden;}
 .home-v1 .ab-photo{object-fit:cover;object-position:56% 50%;}
 .home-v1 .ab-text{margin-top:2rem;}
-.home-v1 .ab-body{font:.9375rem/1.6 var(--f-body);color:var(--ink);max-width:34ch;margin:0 0 1rem;}
+.home-v1 .ab-body{font:.9375rem/1.6 var(--f-body);color:var(--ink);max-width:34ch;margin:2.25rem 0 1rem;}
 .home-v1 .ct-cta{font:.8125rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);}
+/* the visitor's own switch: notes on/off (the inspection is theirs to check) */
+.home-v1 .ab-guides{display:flex;align-items:center;gap:.625rem;min-height:var(--hit);margin-top:1rem;padding:0;border:0;background:none;cursor:pointer;font:.8125rem var(--f-body);color:var(--ink);}
+.home-v1 .ab-guides-box{position:relative;width:2rem;height:1rem;box-shadow:inset 0 0 0 1px var(--clay);}
+.home-v1 .ab-guides-box::after{content:"";position:absolute;inset-block:3px;inset-inline-start:3px;width:calc(50% - 3px);background:var(--clay);transition:translate .25s ease;}
+.home-v1 .ab-guides[data-on="true"] .ab-guides-box::after{translate:100% 0;}
+.home-v1 .ab-guides:dir(rtl)[data-on="true"] .ab-guides-box::after{translate:-100% 0;}
+.home-v1 .ab-guides:focus-visible{outline:2px solid var(--clay);outline-offset:4px;}
 @media (min-width:48rem){
+.home-v1 .ab{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:1.5rem;align-items:end;}
+.home-v1 .ab-eyebrow,.home-v1 .ab-head{grid-column:1/-1;}
 .home-v1 .ab-head{margin-bottom:-.3em;}
-.home-v1 .ab-img{margin-inline:0;aspect-ratio:12/5;}
-.home-v1 .ab-photo{object-position:45% 55%;}
-/* r3: the proof strip fills the start half under the photo, the text keeps the midline */
-.home-v1 .ab-foot{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start;}
-.home-v1 .ab-text{margin-top:2.5rem;}
+.home-v1 .ab-head:lang(ar){margin-bottom:1rem;}
+.home-v1 .ab-img{grid-column:1/7;margin-inline:0;aspect-ratio:1/1;}
+.home-v1 .ab-photo{object-position:36% 50%;}
+.home-v1 .ab-text{grid-column:8/13;margin:0;}
 }
-/* ---- r3 "The Inspector" (AboutInspector.tsx): every mark is measured live ---- */
-.home-v1 .ab{position:relative;isolation:isolate;overflow-x:clip;}
-.home-v1 .ab > :not(.ins){position:relative;z-index:1;}
-.home-v1 .ab .ab-head{z-index:2;}
-.home-v1 .ins{position:absolute;inset:0;pointer-events:none;}
+@media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
+/* ---- inspection layer (AboutInspector.tsx): every mark is measured live ---- */
+.home-v1 .ins{position:absolute;inset:0;pointer-events:none;transition:opacity .35s ease;}
+.home-v1 .ab[data-guides="off"] .ins{opacity:0;}
 .home-v1 .ins-cols{position:absolute;inset-block:1.5rem;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:1.5rem;z-index:0;}
 .home-v1 .ins > :not(.ins-cols){z-index:3;}
 .home-v1 .ins-col{background:color-mix(in srgb,var(--clay) 4%,transparent);transform-origin:top;}
 .home-v1 .ins-col:nth-child(n+5){display:none;}
 .home-v1 .ins-base{position:absolute;height:1px;background:var(--clay-ink);box-shadow:0 0 0 1px rgba(247,245,242,.55);}
-.home-v1 .ins-lead{position:absolute;width:1px;background:var(--clay);transform-origin:bottom;}
-.home-v1 .ins-meas{position:absolute;height:1px;background:var(--clay);display:flex;justify-content:center;align-items:center;}
+.home-v1 .ins-meas{position:absolute;height:1px;background:var(--clay);}
 .home-v1 .ins-meas::before,.home-v1 .ins-meas::after{content:"";position:absolute;top:-4px;width:1px;height:9px;background:var(--clay);}
 .home-v1 .ins-meas::before{inset-inline-start:0;}
 .home-v1 .ins-meas::after{inset-inline-end:0;}
-.home-v1 .ins-sketch{position:absolute;outline:1px dashed var(--ground);outline-offset:-1px;display:none;}
-.home-v1 .ins-chip{position:absolute;white-space:nowrap;background:var(--ground);border:1px solid var(--clay);color:var(--clay-ink);font:.6875rem/1 var(--f-body);padding:.25rem .4rem;}
-.home-v1 .ins-chip b{font-weight:400;}
-.home-v1 .ins-chip-mid{position:relative;}
-.home-v1 .ins-chip-tag{top:0;inset-inline-start:0;translate:0 -100%;}
-.home-v1 .ins .ins-dot{display:none;}
-/* proof strip: number first (Bricolage), label under it (Questrial) */
-.home-v1 .ab-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:1.5rem 0 0;padding:0;}
-.home-v1 .ab-metric[data-off]{visibility:hidden;}
-.home-v1 .ab-metric{display:flex;flex-direction:column-reverse;justify-content:flex-end;gap:.375rem;padding:.75rem clamp(.75rem,2vw,1.25rem);position:relative;}
-.home-v1 .ab-metric:first-child{padding-inline-start:0;}
-.home-v1 .ab-metric + .ab-metric::before{content:"";position:absolute;inset-block:1rem;inset-inline-start:0;width:1px;background:var(--line);}
-.home-v1 .ab-metric dt{font:.6875rem/1.35 var(--f-body);color:var(--muted);max-width:18ch;}
-.home-v1 .ab-metric dd{margin:0;font:500 clamp(1.75rem,1.4rem + 1.2vw,2.5rem)/1 var(--f-head);color:var(--ink);letter-spacing:-.02em;}
-.home-v1 .ab-mirror{color:var(--clay-ink);text-decoration:none;display:inline-flex;min-height:var(--hit);align-items:center;}
+/* the dashed box only exists while the photo opens out of the sketch */
+.home-v1 .ins-sketch{position:absolute;outline:1px dashed var(--ground);outline-offset:-1px;opacity:0;}
+.home-v1 .ins-chip{position:absolute;max-width:22ch;background:var(--ground);border:1px solid var(--clay);color:var(--clay-ink);font:.6875rem/1.35 var(--f-body);padding:.3rem .45rem;}
+.home-v1 .ins-chip bdi{display:block;opacity:.75;margin-top:.15rem;}
 @media (min-width:48rem){
 .home-v1 .ins-cols{grid-template-columns:repeat(12,minmax(0,1fr));}
 .home-v1 .ins-col:nth-child(n+5){display:block;}
-.home-v1 .ins .ins-dot{display:block;}
-.home-v1 .ins-sketch{display:block;}
-.home-v1 .ab-metrics{margin-top:2.5rem;}
-.home-v1 .ab-metric dt{font-size:.75rem;}
-}
-@media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
-/* TEMPORARY direction B (?v=b, AboutVariant.tsx), revised 2026-11-23 evening:
- MIRRORED against Approach (which has text at the start, picture at the end),
- so the two sections zig-zag instead of repeating one split. Tall photo at the
- inline start (7fr), heading + body at the end (5fr). The heading stays inside
- its column (no crossing onto the photo: in FR it only happened by overflow)
- and is sized from the section width (cqi), so the longest word of every
- language fits without per-language tuning. Phone = A. */
-@media (min-width:48rem){
-.home-v1 #sec-about[data-v="b"] .ab{container-type:inline-size;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);grid-template-rows:1fr auto auto auto 1fr;column-gap:clamp(2.5rem,5vw,5rem);}
-.home-v1 #sec-about[data-v="b"] .ab-eyebrow{grid-area:2/2;}
-.home-v1 #sec-about[data-v="b"] .ab-head{grid-area:3/2;font-size:min(8rem,7.6cqi);margin:0 0 2rem;}
-.home-v1 #sec-about[data-v="b"] .ab-img{grid-area:1/1/6/2;aspect-ratio:auto;height:clamp(32rem,80dvh,46rem);}
-.home-v1 #sec-about[data-v="b"] .ab-photo{object-position:52% 50%;}
-.home-v1 #sec-about[data-v="b"] .ab-text{grid-area:4/2;margin:0;}
+.home-v1 .ins-chip{max-width:26ch;}
 }
 /* PARKED for the motion phase (developer 2026-11-23): the ink square's
  scroll drift. Its element left the markup in r2; keep until motion decides. */
