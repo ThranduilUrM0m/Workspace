@@ -45,6 +45,7 @@ function measure(root: HTMLElement): Marks | null {
     const body = root.querySelector<HTMLElement>('.ab-body');
     if (!head || !img || !body || !photo) return null;
     const o = root.getBoundingClientRect();
+    if (!o.width || !img.getBoundingClientRect().width) return null; // hidden or not laid out yet
     // the draw-in moves the heading; marks must sit where it SETTLES
     const tf = getComputedStyle(head).transform;
     const settle = -(tf && tf !== 'none' ? new DOMMatrix(tf).m42 : 0);
@@ -100,15 +101,20 @@ export function AboutInspector({ copy }: { copy: InspectorCopy }) {
         const root = layer.current?.parentElement;
         if (!root) return;
         let raf = 0;
+        let alive = true; // fonts.ready / image load can resolve after cleanup
         const run = () => {
+            if (!alive) return;
             cancelAnimationFrame(raf);
             raf = requestAnimationFrame(() => setM(measure(root)));
         };
         const ro = new ResizeObserver(run);
         ro.observe(root);
         document.fonts.ready.then(run);
-        root.querySelector('img')?.addEventListener('load', run);
+        const photo = root.querySelector('img');
+        photo?.addEventListener('load', run);
         return () => {
+            alive = false;
+            photo?.removeEventListener('load', run);
             ro.disconnect();
             cancelAnimationFrame(raf);
         };
