@@ -31,7 +31,7 @@ const CHIP_ROOM = 240; // px needed after the heading's last line for its note
 type Box = { x: number; y: number; w: number; h: number };
 type Marks = {
     cols: Box;
-    base: { x0: number; x1: number; y: number; size: number };
+    base: { x0: number; x1: number; y: number; size: number; tip: number };
     measure: { x0: number; x1: number; y: number; chars: number };
     sketch: Box;
     rtl: boolean;
@@ -86,7 +86,8 @@ function measure(root: HTMLElement): Marks | null {
 
     return {
         cols: { x: pad, y: 0, w: o.width - pad * 2, h: o.height },
-        base: { x0: lx0, x1: lx1, y: baseY, size },
+        // tip: where the line's ink really stops, accent dot included (the grid note keeps its gap from it)
+        base: { x0: lx0, x1: lx1, y: baseY, size, tip: dr ? (rtl ? dr.left : dr.right) - o.left : rtl ? lx0 : lx1 },
         measure: { x0: br.left - o.left, x1: br.right - o.left, y: br.top - o.top, chars },
         sketch: { x: ir.left - o.left + sx0, y: ir.top - o.top + sy0, w: sx1 - sx0, h: sy1 - sy0 },
         rtl,
@@ -162,15 +163,19 @@ export function AboutInspector({ copy }: { copy: InspectorCopy }) {
     if (!m) return <div ref={layer} className="ins" aria-hidden="true" />;
 
     // heading note: after the line's end when there is room, else tucked under it
-    const end = m.rtl ? m.base.x0 : m.base.x1;
+    const end = m.base.tip;
     const room = m.rtl ? end - m.cols.x : m.cols.x + m.cols.w - end;
     const tuck = room < CHIP_ROOM;
+    // tucked: hangs from the line's END (toward the text column), never from its
+    // start, where it would sit on the photo and run into the sketch note
     const gridChip = tuck
-        ? { top: m.base.y + 10, [m.rtl ? 'right' : 'left']: m.rtl ? `calc(100% - ${m.base.x1}px)` : m.base.x0 }
+        ? { top: m.base.y + 10, translate: 'none', [m.rtl ? 'left' : 'right']: m.rtl ? m.base.x0 : `calc(100% - ${m.base.x1}px)` }
         : { top: m.base.y, translate: '0 -50%', [m.rtl ? 'right' : 'left']: m.rtl ? `calc(100% - ${end - 24}px)` : end + 24 };
     const sketchChip = { top: m.sketch.y + 12, [m.rtl ? 'right' : 'left']: m.rtl ? `calc(100% - ${m.sketch.x + m.sketch.w - 12}px)` : m.sketch.x + 12 };
-    // sits above the measure line (bottom-anchored: GSAP owns the transform)
-    const measChip = { bottom: `calc(100% - ${m.measure.y - 22}px)`, [m.rtl ? 'right' : 'left']: m.rtl ? `calc(100% - ${m.measure.x1}px)` : m.measure.x0 };
+    // above the measure line at its FAR end (bottom-anchored, so the chip's own height never matters).
+    // The heading's note sits after the heading's last line, i.e. over the START of
+    // the text column; the far end keeps the two notes apart.
+    const measChip = { bottom: `calc(100% - ${m.measure.y - 22}px)`, [m.rtl ? 'left' : 'right']: m.rtl ? m.measure.x0 : `calc(100% - ${m.measure.x1}px)` };
 
     return (
         <div ref={layer} className="ins" aria-hidden="true">
@@ -183,22 +188,29 @@ export function AboutInspector({ copy }: { copy: InspectorCopy }) {
                 className="ins-base"
                 style={{ left: m.base.x0 - 16, width: m.base.x1 - m.base.x0 + 32, top: m.base.y, transformOrigin: m.rtl ? 'right' : 'left' }}
             />
-            <span className="ins-chip" style={gridChip}>
-                {copy.grid}
-                <bdi>
-                    <span data-count={Math.round(m.base.size)}>{Math.round(m.base.size)}</span> px
-                </bdi>
+            {/* .ins-pin owns the position (incl. CSS translate); GSAP only animates the
+                inner .ins-chip. GSAP caches a CSS translate it finds on its target the
+                first time, so a chip that later switched to tucked kept the old -50%. */}
+            <span className="ins-pin" style={gridChip}>
+                <span className="ins-chip">
+                    {copy.grid}
+                    <bdi>
+                        <span data-count={Math.round(m.base.size)}>{Math.round(m.base.size)}</span> px
+                    </bdi>
+                </span>
             </span>
             <div className="ins-meas" style={{ left: m.measure.x0, width: m.measure.x1 - m.measure.x0, top: m.measure.y - 14, transformOrigin: m.rtl ? 'right' : 'left' }} />
-            <span className="ins-chip" style={measChip}>
-                {copy.measure}
-                <bdi>
-                    <span data-count={m.measure.chars}>{m.measure.chars}</span> {copy.chars}
-                </bdi>
+            <span className="ins-pin" style={measChip}>
+                <span className="ins-chip">
+                    {copy.measure}
+                    <bdi>
+                        <span data-count={m.measure.chars}>{m.measure.chars}</span> {copy.chars}
+                    </bdi>
+                </span>
             </span>
             <div className="ins-sketch" style={{ left: m.sketch.x, top: m.sketch.y, width: m.sketch.w, height: m.sketch.h }} />
-            <span className="ins-chip" style={sketchChip}>
-                {copy.sketch}
+            <span className="ins-pin" style={sketchChip}>
+                <span className="ins-chip">{copy.sketch}</span>
             </span>
         </div>
     );

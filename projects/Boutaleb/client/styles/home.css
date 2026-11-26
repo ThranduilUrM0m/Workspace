@@ -122,8 +122,8 @@
 /* ===== ABOUT ===== */
 /* r4 (2026-11-24), "The Inspector", message: every detail is decided for a
  reason, and the visitor can check it. Desktop: the heading runs the full width
- (big, as in r2 A) and its last line lands on the top edge of a SQUARE photo set
- in columns 1-6, so the type crosses from the wall onto the paper; body text sits
+ (big, as in r2 A) and its last line lands on the top edge of a photo set
+ in columns 1-6 (as tall as the text beside it, since 24 Nov), so the type crosses from the wall onto the paper; body text sits
  in columns 8-12, bottom-aligned with the photo. The section's real grid is the
  same 12 columns the inspector draws, so the "one grid" note is literally true.
  Phone: heading, photo bleeding to the edges, text. The only clay outside the
@@ -139,7 +139,10 @@
 .home-v1 .ab-photo{object-fit:cover;object-position:56% 50%;}
 .home-v1 .ab-text{margin-top:2rem;}
 .home-v1 .ab-body{font:.9375rem/1.6 var(--f-body);color:var(--ink);max-width:34ch;margin:2.25rem 0 1rem;}
+/* same text-link rule as .pr-link / .seeall: the LABEL carries a hairline ink
+   underline, the arrow stays outside it (ink, not clay: the dot is About's only clay) */
 .home-v1 .ct-cta{font:.8125rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:.375rem;min-height:var(--hit);}
+.home-v1 .ct-cta > span:first-child{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
 /* the visitor's own switch: notes on/off (the inspection is theirs to check) */
 .home-v1 .ab-guides{display:flex;align-items:center;gap:.625rem;min-height:var(--hit);margin-top:1rem;padding:0;border:0;background:none;cursor:pointer;font:.8125rem var(--f-body);color:var(--ink);}
 .home-v1 .ab-guides-box{position:relative;width:2rem;height:1rem;box-shadow:inset 0 0 0 1px var(--clay);}
@@ -152,9 +155,18 @@
 .home-v1 .ab-eyebrow,.home-v1 .ab-head{grid-column:1/-1;}
 .home-v1 .ab-head{margin-bottom:-.3em;}
 .home-v1 .ab-head:lang(ar){margin-bottom:1rem;}
-.home-v1 .ab-img{grid-column:1/7;margin-inline:0;aspect-ratio:1/1;}
+/* 24 Nov: no longer square. A square photo was ~2x taller than the text beside
+   it, which is what left the empty column. The row height now comes from the
+   text; the photo stretches to it (floor below), so both columns end together. */
+.home-v1 .ab-img{grid-column:1/7;margin-inline:0;aspect-ratio:auto;align-self:stretch;min-height:clamp(20rem,28vw,30rem);}
 .home-v1 .ab-photo{object-position:36% 50%;}
-.home-v1 .ab-text{grid-column:8/13;margin:0;}
+/* 24 Nov fix: the text column shares the photo's top and bottom edges.
+   Paragraph at the TOP (the eye drops into it from the heading's last line),
+   at lead size; the visitor's switch at the BOTTOM, on the photo's bottom
+   edge. Top padding = room for the heading's note and the measure note. */
+.home-v1 .ab-text{grid-column:8/13;margin:0;align-self:stretch;display:flex;flex-direction:column;align-items:flex-start;padding-block-start:7.5rem;}
+.home-v1 .ab-body{font:clamp(1.125rem,.75rem + .9vw,1.5rem)/1.45 var(--f-head);max-width:30ch;margin-bottom:1.25rem;}
+.home-v1 .ab-guides{margin-top:auto;}
 }
 @media (min-width:48rem) and (pointer:fine){.home-v1 .ct-cta{min-height:0;}}
 /* ---- inspection layer (AboutInspector.tsx): every mark is measured live ---- */
@@ -171,7 +183,9 @@
 .home-v1 .ins-meas::after{inset-inline-end:0;}
 /* the dashed box only exists while the photo opens out of the sketch */
 .home-v1 .ins-sketch{position:absolute;outline:1px dashed var(--ground);outline-offset:-1px;opacity:0;}
-.home-v1 .ins-chip{position:absolute;max-width:22ch;background:var(--ground);border:1px solid var(--clay);color:var(--clay-ink);font:.6875rem/1.35 var(--f-body);padding:.3rem .45rem;}
+/* .ins-pin positions (inline style), .ins-chip inside is what GSAP animates */
+.home-v1 .ins-pin{position:absolute;}
+.home-v1 .ins-chip{display:block;max-width:22ch;background:var(--ground);border:1px solid var(--clay);color:var(--clay-ink);font:.6875rem/1.35 var(--f-body);padding:.3rem .45rem;}
 .home-v1 .ins-chip bdi{display:block;opacity:.75;margin-top:.15rem;}
 @media (min-width:48rem){
 .home-v1 .ins-cols{grid-template-columns:repeat(12,minmax(0,1fr));}

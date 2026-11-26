@@ -139,7 +139,7 @@ export default async function HomePage({ params }: Props) {
                         <div className="ab-text">
                             <p className="ab-body">{about.text}</p>
                             <Link className="ct-cta" href="/blog">
-                                {about.cta}
+                                <span>{about.cta}</span>
                                 <span className="flip-rtl" aria-hidden="true">
                                     &rarr;
                                 </span>
