@@ -6,6 +6,7 @@ import { AboutGuidesToggle, AboutInspector } from '@/components/public/home/Abou
 import { ApproachDrawing } from '@/components/public/home/ApproachIcons';
 import { ApproachMock } from '@/components/public/home/ApproachMock';
 import { BlogSlider, type SlidePost } from '@/components/public/home/BlogSlider';
+import { DayShadow } from '@/components/public/home/DayShadow';
 import { HeroFit } from '@/components/public/home/HeroFit';
 import { pickLocale, type Locale } from '@/content/page-record';
 import { homePage } from '@/content/pages/home';
@@ -62,6 +63,7 @@ export default async function HomePage({ params }: Props) {
 
     return (
         <div className={`home-v1 ${cookie.variable} ${ruqaa.variable} ${reemKufi.variable}`} id="page-wrap">
+            <DayShadow />
             <main id="main" lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
                 <section id="sec-hero">
                     {/* Layers, back to front: wall, BESPOKE, figure, "made with care". The words'

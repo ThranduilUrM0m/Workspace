@@ -35,6 +35,12 @@
 /* Physical left/right: on a vertical-rl element inset-inline-start would map to top. */
 .home-v1 .h-built{position:absolute;left:0;bottom:1.75rem;font:700 clamp(3.5rem,16vw,5rem)/.85 var(--f-head);color:var(--ink);opacity:.14;letter-spacing:-.02em;writing-mode:vertical-rl;rotate:180deg;z-index:4;height:max-content;}
 .home-v1 .h-built:dir(rtl){left:auto;right:0;}
+/* 26 Nov, CLS: HeroFit moves "made with care" (~100px on phones) and BUILT (~3px)
+   after first paint. Like BESPOKE, both wait unseen until it has placed them;
+   hidden boxes do not count as layout shifts. The visible fade is the reveal. */
+.home-v1 #sec-hero:not([data-fit]) :is(.h-care,.h-built){visibility:hidden;}
+.home-v1 #sec-hero[data-fit] .h-care{animation:h-in .3s ease;}
+@keyframes h-in{from{opacity:0;}}
 .home-v1 .h-pitch{position:absolute;inset-inline-start:calc(var(--site-gutter) + 4.25rem);bottom:1.75rem;max-width:19rem;z-index:5;}
 .home-v1 .h-pitch:lang(ar){max-width:26rem;} /* Arabic runs longer: 2 lines per sentence, not 4 */
 .home-v1 .h-pitch .eyebrow{margin-bottom:.5rem;color:var(--clay-deep);}
@@ -369,3 +375,37 @@ to{translate:-50% calc(-50% + 10rem);}
 .home-v1 .slide,.home-v1 .slide blockquote{margin:0;}
 .home-v1 a.c3-project{display:block;color:inherit;text-decoration:none;}
 .home-v1 .blog-head{padding-bottom:0;}
+
+/* ===== DAY ===== */
+/* PROTOTYPE 2026-11-26, "a day passing on the wall" (developer's idea): as the
+   homepage scrolls, the ground slides from the site ground to warm sand, never
+   dark (the footer already carries the contrast), and an olive-branch shadow
+   (DayShadow.tsx) lengthens and leans like a lowering sun. One fixed layer for
+   the whole page, so there are no seams between sections.
+   Readability: the ground ends at #E9E0D4, where --muted (#707076) and
+   --clay-ink (#A65336) would drop under 4.5:1, so both darken with it, to the
+   smallest values that still pass at the end (#5F5F65 4.9:1, #9A4A2F 4.8:1).
+   Tokens are animated where they are defined, so the header, the inspector's
+   notes and every ground-coloured surface follow with no extra rules.
+   No scroll-timeline support: the page stays as it was (static ground). */
+@property --ground{syntax:'<color>';inherits:true;initial-value:#F7F5F2;}
+@property --muted{syntax:'<color>';inherits:true;initial-value:#707076;}
+@property --clay-ink{syntax:'<color>';inherits:true;initial-value:#A65336;}
+@keyframes day-tone{
+  to{--ground:#E9E0D4;--muted:#5F5F65;--clay-ink:#9A4A2F;}
+}
+@keyframes day-sun{
+  from{transform:translate(0,0) skewX(0deg) scale(1,1);opacity:.09;}
+  to{transform:translate(-22%,6%) skewX(-30deg) scale(1.06,1.35);opacity:.055;}
+}
+.home-v1{isolation:isolate;}
+.home-v1 .day{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
+/* Arabic: the light comes from the other side (the parent mirrors, the child animates) */
+.home-v1 .day:dir(rtl){scale:-1 1;}
+.home-v1 .day-branch{position:absolute;inset-block-start:-5rem;right:-6rem;width:min(64rem,115vw);height:auto;color:#4A2E1E;opacity:.09;filter:blur(5px);transform-origin:100% 0;}
+@supports (animation-timeline:scroll()){
+  html:has(.home-v1){animation:day-tone linear both;animation-timeline:scroll(root);}
+  @media (prefers-reduced-motion:no-preference){
+    .home-v1 .day-branch{animation:day-sun linear both;animation-timeline:scroll(root);will-change:transform;}
+  }
+}
