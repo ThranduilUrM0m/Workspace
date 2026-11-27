@@ -205,22 +205,67 @@ from{translate:-50% calc(-50% - 10rem);}
 to{translate:-50% calc(-50% + 10rem);}
 }
 
-/* ===== PROCESS — no auto-fit: at mid widths it leaves a 2+1 orphan ===== */
-.home-v1 .pr-head{font:clamp(1.75rem,1rem + 3vw,2.5rem)/1.1 var(--f-head);margin:0 0 1rem;}
-.home-v1 .pr-sub{font:.9375rem/1.6 var(--f-body);color:rgba(27,27,31,.62);max-width:48ch;margin:0 0 3rem;}
-.home-v1 .pr-grid{display:grid;gap:1.75rem;}
-.home-v1 .pr-card{display:flex;flex-direction:column;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);padding:1.25rem;}
-.home-v1 .pr-img{width:100%;aspect-ratio:16/9;margin-bottom:1.25rem;}
-.home-v1 .pr-eyebrow{font:.625rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-ink);margin-bottom:.625rem;}
-.home-v1 .pr-title{font:1.1875rem var(--f-head);margin:0 0 .625rem;}
-.home-v1 .pr-body{font:.8125rem/1.6 var(--f-body);color:rgba(27,27,31,.62);flex:1;margin:0 0 .875rem;}
-.home-v1 .pr-link{font:.75rem var(--f-body);color:var(--ink);text-decoration:none;align-self:flex-start;display:inline-flex;align-items:center;min-height:var(--hit);}
-.home-v1 .pr-link span{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
+/* ===== PROCESS ===== */
+/* r1 "Seven verbs" (2026-11-27). The seven email steps of /services#process,
+   told as the client's part only: one verb per row, then the email that asks
+   for it. Medium-large verbs, a rhythm of seven, deliberately smaller than
+   About's heading right above. Phone: number + verb, email lines under it.
+   64rem: number / verb / email on one baseline (cols 1, 2-8, 9-12); below that
+   the email column is too narrow for the French subjects. */
+.home-v1 .pr{padding-block:clamp(4rem,9vw,8rem);}
+.home-v1 .pr-intro{margin-bottom:clamp(2.5rem,5vw,4rem);}
+.home-v1 .pr-head{font:clamp(2rem,1rem + 4vw,3.25rem)/1.05 var(--f-head);letter-spacing:-.02em;max-width:18ch;text-wrap:balance;margin:0 0 1rem;}
+.home-v1 .pr-head:lang(ar){line-height:1.3;letter-spacing:0;}
+.home-v1 .pr-sub{font:.9375rem/1.6 var(--f-body);color:var(--muted);max-width:38ch;margin:0;}
+.home-v1 .pr-group + .pr-group{margin-top:clamp(2rem,4vw,3rem);}
+/* the group's rule spans the content box only, so it never meets the screen edge */
+.home-v1 .pr-label{position:relative;font:.75rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--clay-ink);padding-top:.875rem;margin:0 0 clamp(.5rem,1.5vw,1.25rem);}
+/* Arabic letters join: tracking would pull them apart */
+.home-v1 .pr-label:lang(ar){letter-spacing:0;font-size:.8125rem;}
+.home-v1 .pr-label::before{content:"";position:absolute;inset-inline:0;inset-block-start:0;height:var(--hair);background:var(--line);transform-origin:0 50%;}
+.home-v1 .pr-label:dir(rtl)::before{transform-origin:100% 50%;}
+.home-v1 .pr-steps{list-style:none;margin:0;padding:0;}
+.home-v1 .pr-step{display:grid;grid-template-columns:2.25rem minmax(0,1fr);grid-template-areas:"num verb" ". mail";align-items:baseline;column-gap:.5rem;padding-block:clamp(.25rem,.8vw,.625rem);}
+.home-v1 .pr-num{grid-area:num;font:.8125rem var(--f-body);font-variant-numeric:tabular-nums;color:var(--muted);}
+.home-v1 .pr-verb{grid-area:verb;font:clamp(3rem,1.5rem + 5vw,5.5rem)/.95 var(--f-head);letter-spacing:-.03em;}
+.home-v1 .pr-verb:lang(ar){line-height:1.25;letter-spacing:0;}
+/* the "." stays in the text for screen readers, painted as a square (About's dot) */
+.home-v1 .pr-dot{display:inline-block;width:.16em;height:.16em;margin-inline-start:.05em;overflow:hidden;color:transparent;background:var(--clay);}
+.home-v1 .pr-mail{grid-area:mail;display:flex;flex-direction:column;gap:.25rem;padding-top:.625rem;}
+/* block, icon inline: the subject's first text line is the row's baseline */
+.home-v1 .pr-subject{display:block;font:.9375rem/1.4 var(--f-body);color:var(--ink);}
+.home-v1 .pr-icon{display:inline-block;width:1rem;height:1rem;vertical-align:-.15em;margin-inline-end:.5rem;color:var(--clay);}
+.home-v1 .pr-text{font:.875rem/1.5 var(--f-body);color:var(--muted);max-width:40ch;padding-inline-start:1.5rem;}
+.home-v1 .pr-link{margin-top:clamp(2rem,4vw,3rem);}
 @media (min-width:48rem){
-.home-v1 .pr-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
-.home-v1 .pr-img{height:10.625rem;aspect-ratio:auto;}
+.home-v1 .pr-intro{max-width:calc(7 / 12 * 100%);}
 }
-@media (min-width:48rem) and (pointer:fine){.home-v1 .pr-link{min-height:0;}}
+@media (min-width:64rem){
+.home-v1 .pr-step{grid-template-columns:repeat(12,minmax(0,1fr));grid-template-areas:none;column-gap:1.5rem;}
+.home-v1 .pr-num{grid-column:1;}
+.home-v1 .pr-verb{grid-column:2/9;}
+.home-v1 .pr-mail{grid-column:9/13;padding-top:0;}
+}
+/* MOTION (prototype, CSS scroll-driven like the day device; the GSAP motion
+   system may take it over): each verb goes from faint to ink as it crosses
+   the middle of the screen, its square grows in and its email line comes up;
+   the group rule draws just before its first row. Reverses on the way back.
+   Reduced motion or no support: everything solid from the start. */
+/* faint fill, not an outline: Bricolage's glyphs overlap inside, so a stroke
+   draws every joint (tried 27 Nov, the "e" showed its seams) */
+@keyframes pr-ink{from{color:rgba(27,27,31,.14);}to{color:var(--ink);}}
+@keyframes pr-grow{from{scale:0;}to{scale:1;}}
+@keyframes pr-up{from{opacity:.4;}to{opacity:1;}}
+@keyframes pr-draw{from{scale:0 1;}to{scale:1 1;}}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .home-v1 .pr-step{view-timeline:--pr-row block;}
+    .home-v1 .pr-verb{animation:pr-ink linear both;animation-timeline:--pr-row;animation-range:cover 25% cover 45%;}
+    .home-v1 .pr-dot{animation:pr-grow linear both;animation-timeline:--pr-row;animation-range:cover 35% cover 45%;}
+    .home-v1 .pr-mail{animation:pr-up linear both;animation-timeline:--pr-row;animation-range:cover 25% cover 45%;}
+    .home-v1 .pr-label::before{animation:pr-draw linear both;animation-timeline:view();animation-range:cover 10% cover 35%;}
+  }
+}
 
 /* ===== PORTFOLIO TEASER — the stagger only exists side by side ===== */
 .home-v1 #sec-portfolio .sec{padding-bottom:3rem;overflow:hidden;}

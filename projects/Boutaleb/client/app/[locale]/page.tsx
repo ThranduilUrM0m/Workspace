@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
+import { Mail } from 'lucide-react';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
 import { AboutGuidesToggle, AboutInspector } from '@/components/public/home/AboutInspector';
 import { ApproachDrawing } from '@/components/public/home/ApproachIcons';
@@ -153,25 +154,51 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-process">
-                    <div className="sec">
-                        <div className="eyebrow">{process.eyebrow}</div>
-                        <h2 className="pr-head">{process.heading}</h2>
-                        <p className="pr-sub">{process.sub}</p>
-                        <div className="pr-grid">
-                            {process.cards.map((card) => (
-                                <div key={card.title} className="pr-card">
-                                    <div className="pr-img ph" aria-hidden="true">
-                                        {process.image}
-                                    </div>
-                                    <div className="pr-eyebrow">{card.eyebrow}</div>
-                                    <h3 className="pr-title">{card.title}</h3>
-                                    <div className="pr-body">{card.text}</div>
-                                    <Link className="pr-link" href="/services#process">
-                                        <span>{process.link}</span>
-                                    </Link>
-                                </div>
-                            ))}
+                    {/* r1 "Seven verbs" (2026-11-27): the seven steps of /services#process,
+                        told as the client's part only. Each verb is one row: number, verb (its
+                        full stop a clay square, as About's heading), and the email that asks
+                        for it. Group labels sit on inset rules. Motion: each verb scrubs from
+                        faint to ink as it crosses the viewport (styles/home.css). */}
+                    <div className="sec pr">
+                        <div className="pr-intro">
+                            <div className="eyebrow">{process.eyebrow}</div>
+                            <h2 className="pr-head">{process.heading}</h2>
+                            <p className="pr-sub">{process.sub}</p>
                         </div>
+                        {process.groups.map((group, g) => {
+                            const first = process.groups.slice(0, g).reduce((n, x) => n + x.steps.length, 1);
+                            return (
+                                <div key={group.label} className="pr-group">
+                                    <h3 className="pr-label">{group.label}</h3>
+                                    <ol className="pr-steps" start={first}>
+                                        {group.steps.map((step, i) => (
+                                            <li key={step.verb} className="pr-step">
+                                                <span className="pr-num" aria-hidden="true">
+                                                    {String(first + i).padStart(2, '0')}
+                                                </span>
+                                                <span className="pr-verb">
+                                                    {step.verb}
+                                                    <span className="pr-dot">.</span>
+                                                </span>
+                                                <span className="pr-mail">
+                                                    <span className="pr-subject">
+                                                        <Mail className="pr-icon" aria-hidden="true" strokeWidth={1.5} />
+                                                        {step.subject}
+                                                    </span>
+                                                    <span className="pr-text">{step.text}</span>
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </div>
+                            );
+                        })}
+                        <Link className="ct-cta pr-link" href="/services#process">
+                            <span>{process.link}</span>
+                            <span className="flip-rtl" aria-hidden="true">
+                                &rarr;
+                            </span>
+                        </Link>
                     </div>
                 </section>
 

@@ -4,13 +4,14 @@ import type { PageRecord } from '../page-record';
 // French and Arabic translated 2026-11-21 (plan R3). Projects, posts, testimonials
 // and stats come from content/work.ts, posts.ts and proof.ts.
 
-type Card = { eyebrow: string; title: string; text: string };
+/** One step of the seven: the client's verb, then the email that asks for it. */
+type ProcessStep = { verb: string; subject: string; text: string };
 
 export type HomeBlocks = {
     hero: { built: string; alt: string; script: string; word: string; eyebrow: string; line: [string, string]; cta: string; strip: string };
     approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; mock: MockCopy };
     about: { eyebrow: string; image: string; heading: string; text: string; cta: string; inspector: InspectorCopy };
-    process: { eyebrow: string; heading: string; sub: string; cards: Card[]; link: string; image: string };
+    process: { eyebrow: string; heading: string; sub: string; groups: { label: string; steps: ProcessStep[] }[]; link: string };
     work: { eyebrow: string; all: string; image: string };
     trust: { eyebrow: string; clientsLabel: string };
     blog: { eyebrow: string; slide: string };
@@ -82,27 +83,33 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 process: {
                     eyebrow: '005 · process',
-                    heading: 'Built to your spec.',
-                    sub: 'Three ways to work together, depending on how much you already know about what you need.',
-                    cards: [
+                    heading: 'Your part fits in seven words.',
+                    sub: 'Everything arrives by email. No account, no portal, no password.',
+                    groups: [
                         {
-                            eyebrow: 'Custom',
-                            title: 'No templates, no compromises',
-                            text: 'Every build starts from your actual requirements, not a theme you have to bend your business around.',
+                            label: 'Before work starts',
+                            steps: [
+                                { verb: 'Send', subject: 'Your request has arrived', text: 'A confirmation, and what happens next.' },
+                                { verb: 'Comment', subject: 'Your brief, in plain words', text: 'What you asked for, written back and edited by hand before you see it.' },
+                                { verb: 'Approve', subject: 'Your project plan, on one page', text: 'Scope, budget, payment schedule and contract. Nothing starts until you approve it.' },
+                            ],
                         },
                         {
-                            eyebrow: 'Direct',
-                            title: 'No middleman',
-                            text: 'Feedback goes straight to the person writing the code — changes land in hours, not sprint cycles.',
+                            label: 'While it’s built',
+                            steps: [
+                                { verb: 'Read', subject: 'A milestone is done', text: 'What is finished, and what comes next.' },
+                                { verb: 'Pay', subject: 'An invoice is due', text: 'A payment link, on the schedule approved at step 3.' },
+                            ],
                         },
                         {
-                            eyebrow: 'Lean',
-                            title: 'Speed without the bloat',
-                            text: 'No unnecessary dependencies, no framework churn — just what the project actually needs to run well.',
+                            label: 'After delivery',
+                            steps: [
+                                { verb: 'Receive', subject: 'Everything, handed over', text: 'Files, access and documentation, all in your name.' },
+                                { verb: 'Reply', subject: 'Is it still doing its job?', text: 'A short note at 30, 60 and 90 days.' },
+                            ],
                         },
                     ],
-                    link: 'Learn more →',
-                    image: 'image, PNG',
+                    link: 'See each step in detail',
                 },
                 work: { eyebrow: '006 · selected work', all: 'See full portfolio →', image: 'image, PNG' },
                 trust: { eyebrow: '007 · trusted by', clientsLabel: 'worked with' },
@@ -164,27 +171,33 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 process: {
                     eyebrow: '005 · méthode',
-                    heading: 'Construit selon votre cahier des charges.',
-                    sub: 'Trois façons de travailler ensemble, selon ce que vous savez déjà de votre besoin.',
-                    cards: [
+                    heading: 'Votre part tient en sept mots.',
+                    sub: 'Tout arrive par e-mail. Pas de compte, pas de portail, pas de mot de passe.',
+                    groups: [
                         {
-                            eyebrow: 'Sur mesure',
-                            title: 'Ni modèle, ni compromis',
-                            text: 'Chaque projet part de vos besoins réels, pas d’un thème autour duquel il faudrait plier votre activité.',
+                            label: 'Avant le début du travail',
+                            steps: [
+                                { verb: 'Envoyez', subject: 'Votre demande est bien arrivée', text: 'Une confirmation, et la suite.' },
+                                { verb: 'Commentez', subject: 'Votre brief, en mots simples', text: 'Votre demande reformulée, relue et corrigée à la main avant de vous parvenir.' },
+                                { verb: 'Approuvez', subject: 'Votre plan de projet, sur une page', text: 'Périmètre, budget, échéancier et contrat. Rien ne commence sans votre accord.' },
+                            ],
                         },
                         {
-                            eyebrow: 'Direct',
-                            title: 'Sans intermédiaire',
-                            text: 'Vos retours vont droit à la personne qui écrit le code — les changements arrivent en quelques heures, pas au rythme des sprints.',
+                            label: 'Pendant la réalisation',
+                            steps: [
+                                { verb: 'Lisez', subject: 'Une étape est terminée', text: 'Ce qui est fait, et ce qui vient ensuite.' },
+                                { verb: 'Payez', subject: 'Une facture arrive à échéance', text: 'Un lien de paiement, selon l’échéancier validé à l’étape 3.' },
+                            ],
                         },
                         {
-                            eyebrow: 'Sobre',
-                            title: 'La vitesse sans le superflu',
-                            text: 'Aucune dépendance inutile, aucun changement de framework pour la forme — seulement ce dont le projet a vraiment besoin pour bien tourner.',
+                            label: 'Après la livraison',
+                            steps: [
+                                { verb: 'Recevez', subject: 'Tout vous est remis', text: 'Fichiers, accès et documentation, le tout à votre nom.' },
+                                { verb: 'Répondez', subject: 'Fait-il toujours son travail\u202f?', text: 'Un petit mot à 30, 60 et 90 jours.' },
+                            ],
                         },
                     ],
-                    link: 'En savoir plus →',
-                    image: 'image, PNG',
+                    link: 'Voir chaque étape en détail',
                 },
                 work: { eyebrow: '006 · réalisations choisies', all: 'Voir tout le portfolio →', image: 'image, PNG' },
                 trust: { eyebrow: '007 · ils font confiance', clientsLabel: 'collaborations' },
@@ -246,27 +259,33 @@ export const homePage: PageRecord<HomeBlocks> = {
                 },
                 process: {
                     eyebrow: '005 · طريقة العمل',
-                    heading: 'مبنيّ وفق مواصفاتك.',
-                    sub: 'ثلاث طرق للعمل معًا، حسب ما تعرفه مسبقًا عمّا تحتاجه.',
-                    cards: [
+                    heading: 'دورك يتلخّص في سبع كلمات.',
+                    sub: 'كل شيء يصلك عبر البريد الإلكتروني. لا حساب، ولا بوابة، ولا كلمة مرور.',
+                    groups: [
                         {
-                            eyebrow: 'على المقاس',
-                            title: 'لا قوالب ولا تنازلات',
-                            text: 'كل مشروع ينطلق من احتياجاتك الفعلية، لا من قالب جاهز تُضطرّ إلى تطويع نشاطك ليناسبه.',
+                            label: 'قبل بدء العمل',
+                            steps: [
+                                { verb: 'أرسِل', subject: 'وصل طلبك', text: 'تأكيد، وما الذي سيحدث بعد ذلك.' },
+                                { verb: 'علِّق', subject: 'ملخّص طلبك بكلمات واضحة', text: 'ما طلبته، مكتوبًا من جديد ومراجَعًا يدويًا قبل أن يصلك.' },
+                                { verb: 'وافِق', subject: 'خطة مشروعك في صفحة واحدة', text: 'النطاق والميزانية وجدول الدفع والعقد. لا شيء يبدأ قبل موافقتك.' },
+                            ],
                         },
                         {
-                            eyebrow: 'مباشر',
-                            title: 'بلا وسيط',
-                            text: 'ملاحظاتك تصل مباشرة إلى من يكتب الشيفرة — والتعديلات تتمّ في ساعات، لا في دورات عمل طويلة.',
+                            label: 'أثناء البناء',
+                            steps: [
+                                { verb: 'اقرأ', subject: 'اكتملت مرحلة', text: 'ما أُنجز، وما التالي.' },
+                                { verb: 'ادفع', subject: 'حان موعد فاتورة', text: 'رابط دفع، وفق الجدول الذي وافقت عليه في الخطوة 3.' },
+                            ],
                         },
                         {
-                            eyebrow: 'خفيف',
-                            title: 'سرعة بلا حشو',
-                            text: 'لا مكتبات زائدة ولا تبديل لأطر العمل بلا داعٍ — فقط ما يحتاجه المشروع ليعمل جيدًا.',
+                            label: 'بعد التسليم',
+                            steps: [
+                                { verb: 'استلِم', subject: 'كل شيء بين يديك', text: 'الملفات والصلاحيات والتوثيق، كلها باسمك.' },
+                                { verb: 'رُدّ', subject: 'هل ما زال يؤدّي عمله؟', text: 'رسالة قصيرة بعد 30 و60 و90 يومًا.' },
+                            ],
                         },
                     ],
-                    link: 'اعرف المزيد ←',
-                    image: 'image, PNG',
+                    link: 'تفاصيل كل خطوة',
                 },
                 work: { eyebrow: '006 · أعمال مختارة', all: 'كل الأعمال ←', image: 'image, PNG' },
                 trust: { eyebrow: '007 · ثقة العملاء', clientsLabel: 'شركاء العمل' },
