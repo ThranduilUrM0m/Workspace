@@ -377,35 +377,56 @@ to{translate:-50% calc(-50% + 10rem);}
 .home-v1 .blog-head{padding-bottom:0;}
 
 /* ===== DAY ===== */
-/* PROTOTYPE 2026-11-26, "a day passing on the wall" (developer's idea): as the
+/* PROTOTYPE 2026-11-26/27, "a day passing on the wall" (developer's idea): as the
    homepage scrolls, the ground slides from the site ground to warm sand, never
    dark (the footer already carries the contrast), and an olive-branch shadow
-   (DayShadow.tsx) lengthens and leans like a lowering sun. One fixed layer for
-   the whole page, so there are no seams between sections.
-   Readability: the ground ends at #E9E0D4, where --muted (#707076) and
-   --clay-ink (#A65336) would drop under 4.5:1, so both darken with it, to the
-   smallest values that still pass at the end (#5F5F65 4.9:1, #9A4A2F 4.8:1).
+   (DayShadow.tsx) lengthens and leans like a lowering sun, its twigs and leaves
+   swaying with the scroll like wind. One fixed layer for the whole page, so
+   there are no seams between sections.
+   27 Nov: the first ground (#E9E0D4, a straight line to the end) went unnoticed.
+   Now deeper (#E3D2BD) and front-loaded: a third of the way down it is
+   already at #EDE3D7. Readability at the deepest point: --muted #58585E 4.8:1,
+   --clay-ink #904429 4.7:1, --clay #B25B3C 3.2:1 (fills and icons need 3:1).
    Tokens are animated where they are defined, so the header, the inspector's
    notes and every ground-coloured surface follow with no extra rules.
    No scroll-timeline support: the page stays as it was (static ground). */
 @property --ground{syntax:'<color>';inherits:true;initial-value:#F7F5F2;}
 @property --muted{syntax:'<color>';inherits:true;initial-value:#707076;}
 @property --clay-ink{syntax:'<color>';inherits:true;initial-value:#A65336;}
+@property --clay{syntax:'<color>';inherits:true;initial-value:#C4694A;}
 @keyframes day-tone{
-  to{--ground:#E9E0D4;--muted:#5F5F65;--clay-ink:#9A4A2F;}
+  33%{--ground:#EDE3D7;--muted:#626268;--clay-ink:#9A4B30;--clay:#BA6243;}
+  to{--ground:#E3D2BD;--muted:#58585E;--clay-ink:#904429;--clay:#B25B3C;}
 }
 @keyframes day-sun{
-  from{transform:translate(0,0) skewX(0deg) scale(1,1);opacity:.09;}
-  to{transform:translate(-22%,6%) skewX(-30deg) scale(1.06,1.35);opacity:.055;}
+  from{transform:translate(0,0) skewX(0deg) scale(1,1);opacity:.1;}
+  to{transform:translate(-22%,6%) skewX(-30deg) scale(1.06,1.35);opacity:.07;}
 }
+/* wind: scroll-linked, so the branch moves while the visitor scrolls and rests
+   when they stop. Branch slow and small, twigs livelier, leaves flutter in two
+   opposite phases. Generated keyframes. */
+@keyframes wind-branch{0.00%{rotate:0.00deg}4.17%{rotate:1.10deg}8.33%{rotate:0.00deg}12.50%{rotate:-1.07deg}16.67%{rotate:0.00deg}20.83%{rotate:1.01deg}25.00%{rotate:0.00deg}29.17%{rotate:-0.93deg}33.33%{rotate:0.00deg}37.50%{rotate:0.83deg}41.67%{rotate:0.00deg}45.83%{rotate:-0.73deg}50.00%{rotate:0.00deg}54.17%{rotate:0.71deg}58.33%{rotate:0.00deg}62.50%{rotate:-0.82deg}66.67%{rotate:0.00deg}70.83%{rotate:0.92deg}75.00%{rotate:0.00deg}79.17%{rotate:-1.00deg}83.33%{rotate:0.00deg}87.50%{rotate:1.06deg}91.67%{rotate:0.00deg}95.83%{rotate:-1.09deg}100.00%{rotate:0.00deg}}
+@keyframes wind-twig-a{0.00%{rotate:1.92deg}2.27%{rotate:0.00deg}4.55%{rotate:-2.25deg}6.82%{rotate:0.00deg}9.09%{rotate:2.55deg}11.36%{rotate:0.00deg}13.64%{rotate:-2.82deg}15.91%{rotate:0.00deg}18.18%{rotate:3.02deg}20.45%{rotate:0.00deg}22.73%{rotate:-3.15deg}25.00%{rotate:0.00deg}27.27%{rotate:3.20deg}29.55%{rotate:0.00deg}31.82%{rotate:-3.16deg}34.09%{rotate:0.00deg}36.36%{rotate:3.05deg}38.64%{rotate:0.00deg}40.91%{rotate:-2.85deg}43.18%{rotate:0.00deg}45.45%{rotate:2.60deg}47.73%{rotate:0.00deg}50.00%{rotate:-2.30deg}52.27%{rotate:0.00deg}54.55%{rotate:1.97deg}56.82%{rotate:0.00deg}59.09%{rotate:-2.20deg}61.36%{rotate:0.00deg}63.64%{rotate:2.51deg}65.91%{rotate:0.00deg}68.18%{rotate:-2.78deg}70.45%{rotate:0.00deg}72.73%{rotate:2.99deg}75.00%{rotate:0.00deg}77.27%{rotate:-3.14deg}79.55%{rotate:0.00deg}81.82%{rotate:3.20deg}84.09%{rotate:0.00deg}86.36%{rotate:-3.18deg}88.64%{rotate:0.00deg}90.91%{rotate:3.07deg}93.18%{rotate:0.00deg}95.45%{rotate:-2.89deg}97.73%{rotate:0.00deg}100.00%{rotate:2.64deg}}
+@keyframes wind-twig-b{0.00%{rotate:-2.16deg}2.78%{rotate:0.00deg}5.56%{rotate:2.53deg}8.33%{rotate:0.00deg}11.11%{rotate:-2.87deg}13.89%{rotate:0.00deg}16.67%{rotate:3.17deg}19.44%{rotate:0.00deg}22.22%{rotate:-3.40deg}25.00%{rotate:0.00deg}27.78%{rotate:3.54deg}30.56%{rotate:0.00deg}33.33%{rotate:-3.60deg}36.11%{rotate:0.00deg}38.89%{rotate:3.56deg}41.67%{rotate:0.00deg}44.44%{rotate:-3.43deg}47.22%{rotate:0.00deg}50.00%{rotate:3.21deg}52.78%{rotate:0.00deg}55.56%{rotate:-2.92deg}58.33%{rotate:0.00deg}61.11%{rotate:2.58deg}63.89%{rotate:0.00deg}66.67%{rotate:-2.22deg}69.44%{rotate:0.00deg}72.22%{rotate:2.47deg}75.00%{rotate:0.00deg}77.78%{rotate:-2.82deg}80.56%{rotate:0.00deg}83.33%{rotate:3.13deg}86.11%{rotate:0.00deg}88.89%{rotate:-3.37deg}91.67%{rotate:0.00deg}94.44%{rotate:3.53deg}97.22%{rotate:0.00deg}100.00%{rotate:-3.60deg}}
+@keyframes wind-leaf-a{0.00%{rotate:0.00deg}1.09%{rotate:8.97deg}2.17%{rotate:0.00deg}3.26%{rotate:-8.73deg}4.35%{rotate:0.00deg}5.43%{rotate:8.27deg}6.52%{rotate:0.00deg}7.61%{rotate:-7.63deg}8.70%{rotate:0.00deg}9.78%{rotate:6.83deg}10.87%{rotate:0.00deg}11.96%{rotate:-5.94deg}13.04%{rotate:0.00deg}14.13%{rotate:5.79deg}15.22%{rotate:0.00deg}16.30%{rotate:-6.69deg}17.39%{rotate:0.00deg}18.48%{rotate:7.51deg}19.57%{rotate:0.00deg}20.65%{rotate:-8.18deg}21.74%{rotate:0.00deg}22.83%{rotate:8.67deg}23.91%{rotate:0.00deg}25.00%{rotate:-8.95deg}26.09%{rotate:0.00deg}27.17%{rotate:8.99deg}28.26%{rotate:0.00deg}29.35%{rotate:-8.79deg}30.43%{rotate:0.00deg}31.52%{rotate:8.36deg}32.61%{rotate:0.00deg}33.70%{rotate:-7.74deg}34.78%{rotate:0.00deg}35.87%{rotate:6.96deg}36.96%{rotate:0.00deg}38.04%{rotate:-6.08deg}39.13%{rotate:0.00deg}40.22%{rotate:5.65deg}41.30%{rotate:0.00deg}42.39%{rotate:-6.55deg}43.48%{rotate:0.00deg}44.57%{rotate:7.39deg}45.65%{rotate:0.00deg}46.74%{rotate:-8.09deg}47.83%{rotate:0.00deg}48.91%{rotate:8.61deg}50.00%{rotate:0.00deg}51.09%{rotate:-8.92deg}52.17%{rotate:0.00deg}53.26%{rotate:9.00deg}54.35%{rotate:0.00deg}55.43%{rotate:-8.83deg}56.52%{rotate:0.00deg}57.61%{rotate:8.44deg}58.70%{rotate:0.00deg}59.78%{rotate:-7.85deg}60.87%{rotate:0.00deg}61.96%{rotate:7.09deg}63.04%{rotate:0.00deg}64.13%{rotate:-6.22deg}65.22%{rotate:0.00deg}66.30%{rotate:5.50deg}67.39%{rotate:0.00deg}68.48%{rotate:-6.42deg}69.57%{rotate:0.00deg}70.65%{rotate:7.26deg}71.74%{rotate:0.00deg}72.83%{rotate:-7.99deg}73.91%{rotate:0.00deg}75.00%{rotate:8.54deg}76.09%{rotate:0.00deg}77.17%{rotate:-8.89deg}78.26%{rotate:0.00deg}79.35%{rotate:9.00deg}80.43%{rotate:0.00deg}81.52%{rotate:-8.87deg}82.61%{rotate:0.00deg}83.70%{rotate:8.52deg}84.78%{rotate:0.00deg}85.87%{rotate:-7.95deg}86.96%{rotate:0.00deg}88.04%{rotate:7.22deg}89.13%{rotate:0.00deg}90.22%{rotate:-6.37deg}91.30%{rotate:0.00deg}92.39%{rotate:5.45deg}93.48%{rotate:0.00deg}94.57%{rotate:-6.27deg}95.65%{rotate:0.00deg}96.74%{rotate:7.14deg}97.83%{rotate:0.00deg}98.91%{rotate:-7.89deg}100.00%{rotate:0.00deg}}
+@keyframes wind-leaf-b{0.00%{rotate:0.00deg}1.32%{rotate:-10.96deg}2.63%{rotate:0.00deg}3.95%{rotate:10.67deg}5.26%{rotate:0.00deg}6.58%{rotate:-10.11deg}7.89%{rotate:0.00deg}9.21%{rotate:9.32deg}10.53%{rotate:0.00deg}11.84%{rotate:-8.35deg}13.16%{rotate:0.00deg}14.47%{rotate:7.26deg}15.79%{rotate:0.00deg}17.11%{rotate:-7.08deg}18.42%{rotate:0.00deg}19.74%{rotate:8.18deg}21.05%{rotate:0.00deg}22.37%{rotate:-9.18deg}23.68%{rotate:0.00deg}25.00%{rotate:10.00deg}26.32%{rotate:0.00deg}27.63%{rotate:-10.60deg}28.95%{rotate:0.00deg}30.26%{rotate:10.94deg}31.58%{rotate:0.00deg}32.89%{rotate:-10.98deg}34.21%{rotate:0.00deg}35.53%{rotate:10.74deg}36.84%{rotate:0.00deg}38.16%{rotate:-10.22deg}39.47%{rotate:0.00deg}40.79%{rotate:9.46deg}42.11%{rotate:0.00deg}43.42%{rotate:-8.51deg}44.74%{rotate:0.00deg}46.05%{rotate:7.43deg}47.37%{rotate:0.00deg}48.68%{rotate:-6.90deg}50.00%{rotate:0.00deg}51.32%{rotate:8.01deg}52.63%{rotate:0.00deg}53.95%{rotate:-9.03deg}55.26%{rotate:0.00deg}56.58%{rotate:9.89deg}57.89%{rotate:0.00deg}59.21%{rotate:-10.52deg}60.53%{rotate:0.00deg}61.84%{rotate:10.90deg}63.16%{rotate:0.00deg}64.47%{rotate:-10.99deg}65.79%{rotate:0.00deg}67.11%{rotate:10.80deg}68.42%{rotate:0.00deg}69.74%{rotate:-10.32deg}71.05%{rotate:0.00deg}72.37%{rotate:9.59deg}73.68%{rotate:0.00deg}75.00%{rotate:-8.67deg}76.32%{rotate:0.00deg}77.63%{rotate:7.61deg}78.95%{rotate:0.00deg}80.26%{rotate:-6.72deg}81.58%{rotate:0.00deg}82.89%{rotate:7.84deg}84.21%{rotate:0.00deg}85.53%{rotate:-8.88deg}86.84%{rotate:0.00deg}88.16%{rotate:9.76deg}89.47%{rotate:0.00deg}90.79%{rotate:-10.44deg}92.11%{rotate:0.00deg}93.42%{rotate:10.86deg}94.74%{rotate:0.00deg}96.05%{rotate:-11.00deg}97.37%{rotate:0.00deg}98.68%{rotate:10.85deg}100.00%{rotate:0.00deg}}
 .home-v1{isolation:isolate;}
 .home-v1 .day{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
 /* Arabic: the light comes from the other side (the parent mirrors, the child animates) */
 .home-v1 .day:dir(rtl){scale:-1 1;}
-.home-v1 .day-branch{position:absolute;inset-block-start:-5rem;right:-6rem;width:min(64rem,115vw);height:auto;color:#4A2E1E;opacity:.09;filter:blur(5px);transform-origin:100% 0;}
+.home-v1 .day-branch{position:absolute;inset-block-start:-5rem;right:-6rem;width:min(64rem,115vw);height:auto;color:#4A2E1E;opacity:.1;filter:blur(5px);transform-origin:100% 0;overflow:visible;}
+/* each twig turns on its own base (inline transform-origin, viewBox units);
+   each leaf on its stalk (left middle of its own box) */
+.home-v1 .day-twig{transform-box:view-box;}
+.home-v1 .day-leaf{transform-box:fill-box;transform-origin:0 50%;}
 @supports (animation-timeline:scroll()){
   html:has(.home-v1){animation:day-tone linear both;animation-timeline:scroll(root);}
   @media (prefers-reduced-motion:no-preference){
     .home-v1 .day-branch{animation:day-sun linear both;animation-timeline:scroll(root);will-change:transform;}
+    .home-v1 .day-twig,.home-v1 .day-leaf{animation:wind-twig-a linear both;animation-timeline:scroll(root);}
+    .home-v1 .day-twig.main{animation-name:wind-branch;}
+    .home-v1 .day-twig.b{animation-name:wind-twig-b;}
+    .home-v1 .day-leaf{animation-name:wind-leaf-a;}
+    .home-v1 .day-leaf.b{animation-name:wind-leaf-b;}
   }
 }
