@@ -384,9 +384,8 @@ to{translate:-50% calc(-50% + 10rem);}
    swaying with the scroll like wind. One fixed layer for the whole page, so
    there are no seams between sections.
    27 Nov: the first ground (#E9E0D4, a straight line to the end) went unnoticed.
-   Now deeper (#E3D2BD) and front-loaded: a third of the way down it is
-   already at #EDE3D7. Readability at the deepest point: --muted #58585E 4.8:1,
-   --clay-ink #904429 4.7:1, --clay #B25B3C 3.2:1 (fills and icons need 3:1).
+   It was then made deeper (#E3D2BD) and front-loaded (a third of the way down
+   already most of the way there); r2 below keeps the front-loading, not the depth.
    Tokens are animated where they are defined, so the header, the inspector's
    notes and every ground-coloured surface follow with no extra rules.
    No scroll-timeline support: the page stays as it was (static ground). */
@@ -394,13 +393,21 @@ to{translate:-50% calc(-50% + 10rem);}
 @property --muted{syntax:'<color>';inherits:true;initial-value:#707076;}
 @property --clay-ink{syntax:'<color>';inherits:true;initial-value:#A65336;}
 @property --clay{syntax:'<color>';inherits:true;initial-value:#C4694A;}
+/* 27 Nov r2: #E3D2BD read as dusk, gloomy, not classy: it took 28% of the
+   ground's luminance. Late-afternoon light is warmer, not dimmer, so the day
+   now travels in hue and chroma and loses only 11% (#F3E7D6, warm cream).
+   Contrast is checked UNDER the branch shadow's solid core (worst case, the
+   blur only lightens it): --muted >= 4.6:1, --clay-ink >= 4.7:1, --clay >= 3.2:1
+   at every stop, ink >= 13:1. The shadow itself is lighter (.06 -> .05) because
+   at .1 it already pulled --muted under 4:1 where it crossed text. */
 @keyframes day-tone{
-  33%{--ground:#EDE3D7;--muted:#626268;--clay-ink:#9A4B30;--clay:#BA6243;}
-  to{--ground:#E3D2BD;--muted:#58585E;--clay-ink:#904429;--clay:#B25B3C;}
+  from{--ground:#F7F5F2;--muted:#68686E;--clay-ink:#A05034;--clay:#C4694A;}
+  33%{--ground:#F6EFE4;--muted:#646469;--clay-ink:#9C4D31;--clay:#BE6446;}
+  to{--ground:#F3E7D6;--muted:#606065;--clay-ink:#984A2F;--clay:#B85F42;}
 }
 @keyframes day-sun{
-  from{transform:translate(0,0) skewX(0deg) scale(1,1);opacity:.1;}
-  to{transform:translate(-22%,6%) skewX(-30deg) scale(1.06,1.35);opacity:.07;}
+  from{transform:translate(0,0) skewX(0deg) scale(1,1);opacity:.06;}
+  to{transform:translate(-22%,6%) skewX(-30deg) scale(1.06,1.35);opacity:.05;}
 }
 /* wind: scroll-linked, so the branch moves while the visitor scrolls and rests
    when they stop. Branch slow and small, twigs livelier, leaves flutter in two
@@ -414,7 +421,7 @@ to{translate:-50% calc(-50% + 10rem);}
 .home-v1 .day{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;}
 /* Arabic: the light comes from the other side (the parent mirrors, the child animates) */
 .home-v1 .day:dir(rtl){scale:-1 1;}
-.home-v1 .day-branch{position:absolute;inset-block-start:-5rem;right:-6rem;width:min(64rem,115vw);height:auto;color:#4A2E1E;opacity:.1;filter:blur(5px);transform-origin:100% 0;overflow:visible;}
+.home-v1 .day-branch{position:absolute;inset-block-start:-5rem;right:-6rem;width:min(64rem,115vw);height:auto;color:#4A2E1E;opacity:.06;filter:blur(5px);transform-origin:100% 0;overflow:visible;}
 /* each twig turns on its own base (inline transform-origin, viewBox units);
    each leaf on its stalk (left middle of its own box) */
 .home-v1 .day-twig{transform-box:view-box;}
