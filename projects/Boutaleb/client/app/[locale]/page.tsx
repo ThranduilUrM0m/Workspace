@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import Image, { type StaticImageData } from 'next/image';
@@ -177,12 +176,10 @@ export default async function HomePage({ params }: Props) {
                             const first = process.groups.slice(0, g).reduce((n, x) => n + x.steps.length, 1);
                             return (
                                 <div key={group.label} className="pr-group">
-                                    <h3 className="pr-label" style={{ '--i': first - 1 } as CSSProperties}>
-                                        {group.label}
-                                    </h3>
+                                    <h3 className="pr-label">{group.label}</h3>
                                     <ol className="pr-steps" start={first}>
                                         {group.steps.map((step, i) => (
-                                            <li key={step.verb} className="pr-step" style={{ '--i': first - 1 + i } as CSSProperties}>
+                                            <li key={step.verb} className="pr-step">
                                                 <span className="pr-num" aria-hidden="true">
                                                     {String(first + i).padStart(2, '0')}
                                                 </span>

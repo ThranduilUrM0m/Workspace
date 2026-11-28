@@ -242,29 +242,25 @@ to{translate:-50% calc(-50% + 10rem);}
 }
 /* 28 Nov (developer: verbs too far from their emails, "something is missing"):
    a hairline leader runs from each verb to its subject, like a table of contents.
-   28 Nov r2 (developer: rows packed left left a big empty right side; no
-   centring): THE STAIRCASE. Each row starts one step further in than the one
-   before (--i = 0..6, set inline), so the seven steps walk down and across the
-   page and the last email ends on the right edge. Step = (content - D) / 6,
-   D = the last row's natural width per language (measured 28 Nov at 1366:
-   EN "Reply." 43.3rem, FR "Répondez." 53.25rem; AR is capped by row 6, 39rem),
-   so step 7 lands on the edge in all three. Rows can never overflow: the email
-   column is minmax(0,40ch) and wraps when a step runs short of room. Group labels
-   and their rules start on their first row's step. Arabic walks the other way
-   (margin-inline). */
+   28 Nov r3, THE LEDGER (developer rejected both the empty right side and a
+   staircase offset; no centring): each row reads straight across the full width
+   like a line in an account book: number / verb + leader / subject / what it
+   says. The description moved from under the subject into its own column, which
+   is what fills the right side. Verb, subject and description columns are shared
+   by all seven rows (subgrid), so every column lines up down the section. */
 .home-v1 .pr-leader{display:none;}
 @media (min-width:64rem){
-.home-v1 .pr{--pr-d:43.5rem;}
-.home-v1 .pr:lang(fr){--pr-d:53.5rem;}
-.home-v1 .pr:lang(ar){--pr-d:39rem;}
-.home-v1 .pr-step,.home-v1 .pr-label{margin-inline-start:max(0px,calc((100% - var(--pr-d)) / 6 * var(--i,0)));}
-.home-v1 .pr-step{grid-template-columns:3rem max-content minmax(0,40ch);grid-template-areas:none;column-gap:0;}
+.home-v1 .pr{display:grid;grid-template-columns:3rem max-content minmax(0,1fr);}
+.home-v1 .pr > *{grid-column:1/-1;}
+.home-v1 .pr > .pr-link{justify-self:start;}
+.home-v1 .pr-group,.home-v1 .pr-steps,.home-v1 .pr-step{display:grid;grid-template-columns:subgrid;grid-column:1/-1;}
+.home-v1 .pr-label{grid-column:1/-1;}
+.home-v1 .pr-step{grid-template-areas:none;column-gap:0;}
 .home-v1 .pr-num{grid-column:1;}
 .home-v1 .pr-verb{grid-column:2;display:flex;align-items:baseline;}
-.home-v1 .pr-leader{display:block;flex:0 0 clamp(2.5rem,4vw,4.5rem);align-self:baseline;height:var(--hair);background:rgba(27,27,31,.28);margin-inline:.35em 1.25rem;font-size:1rem;}
-.home-v1 .pr-mail{grid-column:3;padding-top:0;}
-/* the link closes the staircase: it sits at the end the last step reaches */
-.home-v1 .pr > .pr-link{display:flex;inline-size:fit-content;margin-inline-start:auto;}
+.home-v1 .pr-leader{display:block;flex:1 0 2.5rem;align-self:baseline;height:var(--hair);background:rgba(27,27,31,.28);margin-inline:.35em 1.25rem;font-size:1rem;}
+.home-v1 .pr-mail{grid-column:3;display:grid;grid-template-columns:minmax(0,17rem) minmax(0,1fr);column-gap:clamp(1.5rem,3vw,3rem);align-items:baseline;padding-top:0;}
+.home-v1 .pr-text{padding-inline-start:0;max-width:42ch;}
 }
 /* MOTION (prototype, CSS scroll-driven like the day device; the GSAP motion
    system may take it over): each verb goes from faint to ink as it crosses
