@@ -12,7 +12,7 @@ export type HomeBlocks = {
     approach: { eyebrow: string; heading: string; sub: string; items: { icon: ApproachIcon; title: string; text: string }[]; mock: MockCopy };
     about: { eyebrow: string; image: string; heading: string; text: string; cta: string; inspector: InspectorCopy };
     process: { eyebrow: string; heading: string; sub: string; groups: { label: string; steps: ProcessStep[] }[]; link: string };
-    work: { eyebrow: string; all: string; image: string };
+    work: { eyebrow: string; heading: string; all: string; image: string; view: string; next: { eyebrow: string; title: string; text: string; cta: string } };
     trust: { eyebrow: string; clientsLabel: string };
     blog: { eyebrow: string; slide: string };
 };
@@ -111,7 +111,19 @@ export const homePage: PageRecord<HomeBlocks> = {
                     ],
                     link: 'See each step in detail',
                 },
-                work: { eyebrow: '006 · selected work', all: 'See full portfolio →', image: 'image, PNG' },
+                work: {
+                    eyebrow: '006 · selected work',
+                    heading: 'Each one made for one business.',
+                    all: 'See full portfolio →',
+                    image: 'image, PNG',
+                    view: 'View the project',
+                    next: {
+                        eyebrow: 'Your project',
+                        title: 'This place is kept for yours',
+                        text: 'Describe what the business needs. A plan comes back before any price.',
+                        cta: 'Start your website',
+                    },
+                },
                 trust: { eyebrow: '007 · trusted by', clientsLabel: 'worked with' },
                 blog: { eyebrow: '008 · from the blog', slide: 'Post {n}' },
             },
@@ -199,7 +211,19 @@ export const homePage: PageRecord<HomeBlocks> = {
                     ],
                     link: 'Voir chaque étape en détail',
                 },
-                work: { eyebrow: '006 · réalisations choisies', all: 'Voir tout le portfolio →', image: 'image, PNG' },
+                work: {
+                    eyebrow: '006 · réalisations choisies',
+                    heading: 'Chacune faite pour une seule entreprise.',
+                    all: 'Voir tout le portfolio →',
+                    image: 'image, PNG',
+                    view: 'Voir le projet',
+                    next: {
+                        eyebrow: 'Votre projet',
+                        title: 'Cette place attend le vôtre',
+                        text: 'Décrivez ce dont votre activité a besoin. Un plan vous revient avant tout prix.',
+                        cta: 'Lancer votre site',
+                    },
+                },
                 trust: { eyebrow: '007 · ils font confiance', clientsLabel: 'collaborations' },
                 blog: { eyebrow: '008 · sur le blog', slide: 'Article {n}' },
             },
@@ -287,7 +311,19 @@ export const homePage: PageRecord<HomeBlocks> = {
                     ],
                     link: 'تفاصيل كل خطوة',
                 },
-                work: { eyebrow: '006 · أعمال مختارة', all: 'كل الأعمال ←', image: 'image, PNG' },
+                work: {
+                    eyebrow: '006 · أعمال مختارة',
+                    heading: 'كل واحد منها صُنع لنشاط واحد.',
+                    all: 'كل الأعمال ←',
+                    image: 'image, PNG',
+                    view: 'عرض المشروع',
+                    next: {
+                        eyebrow: 'مشروعك',
+                        title: 'هذا المكان محجوز لمشروعك',
+                        text: 'صِف ما يحتاجه نشاطك. تصلك خطة قبل أي سعر.',
+                        cta: 'ابدأ موقعك',
+                    },
+                },
                 trust: { eyebrow: '007 · ثقة العملاء', clientsLabel: 'شركاء العمل' },
                 blog: { eyebrow: '008 · من المدونة', slide: 'مقال {n}' },
             },

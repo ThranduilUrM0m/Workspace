@@ -274,11 +274,13 @@ test('the homepage renders its sections from the shared content', async ({ page 
     expect(res?.status()).toBe(200);
     await expect(page).toHaveTitle('Boutaleb — custom web products');
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Your website should fit you exactly.');
-    await expect(page.locator('.c3-project')).toHaveCount(2);
-    await expect(page.locator('.c3-project').first()).toHaveAttribute(
+    // Two featured projects, then the card kept for the visitor's own project.
+    await expect(page.locator('.wk-card')).toHaveCount(3);
+    await expect(page.locator('.wk-card').first()).toHaveAttribute(
         'href',
         '/en/portfolio/qasidaty'
     );
+    await expect(page.locator('.wk-card').last()).toHaveAttribute('href', '/en/contact');
     await expect(page.locator('.stat')).toHaveCount(4);
 
     // The blog card switches post with its numbered buttons.

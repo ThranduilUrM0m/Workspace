@@ -210,8 +210,8 @@ to{translate:-50% calc(-50% + 10rem);}
    told as the client's part only: one verb per row, then the email that asks
    for it. Medium-large verbs, a rhythm of seven, deliberately smaller than
    About's heading right above. Phone: number + verb, email lines under it.
-   64rem: number / verb / email on one baseline (cols 1, 2-8, 9-12); below that
-   the email column is too narrow for the French subjects. */
+   64rem: number / verb + leader / email on one baseline; below that the email
+   column is too narrow for the French subjects. */
 .home-v1 .pr{padding-block:clamp(4rem,9vw,8rem);}
 .home-v1 .pr-intro{margin-bottom:clamp(2.5rem,5vw,4rem);}
 .home-v1 .pr-head{font:clamp(2rem,1rem + 4vw,3.25rem)/1.05 var(--f-head);letter-spacing:-.02em;max-width:18ch;text-wrap:balance;margin:0 0 1rem;}
@@ -240,11 +240,26 @@ to{translate:-50% calc(-50% + 10rem);}
 @media (min-width:48rem){
 .home-v1 .pr-intro{max-width:calc(7 / 12 * 100%);}
 }
+/* 28 Nov (developer: the verbs sat too far from their emails, "something is
+   missing"): the email column no longer starts at a fixed column 9, it starts
+   right after the LONGEST verb (one shared track via subgrid, so the seven emails
+   still line up), and a hairline leader runs from each verb to its subject, like
+   a table of contents. The leader is what ties the two; it also fills the gap a
+   short verb ("Pay.") leaves. */
+.home-v1 .pr-leader{display:none;}
 @media (min-width:64rem){
-.home-v1 .pr-step{grid-template-columns:repeat(12,minmax(0,1fr));grid-template-areas:none;column-gap:1.5rem;}
+.home-v1 .pr{display:grid;grid-template-columns:3rem max-content minmax(0,1fr);}
+.home-v1 .pr > *{grid-column:1/-1;}
+.home-v1 .pr > .pr-link{justify-self:start;}
+.home-v1 .pr-group,.home-v1 .pr-steps,.home-v1 .pr-step{display:grid;grid-template-columns:subgrid;grid-column:1/-1;}
+.home-v1 .pr-label{grid-column:1/-1;}
+.home-v1 .pr-step{grid-template-areas:none;column-gap:0;}
 .home-v1 .pr-num{grid-column:1;}
-.home-v1 .pr-verb{grid-column:2/9;}
-.home-v1 .pr-mail{grid-column:9/13;padding-top:0;}
+/* the leader lives in the verb's cell: it starts at the square and stretches to
+   the shared email column, so a short verb gets a long line, the longest a 3rem one */
+.home-v1 .pr-verb{grid-column:2;display:flex;align-items:baseline;}
+.home-v1 .pr-leader{display:block;flex:1 0 3rem;align-self:baseline;height:var(--hair);background:rgba(27,27,31,.28);margin-inline:.35em 1.25rem;font-size:1rem;}
+.home-v1 .pr-mail{grid-column:3;padding-top:0;}
 }
 /* MOTION (prototype, CSS scroll-driven like the day device; the GSAP motion
    system may take it over): each verb goes from faint to ink as it crosses
@@ -267,23 +282,35 @@ to{translate:-50% calc(-50% + 10rem);}
   }
 }
 
-/* ===== PORTFOLIO TEASER — the stagger only exists side by side ===== */
-.home-v1 #sec-portfolio .sec{padding-bottom:3rem;overflow:hidden;}
-.home-v1 #sec-portfolio .eyebrow{margin-bottom:0;}
-.home-v1 .c3-row{display:flex;flex-direction:column;gap:2.5rem;margin-top:1.25rem;}
-.home-v1 .c3-media{aspect-ratio:4/3;margin-bottom:1rem;}
-.home-v1 .tag{font:.625rem var(--f-body);letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:.25rem;}
-.home-v1 .c3-title{font:1.375rem var(--f-head);margin:.375rem 0;}
-.home-v1 .c3-blurb{font:.8125rem/1.5 var(--f-body);color:rgba(27,27,31,.62);max-width:34ch;}
-.home-v1 .c3-accent{width:1.75rem;height:2px;background:var(--clay);margin:.875rem 0;}
+/* ===== PORTFOLIO TEASER ===== */
+/* r1 (2026-11-28): the card look the developer liked on the old Process
+   section, moved here: white card on the warm ground, a hairline edge instead
+   of a border, image on top, clay eyebrow, Bricolage title, muted text, an
+   underlined link line at the foot. Three across from 48rem; the third card is
+   kept for the visitor's own project (empty dashed frame, links to /contact). */
+.home-v1 #sec-portfolio .sec{padding-bottom:3rem;}
+.home-v1 .wk-head{font:clamp(2rem,1rem + 4vw,3.25rem)/1.05 var(--f-head);letter-spacing:-.02em;max-width:18ch;text-wrap:balance;margin:0 0 clamp(2rem,4vw,3rem);}
+.home-v1 .wk-head:lang(ar){line-height:1.3;letter-spacing:0;}
+.home-v1 .wk-grid{display:grid;gap:1.75rem;}
+.home-v1 a.wk-card{display:flex;flex-direction:column;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);padding:1.25rem;color:inherit;text-decoration:none;transition:box-shadow .2s ease;}
+.home-v1 a.wk-card:hover{box-shadow:0 0 0 var(--hair) rgba(27,27,31,.22);}
+.home-v1 a.wk-card:focus-visible{outline:2px solid var(--clay);outline-offset:2px;}
+.home-v1 .wk-img{width:100%;aspect-ratio:16/9;margin-bottom:1.25rem;}
+/* the empty frame: a place waiting for a picture, not a grey box */
+.home-v1 .wk-img-next{outline:1px dashed rgba(27,27,31,.25);outline-offset:-1px;background:var(--ground);}
+.home-v1 .wk-eyebrow{font:.625rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-ink);margin-bottom:.625rem;}
+.home-v1 .wk-eyebrow:lang(ar){letter-spacing:0;font-size:.75rem;}
+.home-v1 .wk-title{font:1.1875rem var(--f-head);margin:0 0 .625rem;}
+.home-v1 .wk-body{font:.8125rem/1.6 var(--f-body);color:var(--muted);flex:1;margin:0 0 .875rem;}
+/* same text-link rule as .ct-cta: the LABEL carries the hairline, the arrow sits outside */
+.home-v1 .wk-link{font:.75rem var(--f-body);color:var(--ink);display:inline-flex;align-items:center;gap:.375rem;align-self:flex-start;}
+.home-v1 .wk-link > span:first-child{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
 .home-v1 .seeall-row{margin-top:2rem;}
 .home-v1 .seeall{font:.75rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:var(--hit);}
 .home-v1 .seeall span{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
 @media (min-width:48rem){
-.home-v1 .c3-row{flex-direction:row;gap:1.75rem;}
-.home-v1 .c3-project{flex:1 1 0;}
-.home-v1 .c3-project:nth-child(2){margin-top:2.5rem;}
-.home-v1 .c3-media{height:13.75rem;aspect-ratio:auto;}
+.home-v1 .wk-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+.home-v1 .wk-img{height:10.625rem;aspect-ratio:auto;}
 }
 @media (min-width:48rem) and (pointer:fine){.home-v1 .seeall{min-height:0;}}
 
@@ -418,7 +445,6 @@ to{translate:-50% calc(-50% + 10rem);}
 .home-v1 p.h-word{margin:0;font:inherit;}
 /* Testimonials are figure + blockquote, project teasers are links. */
 .home-v1 .slide,.home-v1 .slide blockquote{margin:0;}
-.home-v1 a.c3-project{display:block;color:inherit;text-decoration:none;}
 .home-v1 .blog-head{padding-bottom:0;}
 
 /* ===== DAY ===== */

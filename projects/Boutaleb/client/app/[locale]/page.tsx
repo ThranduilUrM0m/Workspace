@@ -179,6 +179,7 @@ export default async function HomePage({ params }: Props) {
                                                 <span className="pr-verb">
                                                     {step.verb}
                                                     <span className="pr-dot">.</span>
+                                                    <span className="pr-leader" aria-hidden="true" />
                                                 </span>
                                                 <span className="pr-mail">
                                                     <span className="pr-subject">
@@ -203,20 +204,42 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-portfolio">
+                    {/* r1 (2026-11-28): the card look of the old Process section (white
+                        card, hairline edge, image, clay eyebrow, link line), moved here at
+                        the developer's request. Two featured projects + one card kept for
+                        the visitor's own project, so the row of three stays honest. */}
                     <div className="sec">
                         <div className="eyebrow">{work.eyebrow}</div>
-                        <div className="c3-row">
+                        <h2 className="wk-head">{work.heading}</h2>
+                        <div className="wk-grid">
                             {featuredProjects().map((p) => (
-                                <Link key={p.slug} className="c3-project" href={`/portfolio/${p.slug}`} scroll={false}>
-                                    <div className="c3-media ph" aria-hidden="true">
+                                <Link key={p.slug} className="wk-card" href={`/portfolio/${p.slug}`} scroll={false}>
+                                    <div className="wk-img ph" aria-hidden="true">
                                         {work.image}
                                     </div>
-                                    <div className="tag">{workCategoryLabel[p.category]}</div>
-                                    <h3 className="c3-title">{p.title}</h3>
-                                    <div className="c3-accent" />
-                                    <div className="c3-blurb">{p.blurb}</div>
+                                    <div className="wk-eyebrow">{workCategoryLabel[p.category]}</div>
+                                    <h3 className="wk-title">{p.title}</h3>
+                                    <p className="wk-body">{p.blurb}</p>
+                                    <span className="wk-link">
+                                        <span>{work.view}</span>
+                                        <span className="flip-rtl" aria-hidden="true">
+                                            &rarr;
+                                        </span>
+                                    </span>
                                 </Link>
                             ))}
+                            <Link className="wk-card wk-next" href="/contact">
+                                <div className="wk-img wk-img-next" aria-hidden="true" />
+                                <div className="wk-eyebrow">{work.next.eyebrow}</div>
+                                <h3 className="wk-title">{work.next.title}</h3>
+                                <p className="wk-body">{work.next.text}</p>
+                                <span className="wk-link">
+                                    <span>{work.next.cta}</span>
+                                    <span className="flip-rtl" aria-hidden="true">
+                                        &rarr;
+                                    </span>
+                                </span>
+                            </Link>
                         </div>
                         <div className="seeall-row">
                             <Link className="seeall" href="/portfolio">
