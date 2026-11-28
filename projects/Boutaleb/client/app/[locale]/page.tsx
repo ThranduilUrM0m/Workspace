@@ -1,6 +1,7 @@
+import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { Mail } from 'lucide-react';
 import { cookie, reemKufi, ruqaa } from '@/app/fonts';
 import { AboutGuidesToggle, AboutInspector } from '@/components/public/home/AboutInspector';
@@ -17,6 +18,9 @@ import { featuredProjects, workCategoryLabel } from '@/content/work';
 import { Link } from '@/i18n/navigation';
 import { seoFor } from '@/lib/seo';
 import aboutWall from '@/public/images/home/about-wall-test.jpg';
+import workTest1 from '@/public/images/home/work-test-1.jpg';
+import workTest2 from '@/public/images/home/work-test-2.jpg';
+import workTest3 from '@/public/images/home/work-test-3.jpg';
 import heroFigure from '@/public/images/hero/wall-figure.png';
 import heroScene from '@/public/images/hero/wall-scene.jpg';
 import '@/styles/home.css';
@@ -25,6 +29,10 @@ import '@/styles/home.css';
 // posts and proof come from content/; all of it is placeholder until launch.
 
 type Props = { params: Promise<{ locale: string }> };
+
+// TEST 2026-11-28: the developer's own inspiration mock-ups standing in for
+// project pictures until real ones exist (not final, commercial terms open).
+const workPictures: Record<string, StaticImageData> = { qasidaty: workTest1, risala: workTest2 };
 
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -169,10 +177,12 @@ export default async function HomePage({ params }: Props) {
                             const first = process.groups.slice(0, g).reduce((n, x) => n + x.steps.length, 1);
                             return (
                                 <div key={group.label} className="pr-group">
-                                    <h3 className="pr-label">{group.label}</h3>
+                                    <h3 className="pr-label" style={{ '--i': first - 1 } as CSSProperties}>
+                                        {group.label}
+                                    </h3>
                                     <ol className="pr-steps" start={first}>
                                         {group.steps.map((step, i) => (
-                                            <li key={step.verb} className="pr-step">
+                                            <li key={step.verb} className="pr-step" style={{ '--i': first - 1 + i } as CSSProperties}>
                                                 <span className="pr-num" aria-hidden="true">
                                                     {String(first + i).padStart(2, '0')}
                                                 </span>
@@ -204,18 +214,23 @@ export default async function HomePage({ params }: Props) {
                 </section>
 
                 <section id="sec-portfolio">
-                    {/* r1 (2026-11-28): the card look of the old Process section (white
-                        card, hairline edge, image, clay eyebrow, link line), moved here at
-                        the developer's request. Two featured projects + one card kept for
-                        the visitor's own project, so the row of three stays honest. */}
+                    {/* r2 (2026-11-28) "Hung on the wall": the old Process card look (white
+                        card = the mat around a print) hung like a gallery wall, three sizes
+                        at three heights, each casting a soft shadow from the same sun as the
+                        branch, lengthening as the page scrolls. Two featured projects + one
+                        frame kept for the visitor's own project (links to /contact). */}
                     <div className="sec">
                         <div className="eyebrow">{work.eyebrow}</div>
                         <h2 className="wk-head">{work.heading}</h2>
                         <div className="wk-grid">
                             {featuredProjects().map((p) => (
                                 <Link key={p.slug} className="wk-card" href={`/portfolio/${p.slug}`} scroll={false}>
-                                    <div className="wk-img ph" aria-hidden="true">
-                                        {work.image}
+                                    <div className="wk-img">
+                                        {workPictures[p.slug] ? (
+                                            <Image src={workPictures[p.slug]} alt="" fill sizes="(min-width: 64rem) 40vw, 100vw" />
+                                        ) : (
+                                            <span className="ph">{work.image}</span>
+                                        )}
                                     </div>
                                     <div className="wk-eyebrow">{workCategoryLabel[p.category]}</div>
                                     <h3 className="wk-title">{p.title}</h3>
@@ -229,7 +244,9 @@ export default async function HomePage({ params }: Props) {
                                 </Link>
                             ))}
                             <Link className="wk-card wk-next" href="/contact">
-                                <div className="wk-img wk-img-next" aria-hidden="true" />
+                                <div className="wk-img">
+                                    <Image src={workTest3} alt="" fill sizes="(min-width: 64rem) 25vw, 100vw" />
+                                </div>
                                 <div className="wk-eyebrow">{work.next.eyebrow}</div>
                                 <h3 className="wk-title">{work.next.title}</h3>
                                 <p className="wk-body">{work.next.text}</p>

@@ -240,26 +240,31 @@ to{translate:-50% calc(-50% + 10rem);}
 @media (min-width:48rem){
 .home-v1 .pr-intro{max-width:calc(7 / 12 * 100%);}
 }
-/* 28 Nov (developer: the verbs sat too far from their emails, "something is
-   missing"): the email column no longer starts at a fixed column 9, it starts
-   right after the LONGEST verb (one shared track via subgrid, so the seven emails
-   still line up), and a hairline leader runs from each verb to its subject, like
-   a table of contents. The leader is what ties the two; it also fills the gap a
-   short verb ("Pay.") leaves. */
+/* 28 Nov (developer: verbs too far from their emails, "something is missing"):
+   a hairline leader runs from each verb to its subject, like a table of contents.
+   28 Nov r2 (developer: rows packed left left a big empty right side; no
+   centring): THE STAIRCASE. Each row starts one step further in than the one
+   before (--i = 0..6, set inline), so the seven steps walk down and across the
+   page and the last email ends on the right edge. Step = (content - D) / 6,
+   D = the last row's natural width per language (measured 28 Nov at 1366:
+   EN "Reply." 43.3rem, FR "Répondez." 53.25rem; AR is capped by row 6, 39rem),
+   so step 7 lands on the edge in all three. Rows can never overflow: the email
+   column is minmax(0,40ch) and wraps when a step runs short of room. Group labels
+   and their rules start on their first row's step. Arabic walks the other way
+   (margin-inline). */
 .home-v1 .pr-leader{display:none;}
 @media (min-width:64rem){
-.home-v1 .pr{display:grid;grid-template-columns:3rem max-content minmax(0,1fr);}
-.home-v1 .pr > *{grid-column:1/-1;}
-.home-v1 .pr > .pr-link{justify-self:start;}
-.home-v1 .pr-group,.home-v1 .pr-steps,.home-v1 .pr-step{display:grid;grid-template-columns:subgrid;grid-column:1/-1;}
-.home-v1 .pr-label{grid-column:1/-1;}
-.home-v1 .pr-step{grid-template-areas:none;column-gap:0;}
+.home-v1 .pr{--pr-d:43.5rem;}
+.home-v1 .pr:lang(fr){--pr-d:53.5rem;}
+.home-v1 .pr:lang(ar){--pr-d:39rem;}
+.home-v1 .pr-step,.home-v1 .pr-label{margin-inline-start:max(0px,calc((100% - var(--pr-d)) / 6 * var(--i,0)));}
+.home-v1 .pr-step{grid-template-columns:3rem max-content minmax(0,40ch);grid-template-areas:none;column-gap:0;}
 .home-v1 .pr-num{grid-column:1;}
-/* the leader lives in the verb's cell: it starts at the square and stretches to
-   the shared email column, so a short verb gets a long line, the longest a 3rem one */
 .home-v1 .pr-verb{grid-column:2;display:flex;align-items:baseline;}
-.home-v1 .pr-leader{display:block;flex:1 0 3rem;align-self:baseline;height:var(--hair);background:rgba(27,27,31,.28);margin-inline:.35em 1.25rem;font-size:1rem;}
+.home-v1 .pr-leader{display:block;flex:0 0 clamp(2.5rem,4vw,4.5rem);align-self:baseline;height:var(--hair);background:rgba(27,27,31,.28);margin-inline:.35em 1.25rem;font-size:1rem;}
 .home-v1 .pr-mail{grid-column:3;padding-top:0;}
+/* the link closes the staircase: it sits at the end the last step reaches */
+.home-v1 .pr > .pr-link{display:flex;inline-size:fit-content;margin-inline-start:auto;}
 }
 /* MOTION (prototype, CSS scroll-driven like the day device; the GSAP motion
    system may take it over): each verb goes from faint to ink as it crosses
@@ -283,35 +288,50 @@ to{translate:-50% calc(-50% + 10rem);}
 }
 
 /* ===== PORTFOLIO TEASER ===== */
-/* r1 (2026-11-28): the card look the developer liked on the old Process
-   section, moved here: white card on the warm ground, a hairline edge instead
-   of a border, image on top, clay eyebrow, Bricolage title, muted text, an
-   underlined link line at the foot. Three across from 48rem; the third card is
-   kept for the visitor's own project (empty dashed frame, links to /contact). */
-.home-v1 #sec-portfolio .sec{padding-bottom:3rem;}
+/* r1 (28 Nov): the card look the developer liked on the old Process section,
+   moved here. r2 (28 Nov, developer: "blank and soulless", it broke the mood):
+   "HUNG ON THE WALL". The white card is the mat around a print; the three hang
+   like a gallery wall (big / medium hung low / small hung high) and each casts a
+   soft warm shadow from the same sun as the branch: down and to the inline
+   start, lengthening as the section scrolls by (--sun). Pictures are the
+   developer's own mock-ups as stand-ins (TEST) until real ones exist. */
+@property --sun{syntax:'<length>';inherits:true;initial-value:.5rem;}
+@keyframes wk-sun{from{--sun:.375rem;}to{--sun:1.75rem;}}
+.home-v1 #sec-portfolio .sec{padding-block:clamp(4rem,9vw,8rem) 3rem;}
 .home-v1 .wk-head{font:clamp(2rem,1rem + 4vw,3.25rem)/1.05 var(--f-head);letter-spacing:-.02em;max-width:18ch;text-wrap:balance;margin:0 0 clamp(2rem,4vw,3rem);}
 .home-v1 .wk-head:lang(ar){line-height:1.3;letter-spacing:0;}
-.home-v1 .wk-grid{display:grid;gap:1.75rem;}
-.home-v1 a.wk-card{display:flex;flex-direction:column;background:#fff;box-shadow:0 0 0 var(--hair) rgba(27,27,31,.08);padding:1.25rem;color:inherit;text-decoration:none;transition:box-shadow .2s ease;}
-.home-v1 a.wk-card:hover{box-shadow:0 0 0 var(--hair) rgba(27,27,31,.22);}
-.home-v1 a.wk-card:focus-visible{outline:2px solid var(--clay);outline-offset:2px;}
-.home-v1 .wk-img{width:100%;aspect-ratio:16/9;margin-bottom:1.25rem;}
-/* the empty frame: a place waiting for a picture, not a grey box */
-.home-v1 .wk-img-next{outline:1px dashed rgba(27,27,31,.25);outline-offset:-1px;background:var(--ground);}
-.home-v1 .wk-eyebrow{font:.625rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-ink);margin-bottom:.625rem;}
+.home-v1 .wk-grid{display:grid;gap:2.5rem;align-items:start;}
+.home-v1 a.wk-card{--sx:calc(var(--sun) * -1);display:flex;flex-direction:column;background:#fff;padding:1rem 1rem 1.25rem;color:inherit;text-decoration:none;
+  box-shadow:0 0 0 var(--hair) rgba(27,27,31,.06),var(--sx) var(--sun) calc(var(--sun) * 1.4) rgba(74,46,30,.16);transition:translate .3s ease;}
+.home-v1 a.wk-card:dir(rtl){--sx:var(--sun);}
+.home-v1 a.wk-card:focus-visible{outline:2px solid var(--clay);outline-offset:3px;}
+.home-v1 .wk-img{position:relative;width:100%;aspect-ratio:3/2;margin-bottom:1.125rem;overflow:hidden;background:var(--ground);}
+.home-v1 .wk-img img{object-fit:cover;}
+.home-v1 .wk-img .ph{position:absolute;inset:0;}
+.home-v1 .wk-eyebrow{font:.625rem var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--clay-ink);margin-bottom:.5rem;}
 .home-v1 .wk-eyebrow:lang(ar){letter-spacing:0;font-size:.75rem;}
-.home-v1 .wk-title{font:1.1875rem var(--f-head);margin:0 0 .625rem;}
-.home-v1 .wk-body{font:.8125rem/1.6 var(--f-body);color:var(--muted);flex:1;margin:0 0 .875rem;}
+.home-v1 .wk-title{font:1.1875rem var(--f-head);margin:0 0 .5rem;}
+.home-v1 .wk-body{font:.8125rem/1.6 var(--f-body);color:var(--muted);flex:1;margin:0 0 .875rem;max-width:44ch;}
 /* same text-link rule as .ct-cta: the LABEL carries the hairline, the arrow sits outside */
 .home-v1 .wk-link{font:.75rem var(--f-body);color:var(--ink);display:inline-flex;align-items:center;gap:.375rem;align-self:flex-start;}
 .home-v1 .wk-link > span:first-child{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
+@media (min-width:48rem){
+.home-v1 .wk-grid{grid-template-columns:repeat(12,minmax(0,1fr));column-gap:1.5rem;}
+/* the hang: big at eye level, medium hung lower, small hung higher */
+.home-v1 .wk-card:nth-child(1){grid-column:1/6;}
+.home-v1 .wk-card:nth-child(2){grid-column:6/10;margin-top:clamp(3rem,8vw,7rem);}
+.home-v1 .wk-card:nth-child(3){grid-column:10/13;margin-top:clamp(1rem,3vw,2.5rem);}
+.home-v1 .wk-card:nth-child(3) .wk-img{aspect-ratio:4/5;}
+}
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .home-v1 #sec-portfolio{animation:wk-sun linear both;animation-timeline:view();}
+    @media (hover:hover){.home-v1 a.wk-card:hover{translate:0 -.25rem;}}
+  }
+}
 .home-v1 .seeall-row{margin-top:2rem;}
 .home-v1 .seeall{font:.75rem var(--f-body);color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;min-height:var(--hit);}
 .home-v1 .seeall span{border-bottom:var(--hair) solid var(--ink);padding-bottom:2px;}
-@media (min-width:48rem){
-.home-v1 .wk-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
-.home-v1 .wk-img{height:10.625rem;aspect-ratio:auto;}
-}
 @media (min-width:48rem) and (pointer:fine){.home-v1 .seeall{min-height:0;}}
 
 /* ===== TRUST ===== */
